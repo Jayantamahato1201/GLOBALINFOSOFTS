@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { SERVICES_DATA } from '../data/companyData';
-import { PRODUCT_3D_MODELS } from '../data/product3DModelsData';
 import { ServiceItem } from '../types';
-import { Card3DTilt } from './3d/Card3DTilt';
 import {
   Code2,
   Globe,
@@ -13,8 +11,7 @@ import {
   Cloud,
   Sparkles,
   CheckCircle2,
-  ArrowRight,
-  Box
+  ArrowRight
 } from 'lucide-react';
 
 const ICON_MAP: Record<string, typeof Code2> = {
@@ -34,8 +31,7 @@ interface ServicesSectionProps {
 }
 
 export const ServicesSection: React.FC<ServicesSectionProps> = ({
-  onSelectService,
-  onExplore3DModel
+  onSelectService
 }) => {
   const [activeCategory, setActiveCategory] = useState<string>('all');
 
@@ -106,14 +102,13 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredServices.map((service) => {
             const Icon = ICON_MAP[service.iconName] || Code2;
-            const matched3D = PRODUCT_3D_MODELS.find((m) => m.serviceId === service.id);
 
             return (
-              <Card3DTilt
+              <div
                 key={service.id}
                 id={`service-card-${service.id}`}
-                intensity={10}
-                className="h-full flex flex-col justify-between p-6 sm:p-7 rounded-3xl glass-card transition-all duration-300 group"
+                onClick={() => onSelectService(service)}
+                className="h-full flex flex-col justify-between p-6 sm:p-7 rounded-3xl project-card-gradient border border-white/15 hover:border-indigo-400/60 transition-all duration-500 group cursor-pointer shadow-xl relative overflow-hidden"
               >
                 <div>
                   {/* Top Row: Icon & Metric Badge */}
@@ -121,21 +116,13 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({
                     <div className="w-12 h-12 rounded-2xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-300 group-hover:scale-110 group-hover:border-indigo-400 group-hover:text-white transition-all duration-300 shadow-md shadow-indigo-500/10">
                       <Icon className="w-6 h-6" />
                     </div>
-                    <div className="flex items-center gap-1.5">
-                      {matched3D && (
-                        <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 flex items-center gap-1">
-                          <Box className="w-2.5 h-2.5" />
-                          <span>3D</span>
-                        </span>
-                      )}
-                      <span className="px-2.5 py-1 rounded-full text-[11px] font-mono font-medium bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 shrink-0">
-                        {service.metrics}
-                      </span>
-                    </div>
+                    <span className="px-2.5 py-1 rounded-full text-[11px] font-mono font-medium bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 shrink-0">
+                      {service.metrics}
+                    </span>
                   </div>
 
                   {/* Title & Short Description */}
-                  <h3 className="text-xl font-bold text-white group-hover:text-indigo-300 transition-colors font-['Outfit'] mb-2.5">
+                  <h3 className="text-xl font-bold text-white group-hover:text-indigo-200 transition-colors font-['Outfit'] mb-2.5">
                     {service.title}
                   </h3>
                   <p className="text-slate-300 text-xs sm:text-sm leading-relaxed mb-5">
@@ -156,47 +143,25 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({
                   </div>
                 </div>
 
-                {/* Bottom Row: Tech Tags & Direct Inquire Action */}
+                {/* Bottom Row: Tech Tags & Action */}
                 <div className="pt-4 border-t border-white/10 space-y-4">
                   <div className="flex flex-wrap gap-1.5">
                     {service.technologies.slice(0, 4).map((tech, idx) => (
                       <span
                         key={idx}
-                        className="px-2 py-0.5 rounded-md bg-white/5 border border-white/10 text-[10px] font-mono text-slate-300"
+                        className="px-2 py-0.5 rounded-md bg-white/5 border border-white/10 text-[10px] font-mono text-slate-300 group-hover:text-white transition-colors"
                       >
                         {tech}
                       </span>
                     ))}
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    <button
-                      onClick={() => onSelectService(service)}
-                      className="w-full py-2.5 px-3 rounded-xl glass-card hover:bg-indigo-600/30 text-slate-200 hover:text-white border border-white/10 hover:border-indigo-500/40 text-xs font-semibold transition-all flex items-center justify-center gap-1.5 group/btn"
-                    >
-                      <span>Specs & Scope</span>
-                      <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover/btn:translate-x-1" />
-                    </button>
-
-                    {matched3D && onExplore3DModel ? (
-                      <button
-                        onClick={() => onExplore3DModel(matched3D.id)}
-                        className="w-full py-2.5 px-3 rounded-xl bg-indigo-600/20 hover:bg-indigo-600/40 text-indigo-300 hover:text-white border border-indigo-500/40 text-xs font-semibold transition-all flex items-center justify-center gap-1.5"
-                      >
-                        <Box className="w-3.5 h-3.5 text-indigo-400" />
-                        <span>Explore in 3D</span>
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() => onSelectService(service)}
-                        className="w-full py-2.5 px-3 rounded-xl glass-card hover:bg-white/10 text-slate-400 hover:text-slate-200 text-xs font-medium transition-all flex items-center justify-center gap-1"
-                      >
-                        <span>Details</span>
-                      </button>
-                    )}
+                  <div className="pt-1 flex items-center justify-between text-xs text-indigo-300 font-semibold group-hover:text-indigo-200">
+                    <span>View Specifications & Scope</span>
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                   </div>
                 </div>
-              </Card3DTilt>
+              </div>
             );
           })}
         </div>

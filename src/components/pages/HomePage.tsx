@@ -151,20 +151,20 @@ export const HomePage: React.FC<HomePageProps> = ({
               <div
                 key={s.id}
                 onClick={() => onSelectService(s.id)}
-                className="group relative p-6 rounded-2xl glass-panel border border-white/10 hover:border-indigo-500/50 transition-all duration-300 cursor-pointer flex flex-col justify-between"
+                className="group relative p-6 rounded-2xl project-card-gradient border border-white/10 hover:border-indigo-400/60 transition-all duration-500 cursor-pointer flex flex-col justify-between shadow-lg"
               >
                 <div>
                   <div className="w-10 h-10 rounded-xl bg-indigo-500/15 border border-indigo-500/30 flex items-center justify-center text-indigo-400 group-hover:scale-110 group-hover:bg-indigo-500/25 transition-all mb-4">
                     <Cpu className="w-5 h-5" />
                   </div>
-                  <h3 className="text-lg font-bold text-white group-hover:text-indigo-300 transition-colors font-['Outfit'] mb-2">
+                  <h3 className="text-lg font-bold text-white group-hover:text-indigo-200 transition-colors font-['Outfit'] mb-2">
                     {s.title}
                   </h3>
-                  <p className="text-slate-400 text-xs line-clamp-3 leading-relaxed mb-4">
+                  <p className="text-slate-300 text-xs line-clamp-3 leading-relaxed mb-4">
                     {s.shortDesc}
                   </p>
                 </div>
-                <div className="pt-3 border-t border-white/5 flex items-center justify-between text-xs text-indigo-400 font-semibold group-hover:text-indigo-300">
+                <div className="pt-3 border-t border-white/10 flex items-center justify-between text-xs text-indigo-300 font-semibold group-hover:text-indigo-200">
                   <span>Explore Details</span>
                   <ArrowRight className="w-3.5 h-3.5 transform group-hover:translate-x-1 transition-transform" />
                 </div>
