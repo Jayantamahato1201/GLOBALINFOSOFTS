@@ -70,55 +70,50 @@ export const CaseStudiesSection: React.FC<CaseStudiesSectionProps> = ({ onOpenPr
           {filteredProjects.map((project) => (
             <Card3DTilt
               key={project.id}
-              intensity={8}
+              intensity={6}
               onClick={() => onOpenProject(project)}
-              className="cursor-pointer group flex flex-col justify-between rounded-3xl glass-card overflow-hidden transition-all duration-300 hover:border-indigo-500/50"
+              className="cursor-pointer group flex flex-col justify-between rounded-3xl project-card-gradient border border-white/15 hover:border-indigo-400/60 overflow-hidden transition-all duration-500 shadow-xl"
             >
-              {/* Image Preview Banner */}
-              <div className="relative h-60 sm:h-72 w-full overflow-hidden bg-slate-950">
-                <img
-                  src={project.image}
-                  alt={project.title}
-                  referrerPolicy="no-referrer"
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 group-hover:opacity-90 opacity-80"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#020617] via-[#020617]/40 to-transparent" />
-
-                <div className="absolute top-4 left-4 flex items-center gap-2">
-                  <span className="px-3 py-1 rounded-full text-xs font-semibold glass-card text-indigo-300">
-                    {project.category}
-                  </span>
-                  <span className="px-2.5 py-1 rounded-full text-xs font-mono glass-card text-slate-300">
-                    {project.duration}
-                  </span>
-                </div>
-
-                <div className="absolute top-4 right-4 w-9 h-9 rounded-full glass-card flex items-center justify-center text-slate-300 group-hover:bg-indigo-600 group-hover:text-white group-hover:border-indigo-400 transition-all duration-300">
-                  <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                </div>
-
-                <div className="absolute bottom-4 left-4 right-4">
-                  <div className="text-xs font-mono text-indigo-400 uppercase tracking-wider mb-1">{project.client}</div>
-                  <h3 className="text-xl sm:text-2xl font-bold text-white font-['Outfit'] group-hover:text-indigo-300 transition-colors line-clamp-1">
-                    {project.title}
-                  </h3>
-                </div>
-              </div>
-
-              {/* Content & Results */}
-              <div className="p-6 sm:p-7 space-y-6">
-                <p className="text-slate-300 text-xs sm:text-sm leading-relaxed">
-                  {project.summary}
-                </p>
-
-                {/* Key Metrics Bento */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                  {project.results.map((res, idx) => (
-                    <div key={idx} className="p-2.5 rounded-2xl glass-card text-center">
-                      <div className="text-sm sm:text-base font-extrabold text-indigo-300 font-['Outfit']">{res.value}</div>
-                      <div className="text-[10px] text-slate-400 truncate mt-0.5">{res.label}</div>
+              {/* Card Body */}
+              <div className="p-7 sm:p-8 space-y-5 flex-1 flex flex-col justify-between relative z-10">
+                <div className="space-y-4">
+                  {/* Top Tags & Duration */}
+                  <div className="flex items-center justify-between gap-2 flex-wrap">
+                    <div className="flex items-center gap-2">
+                      <span className="px-3 py-1 rounded-full text-xs font-semibold bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 group-hover:bg-indigo-500/25 transition-colors">
+                        {project.category}
+                      </span>
+                      <span className="px-2.5 py-1 rounded-full text-xs font-mono bg-white/5 text-slate-300 border border-white/10">
+                        {project.duration}
+                      </span>
                     </div>
-                  ))}
+
+                    <div className="w-8 h-8 rounded-full glass-card flex items-center justify-center text-slate-300 group-hover:bg-indigo-600 group-hover:text-white group-hover:border-indigo-400 transition-all duration-300">
+                      <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="text-xs font-mono text-indigo-400 uppercase tracking-wider mb-1">
+                      {project.client} • {project.industry}
+                    </div>
+                    <h3 className="text-xl sm:text-2xl font-bold text-white font-['Outfit'] group-hover:text-indigo-200 transition-colors leading-snug">
+                      {project.title}
+                    </h3>
+                  </div>
+
+                  <p className="text-slate-300 text-xs sm:text-sm leading-relaxed">
+                    {project.summary}
+                  </p>
+
+                  <div className="p-3.5 rounded-xl bg-white/[0.04] border border-white/10 group-hover:border-indigo-500/30 transition-all text-xs space-y-1">
+                    <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-indigo-400">
+                      Engineering Solution:
+                    </div>
+                    <p className="text-slate-300 text-xs line-clamp-2 leading-relaxed">
+                      {project.solution}
+                    </p>
+                  </div>
                 </div>
 
                 {/* Technologies footer */}
@@ -127,14 +122,14 @@ export const CaseStudiesSection: React.FC<CaseStudiesSectionProps> = ({ onOpenPr
                     {project.technologies.map((tech, idx) => (
                       <span
                         key={idx}
-                        className="px-2 py-0.5 rounded-md bg-white/5 border border-white/10 text-[10px] font-mono text-slate-300"
+                        className="px-2.5 py-0.5 rounded-md bg-white/5 border border-white/10 text-[11px] font-mono text-slate-300 group-hover:text-white transition-colors"
                       >
                         {tech}
                       </span>
                     ))}
                   </div>
 
-                  <span className="text-xs font-semibold text-indigo-300 group-hover:underline flex items-center gap-1">
+                  <span className="text-xs font-semibold text-indigo-300 group-hover:text-indigo-200 flex items-center gap-1">
                     <span>Deep-dive analysis</span>
                     <ArrowUpRight className="w-3.5 h-3.5" />
                   </span>

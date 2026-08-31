@@ -90,54 +90,55 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({ onOpenProject, onOpe
             <div
               key={project.id}
               onClick={() => onOpenProject(project)}
-              className="rounded-3xl glass-panel border border-white/15 hover:border-sky-500/50 transition-all duration-300 overflow-hidden cursor-pointer group flex flex-col justify-between"
+              className="rounded-3xl project-card-gradient border border-white/15 hover:border-sky-400/60 transition-all duration-500 overflow-hidden cursor-pointer group flex flex-col justify-between shadow-xl"
             >
-              <div className="relative h-56 sm:h-64 overflow-hidden">
-                <img
-                  src={project.image}
-                  alt={project.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
-                <div className="absolute top-4 left-4">
-                  <span className="px-3 py-1 rounded-full text-[11px] font-mono font-bold uppercase tracking-wider bg-slate-900/80 backdrop-blur-md text-sky-300 border border-sky-500/30">
-                    {project.industry}
-                  </span>
-                </div>
-              </div>
-
-              <div className="p-6 sm:p-8 space-y-4 flex-1 flex flex-col justify-between">
-                <div className="space-y-2">
-                  <div className="text-xs text-slate-400 font-mono">Client: {project.client} • {project.duration}</div>
-                  <h3 className="text-xl sm:text-2xl font-bold text-white group-hover:text-sky-300 transition-colors font-['Outfit']">
-                    {project.title}
-                  </h3>
-                  <p className="text-slate-300 text-xs sm:text-sm line-clamp-3 leading-relaxed">
-                    {project.summary}
-                  </p>
-                </div>
-
-                <div className="space-y-4 pt-4 border-t border-white/10">
-                  {/* Results Grid */}
-                  <div className="grid grid-cols-2 gap-2">
-                    {project.results.map((res, i) => (
-                      <div key={i} className="p-2.5 rounded-xl bg-white/[0.03] border border-white/5">
-                        <div className="text-base sm:text-lg font-bold text-white font-mono">{res.value}</div>
-                        <div className="text-[11px] text-slate-400 truncate">{res.label}</div>
-                      </div>
-                    ))}
+              <div className="p-6 sm:p-8 space-y-5 flex-1 flex flex-col justify-between relative z-10">
+                {/* Header Tags */}
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between gap-2 flex-wrap">
+                    <span className="px-3 py-1 rounded-full text-[11px] font-mono font-bold uppercase tracking-wider bg-sky-500/15 text-sky-300 border border-sky-500/30 group-hover:bg-sky-500/25 transition-colors">
+                      {project.industry}
+                    </span>
+                    <span className="text-xs text-slate-400 font-mono">
+                      {project.duration}
+                    </span>
                   </div>
 
+                  <div>
+                    <div className="text-xs text-sky-400/90 font-mono font-semibold uppercase tracking-wider mb-1">
+                      Client: {project.client}
+                    </div>
+                    <h3 className="text-xl sm:text-2xl font-bold text-white group-hover:text-sky-200 transition-colors font-['Outfit'] leading-tight">
+                      {project.title}
+                    </h3>
+                  </div>
+
+                  <p className="text-slate-300 text-xs sm:text-sm leading-relaxed">
+                    {project.summary}
+                  </p>
+
+                  <div className="p-3.5 rounded-xl bg-white/[0.04] border border-white/10 group-hover:border-sky-500/30 transition-all text-xs space-y-1">
+                    <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-sky-400">
+                      Solution Architecture:
+                    </div>
+                    <p className="text-slate-300 text-xs line-clamp-2 leading-relaxed">
+                      {project.solution}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Footer / Tech Stack & CTA */}
+                <div className="space-y-4 pt-4 border-t border-white/10">
                   {/* Tech stack */}
                   <div className="flex flex-wrap gap-1.5">
-                    {project.technologies.slice(0, 4).map((tech, i) => (
-                      <span key={i} className="px-2.5 py-0.5 rounded-md bg-white/5 text-slate-300 font-mono text-[11px]">
+                    {project.technologies.map((tech, i) => (
+                      <span key={i} className="px-2.5 py-0.5 rounded-md bg-white/5 border border-white/10 text-slate-300 group-hover:text-white font-mono text-[11px] transition-colors">
                         {tech}
                       </span>
                     ))}
                   </div>
 
-                  <div className="flex items-center justify-between text-xs text-sky-300 font-semibold pt-2">
+                  <div className="flex items-center justify-between text-xs text-sky-300 font-semibold pt-2 group-hover:text-sky-200">
                     <span>Read Full Case Study</span>
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                   </div>

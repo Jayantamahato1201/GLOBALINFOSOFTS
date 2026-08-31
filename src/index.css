@@ -120,3 +120,34 @@
 .animate-pulse-glow {
   animation: pulseGlow 8s infinite ease-in-out;
 }
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-gradient-shift {
+  background-size: 200% 200%;
+  animation: gradientShift 4s ease infinite;
+}
+
+.project-card-gradient {
+  position: relative;
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.75) 0%, rgba(30, 27, 75, 0.35) 50%, rgba(15, 23, 42, 0.75) 100%);
+  background-size: 200% 200%;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.project-card-gradient:hover {
+  background: linear-gradient(135deg, rgba(30, 27, 75, 0.9) 0%, rgba(49, 46, 129, 0.6) 25%, rgba(88, 28, 135, 0.5) 50%, rgba(14, 116, 144, 0.5) 75%, rgba(30, 27, 75, 0.9) 100%);
+  background-size: 250% 250%;
+  animation: gradientShift 5s ease infinite;
+  box-shadow: 0 10px 40px -10px rgba(99, 102, 241, 0.35);
+}

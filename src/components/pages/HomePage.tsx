@@ -248,29 +248,35 @@ export const HomePage: React.FC<HomePageProps> = ({
               <div
                 key={p.id}
                 onClick={() => onSelectProject(p.id)}
-                className="p-6 rounded-2xl glass-panel border border-sky-500/20 hover:border-sky-500/50 transition-all cursor-pointer group"
+                className="p-6 rounded-2xl project-card-gradient border border-sky-500/20 hover:border-sky-400/60 transition-all duration-500 cursor-pointer group flex flex-col justify-between shadow-lg"
               >
-                <div className="flex items-center justify-between gap-2 mb-3">
-                  <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-sky-500/15 text-sky-300 border border-sky-500/30">
-                    {p.industry}
-                  </span>
-                  <span className="text-xs text-slate-400">Client Case Study</span>
+                <div>
+                  <div className="flex items-center justify-between gap-2 mb-3">
+                    <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-sky-500/15 text-sky-300 border border-sky-500/30 group-hover:bg-sky-500/25 transition-colors">
+                      {p.industry}
+                    </span>
+                    <span className="text-xs text-slate-400 font-mono">{p.duration}</span>
+                  </div>
+                  <div className="text-xs font-mono text-sky-400/90 uppercase tracking-wider mb-1">
+                    Client: {p.client}
+                  </div>
+                  <h3 className="text-xl font-bold text-white group-hover:text-sky-200 transition-colors font-['Outfit'] mb-2">
+                    {p.title}
+                  </h3>
+                  <p className="text-slate-300 text-xs line-clamp-2 mb-3 leading-relaxed">
+                    {p.summary}
+                  </p>
+
+                  <div className="flex flex-wrap gap-1.5 mb-4">
+                    {p.technologies.slice(0, 4).map((tech, i) => (
+                      <span key={i} className="text-[11px] text-slate-300 bg-white/5 px-2.5 py-0.5 rounded-lg border border-white/5 font-mono group-hover:text-white transition-colors">
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
                 </div>
-                <h3 className="text-xl font-bold text-white group-hover:text-sky-300 transition-colors font-['Outfit'] mb-2">
-                  {p.title}
-                </h3>
-                <p className="text-slate-300 text-xs line-clamp-2 mb-4 leading-relaxed">
-                  {p.summary}
-                </p>
-                <div className="grid grid-cols-2 gap-2 mb-4">
-                  {p.results.slice(0, 2).map((r, i) => (
-                    <div key={i} className="p-2 rounded-xl bg-white/[0.03] border border-white/5">
-                      <div className="text-base font-extrabold text-white font-mono">{r.value}</div>
-                      <div className="text-[10px] text-slate-400 truncate">{r.label}</div>
-                    </div>
-                  ))}
-                </div>
-                <div className="pt-3 border-t border-white/10 flex items-center justify-between text-xs text-sky-300 font-semibold">
+
+                <div className="pt-3 border-t border-white/10 flex items-center justify-between text-xs text-sky-300 font-semibold group-hover:text-sky-200">
                   <span>View Project Deliverables</span>
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </div>

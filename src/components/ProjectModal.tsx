@@ -31,43 +31,31 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
           <X className="w-5 h-5" />
         </button>
 
-        {/* Hero Image & Headline */}
-        <div className="relative h-64 sm:h-80 w-full bg-slate-950">
-          <img
-            src={project.image}
-            alt={project.title}
-            referrerPolicy="no-referrer"
-            className="w-full h-full object-cover opacity-75"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent" />
-
-          <div className="absolute bottom-6 left-6 right-6 space-y-2">
-            <div className="flex items-center gap-2">
-              <span className="px-3.5 py-1.5 rounded-full text-xs font-semibold glass-card text-indigo-300">
-                {project.category}
-              </span>
-              <span className="px-3 py-1 rounded-full text-xs font-mono glass-card text-slate-300">
-                {project.industry}
-              </span>
-            </div>
-            <h3 className="text-2xl sm:text-3xl font-extrabold text-white font-['Outfit']">
-              {project.title}
-            </h3>
-            <div className="text-xs text-indigo-300 font-mono">Client: {project.client} • Duration: {project.duration}</div>
+        {/* Gradient Headline Header */}
+        <div className="p-6 sm:p-8 border-b border-white/10 bg-gradient-to-r from-indigo-950/80 via-purple-950/60 to-slate-950/80 space-y-3">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="px-3 py-1 rounded-full text-xs font-semibold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+              {project.category}
+            </span>
+            <span className="px-3 py-1 rounded-full text-xs font-mono bg-white/5 text-slate-300 border border-white/10">
+              {project.industry}
+            </span>
+            <span className="px-2.5 py-1 rounded-full text-xs font-mono text-slate-400">
+              Duration: {project.duration}
+            </span>
           </div>
+          <h3 className="text-2xl sm:text-3xl font-extrabold text-white font-['Outfit']">
+            {project.title}
+          </h3>
+          <div className="text-xs text-indigo-300 font-mono">Client: {project.client}</div>
         </div>
 
         {/* Content Body */}
         <div className="p-6 sm:p-8 space-y-6 max-h-[60vh] overflow-y-auto">
-          {/* Results Bento */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {project.results.map((res, idx) => (
-              <div key={idx} className="p-3.5 rounded-2xl glass-card text-center">
-                <div className="text-lg font-extrabold text-indigo-300 font-['Outfit']">{res.value}</div>
-                <div className="text-[11px] text-slate-400 mt-0.5">{res.label}</div>
-              </div>
-            ))}
-          </div>
+          {/* Summary */}
+          <p className="text-slate-300 text-sm leading-relaxed">
+            {project.summary}
+          </p>
 
           {/* Challenge & Solution */}
           <div className="space-y-4 pt-2">
