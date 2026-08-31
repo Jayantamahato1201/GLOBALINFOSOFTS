@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="100%" height="100%" fill="none">
+  <defs>
+    <!-- Gradients matching exact logo image -->
+    <linearGradient id="pinkPetal" x1="15%" y1="10%" x2="70%" y2="80%">
+      <stop offset="0%" stop-color="#ff2d78" />
+      <stop offset="50%" stop-color="#ec4899" />
+      <stop offset="100%" stop-color="#db2777" />
+    </linearGradient>
+
+    <linearGradient id="blueDroplet" x1="30%" y1="0%" x2="90%" y2="90%">
+      <stop offset="0%" stop-color="#0284c7" />
+      <stop offset="45%" stop-color="#0ea5e9" />
+      <stop offset="85%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#7dd3fc" />
+    </linearGradient>
+
+    <linearGradient id="blueSpecular" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.9" />
+      <stop offset="50%" stop-color="#ffffff" stop-opacity="0.3" />
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0" />
+    </linearGradient>
+
+    <linearGradient id="cyanDroplet" x1="10%" y1="20%" x2="85%" y2="100%">
+      <stop offset="0%" stop-color="#22d3ee" />
+      <stop offset="40%" stop-color="#06b6d4" />
+      <stop offset="75%" stop-color="#0891b2" />
+      <stop offset="100%" stop-color="#0e7490" />
+    </linearGradient>
+
+    <linearGradient id="cyanSpecular" x1="15%" y1="10%" x2="70%" y2="80%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.85" />
+      <stop offset="60%" stop-color="#ffffff" stop-opacity="0.25" />
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0" />
+    </linearGradient>
+
+    <linearGradient id="greenPetal" x1="20%" y1="10%" x2="90%" y2="90%">
+      <stop offset="0%" stop-color="#a3e635" />
+      <stop offset="50%" stop-color="#84cc16" />
+      <stop offset="100%" stop-color="#65a30d" />
+    </linearGradient>
+
+    <filter id="softGlow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#0284c7" flood-opacity="0.15" />
+    </filter>
+  </defs>
+
+  <g filter="url(#softGlow)">
+    <!-- 1. Top-Left Magenta Petal -->
+    <path
+      d="M 145 35
+         C 178 35 205 52 205 52
+         C 192 78 162 122 108 148
+         C 65 170 32 173 3 178
+         C 11 142 32 108 62 80
+         C 88 53 118 36 145 35 Z"
+      fill="url(#pinkPetal)"
+    />
+
+    <!-- 2. Top-Right Big Blue Water Droplet with Gloss -->
+    <path
+      d="M 145 20
+         C 260 5 440 60 472 170
+         C 490 230 470 290 405 295
+         C 335 300 285 240 270 170
+         C 255 98 200 45 145 20 Z"
+      fill="url(#blueDroplet)"
+    />
+
+    <!-- 2b. Glossy Specular Sheen on Blue Droplet -->
+    <path
+      d="M 285 170
+         C 275 120 310 80 370 70
+         C 425 60 460 100 460 170
+         C 420 175 350 175 285 170 Z"
+      fill="url(#blueSpecular)"
+      opacity="0.65"
+    />
+
+    <!-- 3. Bottom-Left Cyan Big Water Droplet -->
+    <path
+      d="M 8 185
+         C 50 178 115 190 160 250
+         C 205 315 220 395 285 460
+         C 350 515 260 510 190 475
+         C 105 435 25 350 10 260
+         C 5 225 6 200 8 185 Z"
+      fill="url(#cyanDroplet)"
+    />
+
+    <!-- 3b. Glossy Highlight on Cyan Droplet (Rounded Bubble Reflection) -->
+    <ellipse
+      cx="90"
+      cy="270"
+      rx="60"
+      ry="55"
+      transform="rotate(-25 90 270)"
+      fill="url(#cyanSpecular)"
+      opacity="0.85"
+    />
+
+    <!-- 4. Bottom-Right Vibrant Green Leaf/Petal -->
+    <path
+      d="M 285 435
+         C 350 425 405 385 498 295
+         C 495 340 455 400 390 440
+         C 340 470 295 450 285 435 Z"
+      fill="url(#greenPetal)"
+    />
+  </g>
+</svg>

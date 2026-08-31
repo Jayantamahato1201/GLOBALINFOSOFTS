@@ -1,0 +1,316 @@
+import React, { useState, useEffect, useRef } from 'react';
+import {
+  SERVICES_DATA,
+  SOLUTIONS_DATA,
+  CASE_STUDIES,
+  PRICING_PLANS,
+  BLOG_POSTS,
+  FAQS_DATA
+} from '../data/companyData';
+import { PageId } from '../types';
+import {
+  Search,
+  X,
+  Layers,
+  Sparkles,
+  Briefcase,
+  FileText,
+  DollarSign,
+  HelpCircle,
+  Users,
+  Compass,
+  ArrowRight
+} from 'lucide-react';
+
+interface QuickSearchModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onNavigatePage: (page: PageId, sectionOrId?: string) => void;
+  onSelectService?: (serviceId: string) => void;
+  onSelectSolution?: (solutionId: string) => void;
+  onSelectProject?: (projectId: string) => void;
+}
+
+export const QuickSearchModal: React.FC<QuickSearchModalProps> = ({
+  isOpen,
+  onClose,
+  onNavigatePage,
+  onSelectService,
+  onSelectSolution,
+  onSelectProject
+}) => {
+  const [query, setQuery] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (isOpen) {
+      setTimeout(() => inputRef.current?.focus(), 50);
+    } else {
+      setQuery('');
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        if (isOpen) onClose();
+      }
+      if (e.key === 'Escape' && isOpen) {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
+  if (!isOpen) return null;
+
+  const q = query.trim().toLowerCase();
+
+  // Pages
+  const pages: { id: PageId; title: string; desc: string; icon: any }[] = [
+    { id: 'home', title: 'Home', desc: 'Main introduction & overview', icon: Compass },
+    { id: 'services', title: 'Services Catalog', desc: 'Full-stack development, mobile, ERP & cloud', icon: Layers },
+    { id: 'solutions', title: 'Software Solutions', desc: 'Retail POS, optical, hotel, school & hospital ERP', icon: Sparkles },
+    { id: 'projects', title: 'Projects & Case Studies', desc: 'Enterprise portfolio and client successes', icon: Briefcase },
+    { id: 'pricing', title: 'Pricing & Packages', desc: 'Transparent plans, estimator & comparisons', icon: DollarSign },
+    { id: 'about', title: 'About Global InfoSofts', desc: 'Story, footprint, global locations & mission', icon: Users },
+    { id: 'team', title: 'Our Team', desc: 'Software developers, web, mobile & support teams', icon: Users },
+    { id: 'support', title: 'Tech Support & FAQs', desc: '24/7 SLAs, ticket desk & common questions', icon: HelpCircle },
+    { id: 'blog', title: 'Tech Blog & Insights', desc: 'Architectural guides & performance best practices', icon: FileText },
+    { id: 'contact', title: 'Contact & Inquiry', desc: 'Get in touch, proposal consultation & phone', icon: Compass }
+  ];
+
+  const matchedPages = pages.filter(
+    (p) => !q || p.title.toLowerCase().includes(q) || p.desc.toLowerCase().includes(q)
+  );
+
+  const matchedServices = SERVICES_DATA.filter(
+    (s) =>
+      !q ||
+      s.title.toLowerCase().includes(q) ||
+      s.shortDesc.toLowerCase().includes(q) ||
+      s.technologies.some((t) => t.toLowerCase().includes(q))
+  );
+
+  const matchedSolutions = SOLUTIONS_DATA.filter(
+    (sol) =>
+      !q ||
+      sol.title.toLowerCase().includes(q) ||
+      sol.industry.toLowerCase().includes(q) ||
+      sol.shortDesc.toLowerCase().includes(q)
+  );
+
+  const matchedProjects = CASE_STUDIES.filter(
+    (p) =>
+      !q ||
+      p.title.toLowerCase().includes(q) ||
+      p.client.toLowerCase().includes(q) ||
+      p.industry.toLowerCase().includes(q)
+  );
+
+  const matchedBlogs = BLOG_POSTS.filter(
+    (b) => !q || b.title.toLowerCase().includes(q) || b.tags.some((t) => t.toLowerCase().includes(q))
+  );
+
+  const totalResults =
+    (q ? matchedPages.length : 0) +
+    matchedServices.length +
+    matchedSolutions.length +
+    matchedProjects.length +
+    matchedBlogs.length;
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-start justify-center pt-16 sm:pt-24 px-4 bg-slate-950/75 backdrop-blur-md animate-fadeIn"
+      onClick={onClose}
+    >
+      <div
+        className="relative w-full max-w-lg rounded-2xl bg-slate-900/95 border border-white/15 shadow-2xl shadow-slate-950/80 overflow-hidden text-slate-100 flex flex-col max-h-[78vh]"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Compact Search Header */}
+        <div className="p-3 sm:p-3.5 border-b border-white/10 flex items-center gap-2.5 bg-slate-950/60">
+          <Search className="w-4 h-4 text-indigo-400 shrink-0" />
+          <input
+            ref={inputRef}
+            type="text"
+            placeholder="Search Global InfoSofts (e.g. Web, POS, ERP, Pricing)..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className="w-full bg-transparent text-sm text-white placeholder:text-slate-400 focus:outline-none"
+          />
+          {query ? (
+            <button
+              onClick={() => setQuery('')}
+              className="p-1 rounded-md text-slate-400 hover:text-white"
+              aria-label="Clear query"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          ) : (
+            <kbd className="hidden sm:inline text-[10px] font-mono px-1.5 py-0.5 rounded bg-white/10 text-slate-400 border border-white/10">
+              ESC
+            </kbd>
+          )}
+        </div>
+
+        {/* Results List */}
+        <div className="p-3 overflow-y-auto space-y-4 text-xs">
+          {totalResults === 0 && q ? (
+            <div className="py-8 text-center text-slate-400">
+              <p>No matching content found for "{query}".</p>
+              <p className="text-[11px] text-slate-500 mt-1">Try searching for "POS", "ERP", "Web", "Pricing", or "Contact".</p>
+            </div>
+          ) : null}
+
+          {/* Quick Pages */}
+          {matchedPages.length > 0 && (
+            <div className="space-y-1">
+              <div className="text-[10px] font-mono font-semibold uppercase tracking-wider text-slate-400 px-2 py-0.5">
+                Website Pages
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
+                {matchedPages.slice(0, q ? 6 : 4).map((p) => {
+                  const Icon = p.icon;
+                  return (
+                    <button
+                      key={p.id}
+                      onClick={() => {
+                        onNavigatePage(p.id);
+                        onClose();
+                      }}
+                      className="p-2 rounded-xl bg-white/[0.03] hover:bg-indigo-500/15 border border-white/5 hover:border-indigo-500/30 text-left flex items-center gap-2.5 transition-all group"
+                    >
+                      <div className="w-6 h-6 rounded-lg bg-indigo-500/10 flex items-center justify-center shrink-0 text-indigo-400 group-hover:text-indigo-300">
+                        <Icon className="w-3.5 h-3.5" />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="font-semibold text-white group-hover:text-indigo-200 truncate">
+                          {p.title}
+                        </div>
+                        <div className="text-[10px] text-slate-400 truncate">
+                          {p.desc}
+                        </div>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Services */}
+          {matchedServices.length > 0 && (
+            <div className="space-y-1">
+              <div className="text-[10px] font-mono font-semibold uppercase tracking-wider text-indigo-300 px-2 py-0.5 flex items-center justify-between">
+                <span>Services ({matchedServices.length})</span>
+                {!q && <span className="text-[9px] text-slate-400">Featured</span>}
+              </div>
+              {matchedServices.slice(0, q ? 5 : 3).map((s) => (
+                <button
+                  key={s.id}
+                  onClick={() => {
+                    if (onSelectService) {
+                      onSelectService(s.id);
+                    } else {
+                      onNavigatePage('services', s.id);
+                    }
+                    onClose();
+                  }}
+                  className="w-full p-2.5 rounded-xl bg-white/[0.03] hover:bg-indigo-500/15 border border-white/5 hover:border-indigo-500/30 text-left flex items-center justify-between transition-all group"
+                >
+                  <div className="min-w-0 pr-2">
+                    <div className="font-bold text-white group-hover:text-indigo-300">
+                      {s.title}
+                    </div>
+                    <div className="text-[11px] text-slate-400 line-clamp-1">
+                      {s.shortDesc}
+                    </div>
+                  </div>
+                  <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-indigo-400 shrink-0" />
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* Solutions */}
+          {matchedSolutions.length > 0 && (
+            <div className="space-y-1">
+              <div className="text-[10px] font-mono font-semibold uppercase tracking-wider text-emerald-300 px-2 py-0.5 flex items-center justify-between">
+                <span>Software Solutions ({matchedSolutions.length})</span>
+              </div>
+              {matchedSolutions.slice(0, q ? 5 : 3).map((sol) => (
+                <button
+                  key={sol.id}
+                  onClick={() => {
+                    if (onSelectSolution) {
+                      onSelectSolution(sol.id);
+                    } else {
+                      onNavigatePage('solutions', sol.id);
+                    }
+                    onClose();
+                  }}
+                  className="w-full p-2.5 rounded-xl bg-white/[0.03] hover:bg-emerald-500/15 border border-white/5 hover:border-emerald-500/30 text-left flex items-center justify-between transition-all group"
+                >
+                  <div className="min-w-0 pr-2">
+                    <div className="font-bold text-white group-hover:text-emerald-300 flex items-center gap-1.5">
+                      <span>{sol.title}</span>
+                      <span className="text-[9px] px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                        {sol.industry}
+                      </span>
+                    </div>
+                    <div className="text-[11px] text-slate-400 line-clamp-1">
+                      {sol.shortDesc}
+                    </div>
+                  </div>
+                  <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-emerald-400 shrink-0" />
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* Projects */}
+          {matchedProjects.length > 0 && (
+            <div className="space-y-1">
+              <div className="text-[10px] font-mono font-semibold uppercase tracking-wider text-sky-300 px-2 py-0.5">
+                Projects & Case Studies
+              </div>
+              {matchedProjects.slice(0, q ? 3 : 2).map((proj) => (
+                <button
+                  key={proj.id}
+                  onClick={() => {
+                    if (onSelectProject) {
+                      onSelectProject(proj.id);
+                    } else {
+                      onNavigatePage('projects', proj.id);
+                    }
+                    onClose();
+                  }}
+                  className="w-full p-2.5 rounded-xl bg-white/[0.03] hover:bg-sky-500/15 border border-white/5 hover:border-sky-500/30 text-left flex items-center justify-between transition-all group"
+                >
+                  <div className="min-w-0 pr-2">
+                    <div className="font-bold text-white group-hover:text-sky-300">
+                      {proj.title}
+                    </div>
+                    <div className="text-[11px] text-slate-400 line-clamp-1">
+                      {proj.client} • {proj.industry}
+                    </div>
+                  </div>
+                  <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-sky-400 shrink-0" />
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Compact Footer */}
+        <div className="p-2.5 bg-slate-950 border-t border-white/10 flex items-center justify-between text-[10px] text-slate-500 px-4">
+          <span className="font-medium">Direct search across all Global InfoSofts resources</span>
+          <span className="font-mono text-slate-400">Esc to close</span>
+        </div>
+      </div>
+    </div>
+  );
+};
