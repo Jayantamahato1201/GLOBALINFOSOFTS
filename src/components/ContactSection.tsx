@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { COMPANY_INFO, OFFICE_LOCATIONS } from '../data/companyData';
+import { COMPANY_INFO } from '../data/companyData';
 import { getWhatsAppUrl, WHATSAPP_MESSAGES } from '../utils/whatsapp';
 import {
   PRIMARY_ENQUIRY_EMAIL,
@@ -15,11 +15,9 @@ import {
   Clock,
   ShieldCheck,
   CheckCircle2,
-  Sparkles,
   MessageSquare,
   Building,
   User,
-  ArrowRight,
   ExternalLink,
   Copy,
   Check
@@ -35,8 +33,8 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ prefilledScope =
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [company, setCompany] = useState('');
-  const [serviceCategory, setServiceCategory] = useState('Enterprise ERP & CRM');
-  const [budgetRange, setBudgetRange] = useState('$5k - $15k');
+  const [serviceCategory, setServiceCategory] = useState('Software & POS Billing Solutions');
+  const [budgetRange, setBudgetRange] = useState('₹15,000 - ₹35,000');
   const [message, setMessage] = useState(prefilledScope ? `Scope details:\n${prefilledScope}` : '');
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -63,14 +61,12 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ prefilledScope =
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Prepare direct mailto URL
     const mailtoUrl = getEnquiryMailtoUrl(enquiryPayload);
 
     setTimeout(() => {
       setIsSubmitting(false);
       setSubmitted(true);
 
-      // Attempt to launch client default email draft
       try {
         const mailAnchor = document.createElement('a');
         mailAnchor.href = mailtoUrl;
@@ -78,7 +74,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ prefilledScope =
         mailAnchor.rel = 'noopener noreferrer';
         mailAnchor.click();
       } catch {
-        // browser popup safety fallback
+        // safe fallback
       }
 
       try {
@@ -94,77 +90,74 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ prefilledScope =
   };
 
   return (
-    <section id="contact" className="relative py-24 mesh-bg border-t border-white/10 overflow-hidden">
-      {/* Background shape */}
-      <div className="abstract-shape w-[600px] h-[600px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse-glow" />
-
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="contact" className="relative py-20 mesh-bg border-t border-slate-200 dark:border-slate-800 overflow-hidden w-full transition-colors duration-300">
+      <div className="relative z-10 w-full max-w-[1536px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16">
         {/* Header */}
-        <div className="max-w-3xl mb-14 space-y-3">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full glass-card text-indigo-300 text-xs font-semibold uppercase tracking-wider">
-            <MessageSquare className="w-3.5 h-3.5" />
-            <span>Direct Engineering Consultation</span>
+        <div className="max-w-3xl mb-12 space-y-3 text-left">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full glass-card text-cyan-700 dark:text-cyan-400 text-xs font-semibold uppercase tracking-wider font-mono border-slate-200 dark:border-slate-800">
+            <MessageSquare className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" />
+            <span>Direct Software Consultation</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white font-['Outfit']">
-            Let's Architect Your Next Breakthrough
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white font-['Outfit']">
+            Contact Global InfoSoft Jamshedpur
           </h2>
-          <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
-            Fill out the technical brief below to connect with a Senior Solutions Architect. We respond within 24 hours with an initial feasibility roadmap and NDA.
+          <p className="text-slate-600 dark:text-slate-300 text-sm sm:text-base leading-relaxed">
+            Fill out the form below or connect with our team directly via phone or WhatsApp. We provide fast demonstrations, price estimates, and technical guidance.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 text-left">
           {/* Left Column: Interactive Form */}
           <div className="lg:col-span-7">
-            <div className="p-6 sm:p-10 rounded-3xl glass-panel border border-white/10 shadow-2xl">
+            <div className="p-6 sm:p-8 rounded-2xl glass-panel border border-slate-200 dark:border-slate-800">
               {submitted ? (
                 <div className="p-6 sm:p-8 text-center space-y-5 animate-fadeIn">
-                  <div className="w-16 h-16 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 flex items-center justify-center mx-auto shadow-lg shadow-emerald-500/20">
+                  <div className="w-16 h-16 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mx-auto shadow-lg">
                     <CheckCircle2 className="w-8 h-8" />
                   </div>
                   <div>
-                    <h3 className="text-2xl font-bold text-white font-['Outfit']">
+                    <h3 className="text-2xl font-bold text-slate-900 dark:text-white font-['Outfit']">
                       Project Enquiry Dispatched!
                     </h3>
-                    <p className="text-slate-300 text-xs sm:text-sm max-w-lg mx-auto mt-2 leading-relaxed">
-                      Thank you, <strong className="text-white">{fullName || 'there'}</strong>. Your project specifications have been formatted and addressed directly to <span className="font-mono text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">{PRIMARY_ENQUIRY_EMAIL}</span> (Rajnish Kumar - CEO).
+                    <p className="text-slate-600 dark:text-slate-300 text-xs sm:text-sm max-w-lg mx-auto mt-2 leading-relaxed">
+                      Thank you, <strong className="text-slate-900 dark:text-white">{fullName || 'there'}</strong>. Your enquiry details have been addressed directly to <span className="font-mono text-cyan-600 dark:text-cyan-400 font-bold bg-cyan-500/10 px-2 py-0.5 rounded border border-cyan-500/20">{PRIMARY_ENQUIRY_EMAIL}</span> (Global InfoSoft).
                     </p>
                   </div>
 
                   {/* Summary Details Card */}
-                  <div className="p-4 rounded-2xl bg-white/[0.04] border border-white/10 text-left space-y-2 text-xs text-slate-300">
-                    <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider border-b border-white/10 pb-1.5 flex items-center justify-between">
+                  <div className="p-4 rounded-2xl bg-slate-100/80 dark:bg-white/[0.04] border border-slate-200 dark:border-white/10 text-left space-y-2 text-xs text-slate-700 dark:text-slate-300">
+                    <div className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider border-b border-slate-200 dark:border-white/10 pb-1.5 flex items-center justify-between">
                       <span>Enquiry Summary Details</span>
-                      <span className="text-emerald-400 font-mono">Routed to: {PRIMARY_ENQUIRY_EMAIL}</span>
+                      <span className="text-cyan-600 dark:text-cyan-400 font-mono">{PRIMARY_ENQUIRY_EMAIL}</span>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
-                      <div><span className="text-slate-400">Client Name:</span> <strong className="text-white">{fullName || 'N/A'}</strong></div>
-                      <div><span className="text-slate-400">Client Email:</span> <strong className="text-white">{email || 'N/A'}</strong></div>
-                      <div><span className="text-slate-400">Phone / WhatsApp:</span> <span className="text-slate-200 font-mono">{phone || 'N/A'}</span></div>
-                      <div><span className="text-slate-400">Company:</span> <span className="text-slate-200">{company || 'Individual / Direct'}</span></div>
-                      <div><span className="text-slate-400">Service:</span> <span className="text-indigo-300">{serviceCategory}</span></div>
-                      <div><span className="text-slate-400">Budget:</span> <span className="text-emerald-300">{budgetRange}</span></div>
+                      <div><span className="text-slate-500 dark:text-slate-400">Client Name:</span> <strong className="text-slate-900 dark:text-white">{fullName || 'N/A'}</strong></div>
+                      <div><span className="text-slate-500 dark:text-slate-400">Client Email:</span> <strong className="text-slate-900 dark:text-white">{email || 'N/A'}</strong></div>
+                      <div><span className="text-slate-500 dark:text-slate-400">Phone / WhatsApp:</span> <span className="text-slate-900 dark:text-slate-200 font-mono">{phone || 'N/A'}</span></div>
+                      <div><span className="text-slate-500 dark:text-slate-400">Company:</span> <span className="text-slate-900 dark:text-slate-200">{company || 'Direct'}</span></div>
+                      <div><span className="text-slate-500 dark:text-slate-400">Service:</span> <span className="text-cyan-600 dark:text-cyan-300">{serviceCategory}</span></div>
+                      <div><span className="text-slate-500 dark:text-slate-400">Budget:</span> <span className="text-emerald-600 dark:text-emerald-300">{budgetRange}</span></div>
                     </div>
                     {message && (
-                      <div className="pt-2 border-t border-white/5">
-                        <span className="text-slate-400">Scope:</span> <span className="text-slate-300 italic">"{message.slice(0, 140)}{message.length > 140 ? '...' : ''}"</span>
+                      <div className="pt-2 border-t border-slate-200 dark:border-white/5">
+                        <span className="text-slate-500 dark:text-slate-400">Scope:</span> <span className="text-slate-700 dark:text-slate-300 italic">"{message.slice(0, 140)}{message.length > 140 ? '...' : ''}"</span>
                       </div>
                     )}
                   </div>
 
                   {/* Fast Action Buttons */}
                   <div className="space-y-2.5 pt-1">
-                    <div className="text-[11px] text-slate-400">
-                      Open in your preferred email application or send directly to the CEO:
+                    <div className="text-[11px] text-slate-500 dark:text-slate-400">
+                      Open in your preferred email client or chat on WhatsApp:
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                       <a
                         href={getEnquiryGmailWebUrl(enquiryPayload)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="py-2.5 px-4 rounded-xl bg-red-500/20 hover:bg-red-500/30 border border-red-500/40 text-white font-semibold text-xs flex items-center justify-center gap-2 transition-all"
+                        className="py-2.5 px-4 rounded-xl bg-pink-500/20 hover:bg-pink-500/30 border border-pink-500/40 text-slate-900 dark:text-white font-semibold text-xs flex items-center justify-center gap-2 transition-all"
                       >
-                        <Mail className="w-4 h-4 text-red-400" />
+                        <Mail className="w-4 h-4 text-pink-600 dark:text-pink-400" />
                         <span>Open in Gmail Web</span>
                         <ExternalLink className="w-3 h-3 opacity-70" />
                       </a>
@@ -173,10 +166,10 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ prefilledScope =
                         href={getEnquiryMailtoUrl(enquiryPayload)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="py-2.5 px-4 rounded-xl bg-indigo-500/20 hover:bg-indigo-500/30 border border-indigo-500/40 text-white font-semibold text-xs flex items-center justify-center gap-2 transition-all"
+                        className="py-2.5 px-4 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/40 text-slate-900 dark:text-white font-semibold text-xs flex items-center justify-center gap-2 transition-all"
                       >
-                        <Mail className="w-4 h-4 text-indigo-400" />
-                        <span>Send via Mail App</span>
+                        <Mail className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
+                        <span>Send via Default Mail</span>
                         <ExternalLink className="w-3 h-3 opacity-70" />
                       </a>
                     </div>
@@ -184,9 +177,9 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ prefilledScope =
                     <div className="flex items-center justify-center gap-3 pt-2">
                       <button
                         onClick={handleCopyDetails}
-                        className="px-3.5 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 text-[11px] flex items-center gap-1.5 transition-colors border border-white/5"
+                        className="px-3.5 py-1.5 rounded-lg bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-700 dark:text-slate-300 text-[11px] flex items-center gap-1.5 transition-colors border border-slate-200 dark:border-white/5"
                       >
-                        {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5 text-slate-400" />}
+                        {copied ? <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" /> : <Copy className="w-3.5 h-3.5 text-slate-400" />}
                         <span>{copied ? 'Details Copied!' : 'Copy Enquiry Text'}</span>
                       </button>
 
@@ -194,21 +187,21 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ prefilledScope =
                         href={getWhatsAppUrl('+919431515806', `Hello Rajnish Ji, I have submitted an enquiry from ${fullName || 'a client'} (${email || ''}) regarding ${serviceCategory}.`)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="px-3.5 py-1.5 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 text-[11px] flex items-center gap-1.5 transition-colors border border-emerald-500/30"
+                        className="px-3.5 py-1.5 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-700 dark:text-emerald-300 text-[11px] flex items-center gap-1.5 transition-colors border border-emerald-500/30"
                       >
-                        <Phone className="w-3.5 h-3.5 text-emerald-400" />
-                        <span>WhatsApp to CEO</span>
+                        <Phone className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                        <span>WhatsApp Direct</span>
                       </a>
                     </div>
                   </div>
 
-                  <div className="pt-3 border-t border-white/10">
+                  <div className="pt-3 border-t border-slate-200/80 dark:border-white/10">
                     <button
                       onClick={() => {
                         setSubmitted(false);
                         setMessage('');
                       }}
-                      className="px-5 py-2 rounded-xl glass-card text-slate-300 hover:text-white text-xs font-semibold"
+                      className="px-5 py-2 rounded-xl glass-card text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white text-xs font-semibold"
                     >
                       Submit Another Inquiry
                     </button>
@@ -219,7 +212,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ prefilledScope =
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {/* Full Name */}
                     <div className="space-y-1.5">
-                      <label htmlFor="contact-name" className="text-xs font-semibold text-slate-300">
+                      <label htmlFor="contact-name" className="text-xs font-semibold text-slate-700 dark:text-slate-300">
                         Full Name *
                       </label>
                       <div className="relative">
@@ -228,28 +221,28 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ prefilledScope =
                           id="contact-name"
                           type="text"
                           required
-                          placeholder="Alex Morgan"
+                          placeholder="Your Name"
                           value={fullName}
                           onChange={(e) => setFullName(e.target.value)}
-                          className="w-full pl-10 pr-3.5 py-2.5 rounded-xl glass-input text-white text-xs placeholder:text-slate-400 focus:outline-none"
+                          className="w-full pl-10 pr-3.5 py-2.5 rounded-xl glass-input text-slate-900 dark:text-white text-xs placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none"
                         />
                       </div>
                     </div>
 
                     {/* Company Name */}
                     <div className="space-y-1.5">
-                      <label htmlFor="contact-company" className="text-xs font-semibold text-slate-300">
-                        Company / Organization
+                      <label htmlFor="contact-company" className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                        Company / Business Name
                       </label>
                       <div className="relative">
                         <Building className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                         <input
                           id="contact-company"
                           type="text"
-                          placeholder="Apex Enterprises"
+                          placeholder="Store or Company Name"
                           value={company}
                           onChange={(e) => setCompany(e.target.value)}
-                          className="w-full pl-10 pr-3.5 py-2.5 rounded-xl glass-input text-white text-xs placeholder:text-slate-400 focus:outline-none"
+                          className="w-full pl-10 pr-3.5 py-2.5 rounded-xl glass-input text-slate-900 dark:text-white text-xs placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none"
                         />
                       </div>
                     </div>
@@ -258,8 +251,8 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ prefilledScope =
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {/* Work Email */}
                     <div className="space-y-1.5">
-                      <label htmlFor="contact-email" className="text-xs font-semibold text-slate-300">
-                        Work Email *
+                      <label htmlFor="contact-email" className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                        Email Address *
                       </label>
                       <div className="relative">
                         <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -267,28 +260,29 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ prefilledScope =
                           id="contact-email"
                           type="email"
                           required
-                          placeholder="alex@company.com"
+                          placeholder="name@example.com"
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
-                          className="w-full pl-10 pr-3.5 py-2.5 rounded-xl glass-input text-white text-xs placeholder:text-slate-400 focus:outline-none"
+                          className="w-full pl-10 pr-3.5 py-2.5 rounded-xl glass-input text-slate-900 dark:text-white text-xs placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none"
                         />
                       </div>
                     </div>
 
                     {/* Phone / WhatsApp */}
                     <div className="space-y-1.5">
-                      <label htmlFor="contact-phone" className="text-xs font-semibold text-slate-300">
-                        Phone / WhatsApp
+                      <label htmlFor="contact-phone" className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                        Phone / WhatsApp *
                       </label>
                       <div className="relative">
                         <Phone className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                         <input
                           id="contact-phone"
                           type="tel"
-                          placeholder="+1 (555) 000-0000"
+                          required
+                          placeholder="+91 94315 15806"
                           value={phone}
                           onChange={(e) => setPhone(e.target.value)}
-                          className="w-full pl-10 pr-3.5 py-2.5 rounded-xl glass-input text-white text-xs placeholder:text-slate-400 focus:outline-none"
+                          className="w-full pl-10 pr-3.5 py-2.5 rounded-xl glass-input text-slate-900 dark:text-white text-xs placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none"
                         />
                       </div>
                     </div>
@@ -297,57 +291,57 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ prefilledScope =
                   {/* Service Category & Budget */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-1.5">
-                      <label htmlFor="contact-service" className="text-xs font-semibold text-slate-300">
-                        Interested Practice / Solution
+                      <label htmlFor="contact-service" className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                        Product or Service Required
                       </label>
                       <select
                         id="contact-service"
                         value={serviceCategory}
                         onChange={(e) => setServiceCategory(e.target.value)}
-                        className="w-full px-3.5 py-2.5 rounded-xl glass-input text-white text-xs focus:outline-none"
+                        className="w-full px-3.5 py-2.5 rounded-xl glass-input text-slate-900 dark:text-white text-xs focus:outline-none bg-white dark:bg-slate-900"
                       >
-                        <option value="Enterprise ERP & CRM" className="bg-slate-900 text-white">Enterprise ERP & CRM</option>
-                        <option value="Custom Software Development" className="bg-slate-900 text-white">Custom Software Development</option>
-                        <option value="Full-Stack Web & SaaS" className="bg-slate-900 text-white">Full-Stack Web & SaaS</option>
-                        <option value="Mobile App (iOS & Android)" className="bg-slate-900 text-white">Mobile App (iOS & Android)</option>
-                        <option value="Accounting & Retail POS" className="bg-slate-900 text-white">Accounting & Retail POS</option>
-                        <option value="Digital Marketing & SEO" className="bg-slate-900 text-white">Digital Marketing & SEO</option>
-                        <option value="Cloud DevOps & Migration" className="bg-slate-900 text-white">Cloud DevOps & Migration</option>
-                        <option value="AI & Automation Integration" className="bg-slate-900 text-white">AI & Automation Integration</option>
+                        <option value="Software & POS Billing Solutions">Software & POS Billing Solutions</option>
+                        <option value="Custom Software Development">Custom Software Development</option>
+                        <option value="Optical & Clinic Management Software">Optical & Clinic Management Software</option>
+                        <option value="School & College ERP Management">School & College ERP Management</option>
+                        <option value="Website Design & Web Development">Website Design & Web Development</option>
+                        <option value="Mobile App Development">Mobile App Development</option>
+                        <option value="Digital Marketing & Local SEO">Digital Marketing & Local SEO</option>
+                        <option value="Computer Hardware & Tech Support">Computer Hardware & Tech Support</option>
                       </select>
                     </div>
 
                     <div className="space-y-1.5">
-                      <label htmlFor="contact-budget" className="text-xs font-semibold text-slate-300">
-                        Anticipated Investment Range
+                      <label htmlFor="contact-budget" className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                        Estimated Budget
                       </label>
                       <select
                         id="contact-budget"
                         value={budgetRange}
                         onChange={(e) => setBudgetRange(e.target.value)}
-                        className="w-full px-3.5 py-2.5 rounded-xl glass-input text-white text-xs focus:outline-none"
+                        className="w-full px-3.5 py-2.5 rounded-xl glass-input text-slate-900 dark:text-white text-xs focus:outline-none bg-white dark:bg-slate-900"
                       >
-                        <option value="Under $5,000" className="bg-slate-900 text-white">Under $5,000</option>
-                        <option value="$5,000 - $15,000" className="bg-slate-900 text-white">$5,000 - $15,000</option>
-                        <option value="$15,000 - $40,000" className="bg-slate-900 text-white">$15,000 - $40,000</option>
-                        <option value="$40,000 - $100,000+" className="bg-slate-900 text-white">$40,000 - $100,000+</option>
-                        <option value="Monthly Retainer Partnership" className="bg-slate-900 text-white">Monthly Retainer Partnership</option>
+                        <option value="₹10,000 - ₹25,000">₹10,000 - ₹25,000</option>
+                        <option value="₹25,000 - ₹50,000">₹25,000 - ₹50,000</option>
+                        <option value="₹50,000 - ₹1,00,000">₹50,000 - ₹1,00,000</option>
+                        <option value="₹1,00,000+">₹1,00,000+</option>
+                        <option value="Annual Maintenance / Support">Annual Maintenance / Support</option>
                       </select>
                     </div>
                   </div>
 
                   {/* Project Details */}
                   <div className="space-y-1.5">
-                    <label htmlFor="contact-message" className="text-xs font-semibold text-slate-300">
-                      Project Goals & Architecture Scope
+                    <label htmlFor="contact-message" className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                      Requirement Details & Specific Needs
                     </label>
                     <textarea
                       id="contact-message"
                       rows={4}
-                      placeholder="Briefly describe your objectives, existing tech stack, required integrations, and target timeline..."
+                      placeholder="Tell us about your business, required software features, number of counters or users, and target timeline..."
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl glass-input text-white text-xs placeholder:text-slate-400 focus:outline-none"
+                      className="w-full px-3.5 py-2.5 rounded-xl glass-input text-slate-900 dark:text-white text-xs placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none"
                     />
                   </div>
 
@@ -359,18 +353,18 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ prefilledScope =
                     className="w-full py-3.5 px-6 rounded-xl btn-primary text-white font-bold text-xs uppercase tracking-wider transition-all shadow-xl active:scale-[0.99] flex items-center justify-center gap-2"
                   >
                     {isSubmitting ? (
-                      <span>Validating & Dispatching...</span>
+                      <span>Submitting Enquiry...</span>
                     ) : (
                       <>
-                        <span>Submit Project Brief & Request NDA</span>
+                        <span>Submit Project Enquiry</span>
                         <Send className="w-3.5 h-3.5" />
                       </>
                     )}
                   </button>
 
-                  <div className="flex items-center justify-center gap-2 text-[11px] text-slate-400 text-center">
-                    <ShieldCheck className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
-                    <span>Strict confidentiality assured. Mutual NDA provided prior to technical review.</span>
+                  <div className="flex items-center justify-center gap-2 text-[11px] text-slate-500 dark:text-slate-400 text-center">
+                    <ShieldCheck className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400 shrink-0" />
+                    <span>Your contact details are strictly confidential and only used to provide your quote.</span>
                   </div>
                 </form>
               )}
@@ -380,8 +374,8 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ prefilledScope =
           {/* Right Column: Direct Channels & SLA Commitment */}
           <div className="lg:col-span-5 space-y-6">
             {/* Direct Connect Box */}
-            <div className="p-6 rounded-3xl glass-panel border border-white/10 space-y-5 shadow-xl">
-              <h3 className="text-lg font-bold text-white font-['Outfit']">
+            <div className="p-6 rounded-2xl glass-panel border border-slate-200 dark:border-slate-800 space-y-5">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white font-['Outfit']">
                 Direct Communication Channels
               </h3>
 
@@ -391,19 +385,19 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ prefilledScope =
                   target="_blank"
                   rel="noopener noreferrer"
                   title="Click to chat on WhatsApp for sales & quotation enquiry"
-                  className="flex items-center justify-between p-3.5 rounded-2xl glass-card hover:border-emerald-500/50 hover:bg-emerald-500/10 transition-all group"
+                  className="flex items-center justify-between p-3.5 rounded-xl glass-card hover:border-emerald-500/50 hover:bg-emerald-500/5 transition-all group"
                 >
                   <div className="flex items-center gap-3.5">
-                    <div className="w-10 h-10 rounded-xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-emerald-400 group-hover:scale-110 transition-transform">
-                      <Phone className="w-5 h-5" />
+                    <div className="w-9 h-9 rounded-lg bg-cyan-500/10 border border-cyan-500/25 flex items-center justify-center text-cyan-600 dark:text-cyan-400 group-hover:scale-105 transition-transform">
+                      <Phone className="w-4.5 h-4.5" />
                     </div>
                     <div>
-                      <div className="text-[11px] text-slate-400">Head Office Sales & Inquiries</div>
-                      <div className="text-xs font-bold text-white font-mono">+91-9431515806</div>
+                      <div className="text-[11px] text-slate-500 dark:text-slate-400">Head Office Sales & Inquiries</div>
+                      <div className="text-xs font-bold text-slate-900 dark:text-white font-mono">+91-9431515806</div>
                     </div>
                   </div>
-                  <span className="text-[10px] font-semibold text-emerald-400 px-2.5 py-1 rounded-lg bg-emerald-500/15 border border-emerald-500/20">
-                    WhatsApp Enquiry
+                  <span className="text-[10px] font-semibold text-emerald-700 dark:text-emerald-400 px-2 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800/60">
+                    WhatsApp
                   </span>
                 </a>
 
@@ -411,58 +405,45 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ prefilledScope =
                   href={getWhatsAppUrl('+919431515806', WHATSAPP_MESSAGES.general)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  title="Click to chat with Executive Line on WhatsApp"
-                  className="flex items-center justify-between p-3.5 rounded-2xl glass-card hover:border-emerald-500/50 hover:bg-emerald-500/10 transition-all group"
+                  title="Click to chat on WhatsApp"
+                  className="flex items-center justify-between p-3.5 rounded-xl glass-card hover:border-emerald-500/50 hover:bg-emerald-500/5 transition-all group"
                 >
                   <div className="flex items-center gap-3.5">
-                    <div className="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 group-hover:scale-110 transition-transform">
-                      <Phone className="w-5 h-5" />
+                    <div className="w-9 h-9 rounded-lg bg-emerald-500/10 border border-emerald-500/25 flex items-center justify-center text-emerald-600 dark:text-emerald-400 group-hover:scale-105 transition-transform">
+                      <Phone className="w-4.5 h-4.5" />
                     </div>
                     <div>
-                      <div className="text-[11px] text-slate-400">Direct Executive Line (CEO / CTO)</div>
-                      <div className="text-xs font-bold text-white font-mono">+91-9431515806</div>
+                      <div className="text-[11px] text-slate-500 dark:text-slate-400">Direct Executive Support</div>
+                      <div className="text-xs font-bold text-slate-900 dark:text-white font-mono">+91-9431515806</div>
                     </div>
                   </div>
-                  <span className="text-[10px] font-semibold text-emerald-400 px-2.5 py-1 rounded-lg bg-emerald-500/15 border border-emerald-500/20">
-                    WhatsApp Enquiry
+                  <span className="text-[10px] font-semibold text-emerald-700 dark:text-emerald-400 px-2 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800/60">
+                    WhatsApp
                   </span>
                 </a>
 
                 <a
                   href={`mailto:${PRIMARY_ENQUIRY_EMAIL}`}
-                  className="flex items-center gap-3.5 p-3.5 rounded-2xl glass-card hover:border-indigo-500/50 transition-all group"
+                  className="flex items-center gap-3.5 p-3.5 rounded-xl glass-card hover:border-cyan-500/50 transition-all group"
                 >
-                  <div className="w-10 h-10 rounded-xl bg-blue-500/20 border border-blue-500/30 flex items-center justify-center text-blue-300 group-hover:scale-110 transition-transform">
-                    <Mail className="w-5 h-5" />
+                  <div className="w-9 h-9 rounded-lg bg-cyan-500/10 border border-cyan-500/25 flex items-center justify-center text-cyan-600 dark:text-cyan-400 group-hover:scale-105 transition-transform">
+                    <Mail className="w-4.5 h-4.5" />
                   </div>
                   <div>
-                    <div className="text-[11px] text-slate-400">Direct Inquiries & RFPs (CEO)</div>
-                    <div className="text-xs font-bold text-white font-mono">{PRIMARY_ENQUIRY_EMAIL}</div>
-                  </div>
-                </a>
-
-                <a
-                  href="mailto:manoj@globalinfosofts.com"
-                  className="flex items-center gap-3.5 p-3.5 rounded-2xl glass-card hover:border-indigo-500/50 transition-all group"
-                >
-                  <div className="w-10 h-10 rounded-xl bg-purple-500/20 border border-purple-500/30 flex items-center justify-center text-purple-300 group-hover:scale-110 transition-transform">
-                    <Mail className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <div className="text-[11px] text-slate-400">CTO Technical Architecture</div>
-                    <div className="text-xs font-bold text-white font-mono">manoj@globalinfosofts.com</div>
+                    <div className="text-[11px] text-slate-500 dark:text-slate-400">Direct Inquiries & Software Quotes</div>
+                    <div className="text-xs font-bold text-slate-900 dark:text-white font-mono">{PRIMARY_ENQUIRY_EMAIL}</div>
                   </div>
                 </a>
               </div>
 
               {/* SLA Guarantee Box */}
-              <div className="p-4 rounded-2xl glass-card border border-indigo-500/30 space-y-2">
-                <div className="flex items-center gap-2 text-indigo-300 font-semibold text-xs">
+              <div className="p-4 rounded-xl glass-card border border-slate-200 dark:border-slate-800 space-y-1.5">
+                <div className="flex items-center gap-2 text-cyan-700 dark:text-cyan-400 font-semibold text-xs">
                   <Clock className="w-4 h-4" />
-                  <span>Guaranteed 24-Hour SLA Response</span>
+                  <span>Prompt Response & Demo</span>
                 </div>
-                <p className="text-[11px] text-slate-300 leading-relaxed">
-                  Every inquiry is triaged directly by our lead architectural committee. You will receive an actionable technical overview and milestone estimate.
+                <p className="text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed">
+                  Every enquiry is evaluated promptly by our technical team. You will receive an actionable software demo, cost estimate, and implementation plan.
                 </p>
               </div>
             </div>

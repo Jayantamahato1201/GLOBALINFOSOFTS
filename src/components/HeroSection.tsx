@@ -8,8 +8,6 @@ import {
   ShieldCheck,
   Zap,
   TrendingUp,
-  Cpu,
-  Layers,
   ChevronDown
 } from 'lucide-react';
 
@@ -28,39 +26,40 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       <Hero3DCanvas className="opacity-95" />
 
       {/* Abstract Frosted Blur Shapes from Theme */}
-      <div className="abstract-shape w-[500px] h-[500px] -top-24 -left-24 animate-pulse-glow" />
-      <div className="abstract-shape w-[600px] h-[600px] top-1/3 -right-32 animate-pulse-glow" style={{ animationDelay: '-4s' }} />
+      <div className="abstract-shape-blue w-[500px] h-[500px] -top-24 -left-24 animate-pulse-glow" />
+      <div className="abstract-shape-pink w-[600px] h-[600px] top-1/3 -right-32 animate-pulse-glow" style={{ animationDelay: '-4s' }} />
 
-      {/* Subtle Radial Gradient Overlay for crisp typography */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#020617]/50 via-transparent to-[#020617] pointer-events-none" />
+      {/* Subtle Radial Gradient Overlay that adapts to theme */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[var(--bg-body)]/40 via-transparent to-[var(--bg-body)] pointer-events-none transition-colors duration-300" />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+      <div className="relative z-10 w-full max-w-[1536px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16">
         <div className="flex flex-col items-center text-center space-y-8 max-w-4xl mx-auto">
           {/* Live Status Pill */}
-          <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full glass-card shadow-lg shadow-indigo-500/10 animate-fadeDown">
+          <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full glass-card shadow-lg animate-fadeDown border-cyan-500/30">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
             </span>
-            <span className="text-xs font-semibold text-indigo-300 tracking-wide uppercase font-mono">
-              Global InfoSofts Next-Gen Release
+            <span className="text-xs font-semibold text-cyan-700 dark:text-cyan-300 tracking-wide uppercase font-mono">
+              Global InfoSoft • Jamshedpur
             </span>
-            <span className="hidden sm:inline text-xs text-slate-400">• Accepting New Global Sprints</span>
+            <span className="hidden sm:inline text-xs text-slate-500 dark:text-slate-400">• Established 2014</span>
           </div>
 
           {/* Main Display Headline */}
           <div className="space-y-4">
-            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-white font-['Outfit'] leading-[1.1]">
+            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-slate-900 dark:text-white font-['Outfit'] leading-[1.1]">
               Architecting{' '}
               <span className="hero-accent-gradient">
-                Intelligent Digital Systems
+                Intelligent Software
               </span>{' '}
-              For Global Enterprises
+              & Modern Digital Solutions
             </h1>
-            <p className="text-slate-300 text-base sm:text-lg lg:text-xl font-normal max-w-3xl mx-auto leading-relaxed">
-              We design, engineer, and scale bespoke <strong className="text-white font-semibold">Enterprise ERP & CRM systems</strong>, high-performance{' '}
-              <strong className="text-white font-semibold">Web & Mobile applications</strong>, specialized <strong className="text-white font-semibold">Accounting platforms</strong>, and{' '}
-              <strong className="text-white font-semibold">Data-driven Growth funnels</strong>.
+            <p className="text-slate-600 dark:text-slate-300 text-base sm:text-lg lg:text-xl font-normal max-w-3xl mx-auto leading-relaxed">
+              We design, engineer, and deploy tailor-made <strong className="text-slate-900 dark:text-white font-semibold">Custom Software & ERP Systems</strong>,{' '}
+              <strong className="text-slate-900 dark:text-white font-semibold">GST Billing & POS Solutions</strong>,{' '}
+              <strong className="text-slate-900 dark:text-white font-semibold">Corporate Websites</strong>, and{' '}
+              <strong className="text-slate-900 dark:text-white font-semibold">Mobile Apps</strong> from Jamshedpur to businesses nationwide.
             </p>
           </div>
 
@@ -72,68 +71,68 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               className="w-full sm:w-auto px-7 py-4 rounded-2xl btn-primary text-white font-bold text-sm uppercase tracking-wider flex items-center justify-center gap-3 active:scale-95 group shadow-xl"
             >
               <Sparkles className="w-4 h-4 text-white" />
-              <span>Interactive Project Estimator</span>
+              <span>Interactive Cost Estimator</span>
               <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
             </button>
 
             <button
               id="hero-btn-contact"
               onClick={onOpenContact}
-              className="w-full sm:w-auto px-7 py-4 rounded-2xl glass-card text-white font-semibold text-sm transition-all duration-200 shadow-lg flex items-center justify-center gap-2 active:scale-95 hover:border-indigo-500/50"
+              className="w-full sm:w-auto px-7 py-4 rounded-2xl glass-card text-slate-800 dark:text-white font-semibold text-sm transition-all duration-200 shadow-lg flex items-center justify-center gap-2 active:scale-95 hover:border-cyan-500/50"
             >
-              <span>Schedule Architecture Call</span>
+              <span>Schedule Free Consultation</span>
             </button>
           </div>
 
           {/* Key Value Proof Badges */}
-          <div className="flex flex-wrap items-center justify-center gap-y-2 gap-x-6 text-xs text-slate-300 pt-2">
-            <div className="flex items-center gap-1.5 glass-card px-3 py-1 rounded-full">
-              <ShieldCheck className="w-4 h-4 text-indigo-400" />
-              <span>100% IP & Source Code Ownership</span>
+          <div className="flex flex-wrap items-center justify-center gap-y-2 gap-x-6 text-xs text-slate-600 dark:text-slate-300 pt-2">
+            <div className="flex items-center gap-1.5 glass-card px-3.5 py-1.5 rounded-full border-slate-200/80 dark:border-white/10">
+              <ShieldCheck className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
+              <span>100% Data Security & Ownership</span>
             </div>
-            <div className="flex items-center gap-1.5 glass-card px-3 py-1 rounded-full">
-              <Zap className="w-4 h-4 text-indigo-400" />
+            <div className="flex items-center gap-1.5 glass-card px-3.5 py-1.5 rounded-full border-slate-200/80 dark:border-white/10">
+              <Zap className="w-4 h-4 text-sky-600 dark:text-sky-400" />
               <span>6 Months Free Warranty & Support</span>
             </div>
-            <div className="flex items-center gap-1.5 glass-card px-3 py-1 rounded-full">
-              <TrendingUp className="w-4 h-4 text-indigo-400" />
-              <span>Guaranteed 24-Hour SLA Response</span>
+            <div className="flex items-center gap-1.5 glass-card px-3.5 py-1.5 rounded-full border-slate-200/80 dark:border-white/10">
+              <TrendingUp className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+              <span>Guaranteed 24-Hour SLA Support</span>
             </div>
           </div>
         </div>
 
         {/* 3D Floating Interactive Metrics Bento Grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-14">
-          <Card3DTilt intensity={12} className="p-5 rounded-2xl glass-card">
-            <div className="text-2xl sm:text-3xl font-extrabold text-white font-['Outfit'] tracking-tight">
+          <Card3DTilt intensity={12} className="p-5 rounded-2xl glass-card text-left">
+            <div className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white font-['Outfit'] tracking-tight">
               {COMPANY_INFO.yearsOfExperience}
             </div>
-            <div className="text-xs font-semibold text-indigo-300 uppercase tracking-wider mt-1">Industry Leadership</div>
-            <p className="text-[11px] text-slate-400 mt-1">Engineering enterprise software solutions since 2012.</p>
+            <div className="text-xs font-semibold text-cyan-600 dark:text-cyan-300 uppercase tracking-wider mt-1">Established Excellence</div>
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Delivering software and IT services since 2014 in Jamshedpur.</p>
           </Card3DTilt>
 
-          <Card3DTilt intensity={12} className="p-5 rounded-2xl glass-card">
-            <div className="text-2xl sm:text-3xl font-extrabold text-indigo-300 font-['Outfit'] tracking-tight">
+          <Card3DTilt intensity={12} className="p-5 rounded-2xl glass-card text-left">
+            <div className="text-2xl sm:text-3xl font-extrabold text-cyan-600 dark:text-cyan-300 font-['Outfit'] tracking-tight">
               {COMPANY_INFO.projectsCompleted}
             </div>
-            <div className="text-xs font-semibold text-indigo-300 uppercase tracking-wider mt-1">Projects Delivered</div>
-            <p className="text-[11px] text-slate-400 mt-1">From high-load SaaS to custom ERP & accounting suites.</p>
+            <div className="text-xs font-semibold text-cyan-600 dark:text-cyan-300 uppercase tracking-wider mt-1">Projects Delivered</div>
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">From desktop POS billing to custom ERP and dynamic web portals.</p>
           </Card3DTilt>
 
-          <Card3DTilt intensity={12} className="p-5 rounded-2xl glass-card">
-            <div className="text-2xl sm:text-3xl font-extrabold text-white font-['Outfit'] tracking-tight">
+          <Card3DTilt intensity={12} className="p-5 rounded-2xl glass-card text-left">
+            <div className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white font-['Outfit'] tracking-tight">
               {COMPANY_INFO.uptimeSla}
             </div>
-            <div className="text-xs font-semibold text-indigo-300 uppercase tracking-wider mt-1">Infrastructure SLA</div>
-            <p className="text-[11px] text-slate-400 mt-1">Zero-downtime microservices & cloud redundancy.</p>
+            <div className="text-xs font-semibold text-pink-600 dark:text-pink-300 uppercase tracking-wider mt-1">Reliability SLA</div>
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">High-reliability desktop databases & secure cloud hosting.</p>
           </Card3DTilt>
 
-          <Card3DTilt intensity={12} className="p-5 rounded-2xl glass-card">
-            <div className="text-2xl sm:text-3xl font-extrabold text-emerald-400 font-['Outfit'] tracking-tight">
+          <Card3DTilt intensity={12} className="p-5 rounded-2xl glass-card text-left">
+            <div className="text-2xl sm:text-3xl font-extrabold text-emerald-600 dark:text-emerald-400 font-['Outfit'] tracking-tight">
               {COMPANY_INFO.clientSatisfaction}
             </div>
-            <div className="text-xs font-semibold text-emerald-400 uppercase tracking-wider mt-1">Client Retention</div>
-            <p className="text-[11px] text-slate-400 mt-1">Serving 180+ global businesses across 8 countries.</p>
+            <div className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider mt-1">Client Satisfaction</div>
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Trusted by 150+ retail stores, clinics, schools and enterprises.</p>
           </Card3DTilt>
         </div>
 
@@ -141,11 +140,11 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         <div className="flex justify-center mt-12">
           <a
             href="#services"
-            className="flex flex-col items-center gap-1 text-slate-400 hover:text-indigo-300 transition-colors text-xs font-mono group"
+            className="flex flex-col items-center gap-1 text-slate-500 dark:text-slate-400 hover:text-cyan-600 dark:hover:text-cyan-300 transition-colors text-xs font-mono group"
             aria-label="Scroll to services"
           >
             <span>EXPLORE SERVICES</span>
-            <ChevronDown className="w-4 h-4 animate-bounce group-hover:text-indigo-300" />
+            <ChevronDown className="w-4 h-4 animate-bounce group-hover:text-cyan-600 dark:group-hover:text-cyan-300" />
           </a>
         </div>
       </div>

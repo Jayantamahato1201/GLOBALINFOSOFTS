@@ -3,9 +3,7 @@ import {
   SERVICES_DATA,
   SOLUTIONS_DATA,
   CASE_STUDIES,
-  PRICING_PLANS,
-  BLOG_POSTS,
-  FAQS_DATA
+  BLOG_POSTS
 } from '../data/companyData';
 import { PageId } from '../types';
 import {
@@ -70,16 +68,16 @@ export const QuickSearchModal: React.FC<QuickSearchModalProps> = ({
 
   // Pages
   const pages: { id: PageId; title: string; desc: string; icon: any }[] = [
-    { id: 'home', title: 'Home', desc: 'Main introduction & overview', icon: Compass },
-    { id: 'services', title: 'Services Catalog', desc: 'Full-stack development, mobile, ERP & cloud', icon: Layers },
-    { id: 'solutions', title: 'Software Solutions', desc: 'Retail POS, optical, hotel, school & hospital ERP', icon: Sparkles },
-    { id: 'projects', title: 'Projects & Case Studies', desc: 'Enterprise portfolio and client successes', icon: Briefcase },
-    { id: 'pricing', title: 'Pricing & Packages', desc: 'Transparent plans, estimator & comparisons', icon: DollarSign },
-    { id: 'about', title: 'About Global InfoSofts', desc: 'Story, footprint, global locations & mission', icon: Users },
-    { id: 'team', title: 'Our Team', desc: 'Software developers, web, mobile & support teams', icon: Users },
-    { id: 'support', title: 'Tech Support & FAQs', desc: '24/7 SLAs, ticket desk & common questions', icon: HelpCircle },
-    { id: 'blog', title: 'Tech Blog & Insights', desc: 'Architectural guides & performance best practices', icon: FileText },
-    { id: 'contact', title: 'Contact & Inquiry', desc: 'Get in touch, proposal consultation & phone', icon: Compass }
+    { id: 'home', title: 'Home', desc: 'Main introduction & software services overview', icon: Compass },
+    { id: 'services', title: 'Services Catalog', desc: 'Custom software, web design, mobile apps & GST billing', icon: Layers },
+    { id: 'solutions', title: 'Software Solutions', desc: 'Retail POS, optical store, jewelry & accounting software', icon: Sparkles },
+    { id: 'projects', title: 'Projects & Case Studies', desc: 'Software portfolio and client deployments in Jamshedpur', icon: Briefcase },
+    { id: 'pricing', title: 'Pricing & Packages', desc: 'Transparent software pricing & price estimator', icon: DollarSign },
+    { id: 'about', title: 'About Global InfoSoft', desc: 'Company overview, Jamshedpur head office & history', icon: Users },
+    { id: 'team', title: 'Our Team', desc: 'Developers, web designers, and support staff', icon: Users },
+    { id: 'support', title: 'Tech Support & FAQs', desc: 'Software support, AnyDesk remote help & FAQs', icon: HelpCircle },
+    { id: 'blog', title: 'Tech Blog & Insights', desc: 'GST billing tips, software guides & articles', icon: FileText },
+    { id: 'contact', title: 'Contact & Enquiry', desc: 'Contact details, phone, address & WhatsApp', icon: Compass }
   ];
 
   const matchedPages = pages.filter(
@@ -127,30 +125,30 @@ export const QuickSearchModal: React.FC<QuickSearchModalProps> = ({
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-lg rounded-2xl bg-slate-900/95 border border-white/15 shadow-2xl shadow-slate-950/80 overflow-hidden text-slate-100 flex flex-col max-h-[78vh]"
+        className="relative w-full max-w-lg rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/15 shadow-2xl overflow-hidden text-slate-800 dark:text-slate-100 flex flex-col max-h-[78vh]"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Compact Search Header */}
-        <div className="p-3 sm:p-3.5 border-b border-white/10 flex items-center gap-2.5 bg-slate-950/60">
-          <Search className="w-4 h-4 text-indigo-400 shrink-0" />
+        {/* Search Header */}
+        <div className="p-3 sm:p-3.5 border-b border-slate-200 dark:border-white/10 flex items-center gap-2.5 bg-slate-50 dark:bg-slate-950/60">
+          <Search className="w-4 h-4 text-cyan-600 dark:text-cyan-400 shrink-0" />
           <input
             ref={inputRef}
             type="text"
-            placeholder="Search Global InfoSofts (e.g. Web, POS, ERP, Pricing)..."
+            placeholder="Search software, services, solutions (e.g. POS, Web, Pricing)..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="w-full bg-transparent text-sm text-white placeholder:text-slate-400 focus:outline-none"
+            className="w-full bg-transparent text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none"
           />
           {query ? (
             <button
               onClick={() => setQuery('')}
-              className="p-1 rounded-md text-slate-400 hover:text-white"
+              className="p-1 rounded-md text-slate-400 hover:text-slate-700 dark:hover:text-white"
               aria-label="Clear query"
             >
               <X className="w-3.5 h-3.5" />
             </button>
           ) : (
-            <kbd className="hidden sm:inline text-[10px] font-mono px-1.5 py-0.5 rounded bg-white/10 text-slate-400 border border-white/10">
+            <kbd className="hidden sm:inline text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-200 dark:bg-white/10 text-slate-600 dark:text-slate-400 border border-slate-300 dark:border-white/10">
               ESC
             </kbd>
           )}
@@ -159,17 +157,17 @@ export const QuickSearchModal: React.FC<QuickSearchModalProps> = ({
         {/* Results List */}
         <div className="p-3 overflow-y-auto space-y-4 text-xs">
           {totalResults === 0 && q ? (
-            <div className="py-8 text-center text-slate-400">
-              <p>No matching content found for "{query}".</p>
-              <p className="text-[11px] text-slate-500 mt-1">Try searching for "POS", "ERP", "Web", "Pricing", or "Contact".</p>
+            <div className="py-8 text-center text-slate-500 dark:text-slate-400">
+              <p>No matching software or content found for "{query}".</p>
+              <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-1">Try searching for "POS", "Billing", "Optical", "Web", or "Contact".</p>
             </div>
           ) : null}
 
           {/* Quick Pages */}
           {matchedPages.length > 0 && (
             <div className="space-y-1">
-              <div className="text-[10px] font-mono font-semibold uppercase tracking-wider text-slate-400 px-2 py-0.5">
-                Website Pages
+              <div className="text-[10px] font-mono font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 px-2 py-0.5">
+                Website Navigation
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
                 {matchedPages.slice(0, q ? 6 : 4).map((p) => {
@@ -181,16 +179,16 @@ export const QuickSearchModal: React.FC<QuickSearchModalProps> = ({
                         onNavigatePage(p.id);
                         onClose();
                       }}
-                      className="p-2 rounded-xl bg-white/[0.03] hover:bg-indigo-500/15 border border-white/5 hover:border-indigo-500/30 text-left flex items-center gap-2.5 transition-all group"
+                      className="p-2 rounded-xl bg-slate-100/60 dark:bg-white/[0.03] hover:bg-cyan-500/10 dark:hover:bg-cyan-500/15 border border-slate-200/80 dark:border-white/5 hover:border-cyan-500/30 text-left flex items-center gap-2.5 transition-all group"
                     >
-                      <div className="w-6 h-6 rounded-lg bg-indigo-500/10 flex items-center justify-center shrink-0 text-indigo-400 group-hover:text-indigo-300">
+                      <div className="w-6 h-6 rounded-lg bg-cyan-500/10 flex items-center justify-center shrink-0 text-cyan-600 dark:text-cyan-400 group-hover:text-cyan-700 dark:group-hover:text-cyan-300">
                         <Icon className="w-3.5 h-3.5" />
                       </div>
                       <div className="min-w-0">
-                        <div className="font-semibold text-white group-hover:text-indigo-200 truncate">
+                        <div className="font-semibold text-slate-900 dark:text-white group-hover:text-cyan-700 dark:group-hover:text-cyan-200 truncate">
                           {p.title}
                         </div>
-                        <div className="text-[10px] text-slate-400 truncate">
+                        <div className="text-[10px] text-slate-500 dark:text-slate-400 truncate">
                           {p.desc}
                         </div>
                       </div>
@@ -204,9 +202,9 @@ export const QuickSearchModal: React.FC<QuickSearchModalProps> = ({
           {/* Services */}
           {matchedServices.length > 0 && (
             <div className="space-y-1">
-              <div className="text-[10px] font-mono font-semibold uppercase tracking-wider text-indigo-300 px-2 py-0.5 flex items-center justify-between">
+              <div className="text-[10px] font-mono font-semibold uppercase tracking-wider text-cyan-700 dark:text-cyan-300 px-2 py-0.5 flex items-center justify-between">
                 <span>Services ({matchedServices.length})</span>
-                {!q && <span className="text-[9px] text-slate-400">Featured</span>}
+                {!q && <span className="text-[9px] text-slate-500 dark:text-slate-400">Featured</span>}
               </div>
               {matchedServices.slice(0, q ? 5 : 3).map((s) => (
                 <button
@@ -219,17 +217,17 @@ export const QuickSearchModal: React.FC<QuickSearchModalProps> = ({
                     }
                     onClose();
                   }}
-                  className="w-full p-2.5 rounded-xl bg-white/[0.03] hover:bg-indigo-500/15 border border-white/5 hover:border-indigo-500/30 text-left flex items-center justify-between transition-all group"
+                  className="w-full p-2.5 rounded-xl bg-slate-100/60 dark:bg-white/[0.03] hover:bg-cyan-500/10 dark:hover:bg-cyan-500/15 border border-slate-200/80 dark:border-white/5 hover:border-cyan-500/30 text-left flex items-center justify-between transition-all group"
                 >
                   <div className="min-w-0 pr-2">
-                    <div className="font-bold text-white group-hover:text-indigo-300">
+                    <div className="font-bold text-slate-900 dark:text-white group-hover:text-cyan-700 dark:group-hover:text-cyan-300">
                       {s.title}
                     </div>
-                    <div className="text-[11px] text-slate-400 line-clamp-1">
+                    <div className="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-1">
                       {s.shortDesc}
                     </div>
                   </div>
-                  <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-indigo-400 shrink-0" />
+                  <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-cyan-600 dark:group-hover:text-cyan-400 shrink-0" />
                 </button>
               ))}
             </div>
@@ -238,8 +236,8 @@ export const QuickSearchModal: React.FC<QuickSearchModalProps> = ({
           {/* Solutions */}
           {matchedSolutions.length > 0 && (
             <div className="space-y-1">
-              <div className="text-[10px] font-mono font-semibold uppercase tracking-wider text-emerald-300 px-2 py-0.5 flex items-center justify-between">
-                <span>Software Solutions ({matchedSolutions.length})</span>
+              <div className="text-[10px] font-mono font-semibold uppercase tracking-wider text-emerald-700 dark:text-emerald-300 px-2 py-0.5 flex items-center justify-between">
+                <span>Software Products & POS ({matchedSolutions.length})</span>
               </div>
               {matchedSolutions.slice(0, q ? 5 : 3).map((sol) => (
                 <button
@@ -252,20 +250,20 @@ export const QuickSearchModal: React.FC<QuickSearchModalProps> = ({
                     }
                     onClose();
                   }}
-                  className="w-full p-2.5 rounded-xl bg-white/[0.03] hover:bg-emerald-500/15 border border-white/5 hover:border-emerald-500/30 text-left flex items-center justify-between transition-all group"
+                  className="w-full p-2.5 rounded-xl bg-slate-100/60 dark:bg-white/[0.03] hover:bg-emerald-500/10 dark:hover:bg-emerald-500/15 border border-slate-200/80 dark:border-white/5 hover:border-emerald-500/30 text-left flex items-center justify-between transition-all group"
                 >
                   <div className="min-w-0 pr-2">
-                    <div className="font-bold text-white group-hover:text-emerald-300 flex items-center gap-1.5">
+                    <div className="font-bold text-slate-900 dark:text-white group-hover:text-emerald-700 dark:group-hover:text-emerald-300 flex items-center gap-1.5">
                       <span>{sol.title}</span>
-                      <span className="text-[9px] px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                      <span className="text-[9px] px-1.5 py-0.2 rounded bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
                         {sol.industry}
                       </span>
                     </div>
-                    <div className="text-[11px] text-slate-400 line-clamp-1">
+                    <div className="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-1">
                       {sol.shortDesc}
                     </div>
                   </div>
-                  <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-emerald-400 shrink-0" />
+                  <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 shrink-0" />
                 </button>
               ))}
             </div>
@@ -274,8 +272,8 @@ export const QuickSearchModal: React.FC<QuickSearchModalProps> = ({
           {/* Projects */}
           {matchedProjects.length > 0 && (
             <div className="space-y-1">
-              <div className="text-[10px] font-mono font-semibold uppercase tracking-wider text-sky-300 px-2 py-0.5">
-                Projects & Case Studies
+              <div className="text-[10px] font-mono font-semibold uppercase tracking-wider text-sky-700 dark:text-sky-300 px-2 py-0.5">
+                Client Projects & Deployments
               </div>
               {matchedProjects.slice(0, q ? 3 : 2).map((proj) => (
                 <button
@@ -288,26 +286,26 @@ export const QuickSearchModal: React.FC<QuickSearchModalProps> = ({
                     }
                     onClose();
                   }}
-                  className="w-full p-2.5 rounded-xl bg-white/[0.03] hover:bg-sky-500/15 border border-white/5 hover:border-sky-500/30 text-left flex items-center justify-between transition-all group"
+                  className="w-full p-2.5 rounded-xl bg-slate-100/60 dark:bg-white/[0.03] hover:bg-sky-500/10 dark:hover:bg-sky-500/15 border border-slate-200/80 dark:border-white/5 hover:border-sky-500/30 text-left flex items-center justify-between transition-all group"
                 >
                   <div className="min-w-0 pr-2">
-                    <div className="font-bold text-white group-hover:text-sky-300">
+                    <div className="font-bold text-slate-900 dark:text-white group-hover:text-sky-700 dark:group-hover:text-sky-300">
                       {proj.title}
                     </div>
-                    <div className="text-[11px] text-slate-400 line-clamp-1">
+                    <div className="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-1">
                       {proj.client} • {proj.industry}
                     </div>
                   </div>
-                  <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-sky-400 shrink-0" />
+                  <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-sky-600 dark:group-hover:text-sky-400 shrink-0" />
                 </button>
               ))}
             </div>
           )}
         </div>
 
-        {/* Compact Footer */}
-        <div className="p-2.5 bg-slate-950 border-t border-white/10 flex items-center justify-between text-[10px] text-slate-500 px-4">
-          <span className="font-medium">Direct search across all Global InfoSofts resources</span>
+        {/* Footer */}
+        <div className="p-2.5 bg-slate-100 dark:bg-slate-950 border-t border-slate-200 dark:border-white/10 flex items-center justify-between text-[10px] text-slate-500 px-4">
+          <span className="font-medium">Quick search across Global InfoSoft resources</span>
           <span className="font-mono text-slate-400">Esc to close</span>
         </div>
       </div>

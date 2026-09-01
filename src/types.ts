@@ -8,6 +8,8 @@ export interface ServiceItem {
   deliverables: string[];
   technologies: string[];
   metrics: string;
+  image?: string;
+  duration?: string;
   featured?: boolean;
 }
 
@@ -23,8 +25,26 @@ export interface SoftwareSolution {
   technologies: string[];
   compliance: string;
   demoAvailable: boolean;
+  image?: string;
+  duration?: string;
   model3DId?: string;
   featured?: boolean;
+}
+
+export interface DetailModalData {
+  type: 'project' | 'service' | 'solution';
+  id: string;
+  category: string;
+  title: string;
+  description: string;
+  duration?: string;
+  metadata?: string;
+  image: string;
+  technologies: string[];
+  primaryActionLabel?: string;
+  secondaryActionLabel?: string;
+  onPrimaryAction?: () => void;
+  onSecondaryAction?: () => void;
 }
 
 export interface PricingPlan {

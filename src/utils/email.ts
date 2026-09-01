@@ -21,7 +21,7 @@ export const formatEnquiryEmailBody = (data: ProjectEnquiryData): string => {
 
   return `Dear Rajnish Kumar,
 
-A new business project enquiry has been submitted through the Global InfoSofts website portal.
+A new business project enquiry has been submitted through the Global InfoSoft website portal.
 
 ==============================================
 1. CLIENT CONTACT DETAILS
@@ -48,7 +48,7 @@ ${data.message || 'No additional details provided.'}
 • Action Required: Review requirements, execute mutual NDA, and prepare preliminary architecture roadmap.
 
 ---
-Global InfoSofts - Enterprise Software & Intelligent Digital Realities
+Global InfoSoft - Enterprise Software & Intelligent Digital Realities
 Website Portal Automated Dispatch`;
 };
 
@@ -73,7 +73,7 @@ export const getSupportTicketMailtoUrl = (ticket: {
   description: string;
 }): string => {
   const subject = `[Support Ticket #${ticket.ticketId}] ${ticket.category} (${ticket.priority}) - ${ticket.fullName}`;
-  const body = `Dear Global InfoSofts Engineering Team & Rajnish Kumar,
+  const body = `Dear Global InfoSoft Engineering Team & Rajnish Kumar,
 
 A new technical support ticket has been logged:
 

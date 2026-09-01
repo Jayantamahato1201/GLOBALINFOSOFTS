@@ -10,6 +10,7 @@ import {
   TrendingUp,
   Cloud,
   Sparkles,
+  Headphones,
   CheckCircle2,
   ArrowRight
 } from 'lucide-react';
@@ -22,7 +23,8 @@ const ICON_MAP: Record<string, typeof Code2> = {
   Calculator,
   TrendingUp,
   Cloud,
-  Sparkles
+  Sparkles,
+  Headphones
 };
 
 interface ServicesSectionProps {
@@ -36,49 +38,111 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({
   const [activeCategory, setActiveCategory] = useState<string>('all');
 
   const categories = [
-    { id: 'all', label: 'All Solutions' },
-    { id: 'enterprise', label: 'Enterprise ERP/CRM' },
-    { id: 'software', label: 'Custom Software & POS' },
-    { id: 'web', label: 'Web & SaaS' },
+    { id: 'all', label: 'All Services' },
+    { id: 'software', label: 'Custom Software & ERP' },
+    { id: 'web', label: 'Website & Web Apps' },
     { id: 'mobile', label: 'Mobile Apps' },
-    { id: 'cloud', label: 'Cloud & DevOps' },
-    { id: 'marketing', label: 'Growth & Marketing' },
-    { id: 'ai', label: 'AI & Automation' }
+    { id: 'marketing', label: 'SEO & Marketing' },
+    { id: 'cloud', label: 'Cloud Hosting & Support' }
   ];
 
   const filteredServices = activeCategory === 'all'
     ? SERVICES_DATA
     : SERVICES_DATA.filter((s) => s.category === activeCategory);
 
-  return (
-    <section id="services" className="relative py-24 mesh-bg border-t border-white/10 overflow-hidden">
-      {/* Abstract Blur Shape */}
-      <div className="abstract-shape w-[450px] h-[450px] top-1/4 -right-20 animate-pulse-glow" />
+  const renderServiceCard = (service: ServiceItem, idx: number) => {
+    const Icon = ICON_MAP[service.iconName] || Code2;
+    const iconColors = [
+      'bg-cyan-50 dark:bg-cyan-950/60 text-cyan-700 dark:text-cyan-300 border-cyan-200 dark:border-cyan-800',
+      'bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-800',
+      'bg-pink-50 dark:bg-pink-950/60 text-pink-700 dark:text-pink-300 border-pink-200 dark:border-pink-800',
+      'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800'
+    ];
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
-          <div className="max-w-2xl space-y-3">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full glass-card text-indigo-300 text-xs font-semibold uppercase tracking-wider font-mono">
-              Comprehensive Technology Capabilities
+    return (
+      <div
+        key={service.id}
+        id={`service-card-${service.id}`}
+        onClick={() => onSelectService(service)}
+        className="h-full min-h-[340px] flex flex-col justify-between p-5 rounded-2xl project-card-gradient border border-slate-200 dark:border-slate-800 hover:border-cyan-500 dark:hover:border-cyan-400/80 transition-all duration-250 group cursor-pointer text-left"
+      >
+        <div>
+          {/* Top Row: Icon & Metric Badge */}
+          <div className="flex items-start justify-between gap-3 mb-3">
+            <div className={`w-9 h-9 rounded-xl border flex items-center justify-center ${iconColors[idx % 4]} group-hover:scale-105 transition-transform`}>
+              <Icon className="w-4.5 h-4.5" />
             </div>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white font-['Outfit']">
-              Engineered For Modern Business Evolution
-            </h2>
-            <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
-              From enterprise resource planning to high-conversion digital funnels, we provide complete lifecycle technology services without cutting corners.
-            </p>
+            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 shrink-0">
+              {service.metrics}
+            </span>
           </div>
 
-          {/* Quick Counter */}
-          <div className="hidden lg:flex items-center gap-3 px-4 py-2.5 rounded-2xl glass-card text-xs text-slate-300">
-            <span className="w-2 h-2 rounded-full bg-indigo-400 animate-ping" />
-            <span>8 Specialization Practices • 100% In-House Engineers</span>
+          {/* Title & Short Description */}
+          <h3 className="text-base font-bold text-slate-900 dark:text-white group-hover:text-cyan-600 dark:group-hover:text-cyan-300 transition-colors font-['Outfit'] mb-1 line-clamp-1">
+            {service.title}
+          </h3>
+          <p className="text-slate-600 dark:text-slate-300 text-xs line-clamp-2 leading-relaxed mb-3">
+            {service.shortDesc}
+          </p>
+
+          {/* Deliverables Checklist */}
+          <div className="space-y-1.5 mb-2 pt-2 border-t border-slate-200 dark:border-slate-800">
+            {service.deliverables.slice(0, 2).map((item, dIdx) => (
+              <div key={dIdx} className="flex items-start gap-1.5 text-[11px] text-slate-700 dark:text-slate-300">
+                <CheckCircle2 className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400 shrink-0 mt-0.5" />
+                <span className="truncate">{item}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Bottom Row: Tech Tags & Action */}
+        <div className="pt-2 border-t border-slate-200 dark:border-slate-800 space-y-2">
+          <div className="flex flex-wrap gap-1">
+            {service.technologies.slice(0, 3).map((tech, tIdx) => (
+              <span
+                key={tIdx}
+                className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[10px] font-mono text-slate-700 dark:text-slate-200"
+              >
+                {tech}
+              </span>
+            ))}
+            {service.technologies.length > 3 && (
+              <span className="px-1 py-0.5 text-[10px] font-mono text-slate-500 dark:text-slate-400 font-medium">
+                +{service.technologies.length - 3}
+              </span>
+            )}
+          </div>
+
+          <div className="pt-0.5 flex items-center justify-between text-xs text-cyan-700 dark:text-cyan-400 font-bold group-hover:text-cyan-800 dark:group-hover:text-cyan-300 transition-colors">
+            <span>View Specifications</span>
+            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <section id="services" className="relative py-20 mesh-bg border-t border-slate-200 dark:border-slate-800/80 overflow-hidden w-full transition-colors duration-300">
+      <div className="relative z-10 w-full max-w-[1536px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16">
+        {/* Section Header */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-6 text-left">
+          <div className="max-w-3xl space-y-2.5">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full glass-card text-cyan-700 dark:text-cyan-300 text-xs font-semibold uppercase tracking-wider font-mono border-cyan-500/25">
+              Comprehensive Technology Capabilities
+            </div>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white font-['Outfit']">
+              Engineered For Business Growth & Automation
+            </h2>
+            <p className="text-slate-600 dark:text-slate-300 text-xs sm:text-sm leading-relaxed">
+              From desktop GST billing and retail POS software to institutional portals and responsive corporate websites, we engineer complete IT solutions in Jamshedpur with zero compromises.
+            </p>
           </div>
         </div>
 
         {/* Filter Category Tabs */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-4 mb-8 scrollbar-none">
+        <div className="flex items-center gap-2 overflow-x-auto pb-3 mb-6 scrollbar-none">
           {categories.map((cat) => {
             const isSelected = activeCategory === cat.id;
             return (
@@ -86,10 +150,10 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({
                 key={cat.id}
                 id={`category-btn-${cat.id}`}
                 onClick={() => setActiveCategory(cat.id)}
-                className={`px-4 py-2 rounded-xl text-xs font-semibold tracking-wide whitespace-nowrap transition-all duration-200 ${
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all duration-200 ${
                   isSelected
-                    ? 'btn-primary text-white shadow-lg'
-                    : 'glass-card text-slate-300 hover:text-white'
+                    ? 'btn-primary text-white shadow-sm'
+                    : 'glass-card text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
                 {cat.label}
@@ -98,72 +162,9 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({
           })}
         </div>
 
-        {/* Services Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredServices.map((service) => {
-            const Icon = ICON_MAP[service.iconName] || Code2;
-
-            return (
-              <div
-                key={service.id}
-                id={`service-card-${service.id}`}
-                onClick={() => onSelectService(service)}
-                className="h-full flex flex-col justify-between p-6 sm:p-7 rounded-3xl project-card-gradient border border-white/15 hover:border-indigo-400/60 transition-all duration-500 group cursor-pointer shadow-xl relative overflow-hidden"
-              >
-                <div>
-                  {/* Top Row: Icon & Metric Badge */}
-                  <div className="flex items-start justify-between gap-4 mb-5">
-                    <div className="w-12 h-12 rounded-2xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-300 group-hover:scale-110 group-hover:border-indigo-400 group-hover:text-white transition-all duration-300 shadow-md shadow-indigo-500/10">
-                      <Icon className="w-6 h-6" />
-                    </div>
-                    <span className="px-2.5 py-1 rounded-full text-[11px] font-mono font-medium bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 shrink-0">
-                      {service.metrics}
-                    </span>
-                  </div>
-
-                  {/* Title & Short Description */}
-                  <h3 className="text-xl font-bold text-white group-hover:text-indigo-200 transition-colors font-['Outfit'] mb-2.5">
-                    {service.title}
-                  </h3>
-                  <p className="text-slate-300 text-xs sm:text-sm leading-relaxed mb-5">
-                    {service.shortDesc}
-                  </p>
-
-                  {/* Deliverables Checklist */}
-                  <div className="space-y-2 mb-6 pt-4 border-t border-white/10">
-                    <div className="text-[11px] font-semibold text-slate-300 uppercase tracking-wider">
-                      Key Deliverables:
-                    </div>
-                    {service.deliverables.slice(0, 3).map((item, idx) => (
-                      <div key={idx} className="flex items-start gap-2 text-xs text-slate-300">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-indigo-400 shrink-0 mt-0.5" />
-                        <span className="leading-tight">{item}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Bottom Row: Tech Tags & Action */}
-                <div className="pt-4 border-t border-white/10 space-y-4">
-                  <div className="flex flex-wrap gap-1.5">
-                    {service.technologies.slice(0, 4).map((tech, idx) => (
-                      <span
-                        key={idx}
-                        className="px-2 py-0.5 rounded-md bg-white/5 border border-white/10 text-[10px] font-mono text-slate-300 group-hover:text-white transition-colors"
-                      >
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-
-                  <div className="pt-1 flex items-center justify-between text-xs text-indigo-300 font-semibold group-hover:text-indigo-200">
-                    <span>View Specifications & Scope</span>
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+        {/* Responsive Grid Layout */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 w-full">
+          {filteredServices.map((service, idx) => renderServiceCard(service, idx))}
         </div>
       </div>
     </section>

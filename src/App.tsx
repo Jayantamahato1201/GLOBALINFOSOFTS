@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { ThemeProvider } from './context/ThemeContext';
 import { Navbar } from './components/Navbar';
 import { HomePage } from './components/pages/HomePage';
 import { SolutionsPage } from './components/pages/SolutionsPage';
@@ -11,17 +12,15 @@ import { ServicesSection } from './components/ServicesSection';
 import { AboutSection } from './components/AboutSection';
 import { ContactSection } from './components/ContactSection';
 import { Footer } from './components/Footer';
-import { ProjectModal } from './components/ProjectModal';
-import { ServiceDetailModal } from './components/ServiceDetailModal';
+import { DetailModal } from './components/DetailModal';
 import { QuickSearchModal } from './components/QuickSearchModal';
 import { WhatsAppWidget } from './components/WhatsAppWidget';
 import { SERVICES_DATA, SOLUTIONS_DATA, CASE_STUDIES } from './data/companyData';
-import { ServiceItem, CaseStudy, SoftwareSolution, PageId } from './types';
+import { ServiceItem, CaseStudy, SoftwareSolution, DetailModalData, PageId } from './types';
 
-export default function App() {
+function MainAppContent() {
   const [currentPage, setCurrentPage] = useState<PageId>('home');
-  const [selectedProject, setSelectedProject] = useState<CaseStudy | null>(null);
-  const [selectedService, setSelectedService] = useState<ServiceItem | null>(null);
+  const [modalData, setModalData] = useState<DetailModalData | null>(null);
   const [searchOpen, setSearchOpen] = useState<boolean>(false);
   const [prefilledContactScope, setPrefilledContactScope] = useState<string>('');
 
@@ -59,16 +58,15 @@ export default function App() {
     if (detailId) {
       if (page === 'services') {
         const found = SERVICES_DATA.find((s) => s.id === detailId);
-        if (found) setSelectedService(found);
+        if (found) openServiceModal(found);
       } else if (page === 'projects') {
         const found = CASE_STUDIES.find((p) => p.id === detailId);
-        if (found) setSelectedProject(found);
+        if (found) openProjectModal(found);
+      } else if (page === 'solutions') {
+        const found = SOLUTIONS_DATA.find((s) => s.id === detailId);
+        if (found) openSolutionModal(found);
       }
     }
-  };
-
-  const handleOpenEstimator = () => {
-    navigateToPage('pricing');
   };
 
   const handleOpenContact = (scope?: string) => {
@@ -78,36 +76,108 @@ export default function App() {
     navigateToPage('contact');
   };
 
+  const openProjectModal = (project: CaseStudy) => {
+    setModalData({
+      type: 'project',
+      id: project.id,
+      category: project.category || project.industry,
+      title: project.title,
+      description: project.summary,
+      duration: project.duration,
+      metadata: project.client ? `Client: ${project.client}` : undefined,
+      image: project.image,
+      technologies: project.technologies,
+      primaryActionLabel: 'Read Full Case Study',
+      secondaryActionLabel: 'Enquire Now',
+      onPrimaryAction: () => {
+        handleOpenContact(`Consultation for project deployment: ${project.title} (${project.client})`);
+      },
+      onSecondaryAction: () => {
+        handleOpenContact(`Enquiring about project: ${project.title}`);
+      }
+    });
+  };
+
+  const openServiceModal = (service: ServiceItem) => {
+    setModalData({
+      type: 'service',
+      id: service.id,
+      category: service.category ? service.category.toUpperCase() : 'SERVICE',
+      title: service.title,
+      description: service.shortDesc,
+      duration: service.duration || '2 - 4 Weeks',
+      metadata: service.metrics,
+      image: service.image || 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1200&q=80',
+      technologies: service.technologies,
+      primaryActionLabel: 'View Full Specifications',
+      secondaryActionLabel: 'Enquire About Service',
+      onPrimaryAction: () => {
+        handleOpenContact(`Requesting specifications for service: ${service.title}`);
+      },
+      onSecondaryAction: () => {
+        handleOpenContact(`Enquiry for: ${service.title}`);
+      }
+    });
+  };
+
+  const openSolutionModal = (solution: SoftwareSolution) => {
+    setModalData({
+      type: 'solution',
+      id: solution.id,
+      category: solution.industry,
+      title: solution.title,
+      description: solution.shortDesc,
+      duration: solution.duration || 'Turnkey Setup',
+      metadata: solution.compliance,
+      image: solution.image || 'https://images.unsplash.com/photo-1556742049-0a67e5572263?auto=format&fit=crop&w=1200&q=80',
+      technologies: solution.technologies,
+      primaryActionLabel: 'View Solution Details',
+      secondaryActionLabel: 'Enquire Now',
+      onPrimaryAction: () => {
+        handleOpenContact(`Demo & consultation request for software solution: ${solution.title}`);
+      },
+      onSecondaryAction: () => {
+        handleOpenContact(`Enquiry for solution: ${solution.title}`);
+      }
+    });
+  };
+
   const handleSelectServiceById = (serviceId: string) => {
     const found = SERVICES_DATA.find((s) => s.id === serviceId);
     if (found) {
-      setSelectedService(found);
+      openServiceModal(found);
     } else {
       navigateToPage('services');
     }
   };
 
-  const handleSelectSolutionById = (solutionId: string) => {
+  const handleSelectSolutionById = (solutionId?: string) => {
+    if (solutionId) {
+      const found = SOLUTIONS_DATA.find((s) => s.id === solutionId);
+      if (found) {
+        openSolutionModal(found);
+        return;
+      }
+    }
     navigateToPage('solutions');
   };
 
   const handleSelectProjectById = (projectId: string) => {
     const found = CASE_STUDIES.find((p) => p.id === projectId);
     if (found) {
-      setSelectedProject(found);
+      openProjectModal(found);
     } else {
       navigateToPage('projects');
     }
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 selection:bg-indigo-500/30 selection:text-indigo-200 flex flex-col justify-between">
-      {/* Universal Fixed Navigation */}
+    <div className="min-h-screen bg-[var(--bg-body)] text-[var(--text-body)] selection:bg-cyan-500/30 selection:text-cyan-200 flex flex-col justify-between transition-colors duration-300">
+      {/* Universal Fixed Navigation with Theme Toggle */}
       <Navbar
         currentPage={currentPage}
         onNavigatePage={(page) => navigateToPage(page)}
         onOpenSearch={() => setSearchOpen(true)}
-        onOpenEstimator={handleOpenEstimator}
         onOpenContact={() => handleOpenContact()}
       />
 
@@ -117,7 +187,6 @@ export default function App() {
           <HomePage
             onNavigatePage={(page) => navigateToPage(page)}
             onOpenContact={(scope) => handleOpenContact(scope)}
-            onOpenEstimator={handleOpenEstimator}
             onSelectService={handleSelectServiceById}
             onSelectProject={handleSelectProjectById}
             onSelectSolution={handleSelectSolutionById}
@@ -127,7 +196,7 @@ export default function App() {
         {currentPage === 'services' && (
           <div className="pt-24 pb-16 mesh-bg min-h-screen">
             <ServicesSection
-              onSelectService={(service) => setSelectedService(service)}
+              onSelectService={(service) => openServiceModal(service)}
               onExplore3DModel={() => navigateToPage('solutions')}
             />
           </div>
@@ -135,11 +204,7 @@ export default function App() {
 
         {currentPage === 'solutions' && (
           <SolutionsPage
-            onSelectSolution={(sol) => {
-              setPrefilledContactScope(`Inquiring about solution: ${sol.title}`);
-              handleOpenContact(`Inquiring about solution: ${sol.title}`);
-            }}
-            onOpenEstimator={handleOpenEstimator}
+            onSelectSolution={(sol) => openSolutionModal(sol)}
             onOpenContact={(scope) => handleOpenContact(scope)}
             onSelectServiceById={handleSelectServiceById}
           />
@@ -147,7 +212,7 @@ export default function App() {
 
         {currentPage === 'projects' && (
           <ProjectsPage
-            onOpenProject={(proj) => setSelectedProject(proj)}
+            onOpenProject={(proj) => openProjectModal(proj)}
             onOpenContact={(scope) => handleOpenContact(scope)}
           />
         )}
@@ -187,31 +252,13 @@ export default function App() {
       {/* Modern Footer */}
       <Footer
         onNavigatePage={(page) => navigateToPage(page)}
-        onOpenEstimator={handleOpenEstimator}
         onOpenContact={() => handleOpenContact()}
       />
 
-      {/* Modal Dialogs */}
-      <ProjectModal
-        project={selectedProject}
-        onClose={() => setSelectedProject(null)}
-        onConsult={(summary) => {
-          setPrefilledContactScope(summary);
-          handleOpenContact(summary);
-        }}
-      />
-
-      <ServiceDetailModal
-        service={selectedService}
-        onClose={() => setSelectedService(null)}
-        onInquire={(title) => {
-          setPrefilledContactScope(`Inquiring about service: ${title}`);
-          handleOpenContact(`Inquiring about service: ${title}`);
-        }}
-        onExplore3D={() => {
-          setSelectedService(null);
-          navigateToPage('solutions');
-        }}
+      {/* Universal Detail Modal for Projects, Services & Solutions */}
+      <DetailModal
+        data={modalData}
+        onClose={() => setModalData(null)}
       />
 
       {/* Compact Search Popup */}
@@ -227,5 +274,13 @@ export default function App() {
       {/* Floating WhatsApp Enquiry Widget */}
       <WhatsAppWidget />
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <ThemeProvider>
+      <MainAppContent />
+    </ThemeProvider>
   );
 }

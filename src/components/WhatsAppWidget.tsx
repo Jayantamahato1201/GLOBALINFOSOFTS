@@ -1,17 +1,12 @@
 import React, { useState } from 'react';
-import { COMPANY_INFO, LEADERSHIP_CONTACTS, HEAD_OFFICE } from '../data/companyData';
 import { getWhatsAppUrl, WHATSAPP_MESSAGES } from '../utils/whatsapp';
 import {
   MessageCircle,
   X,
-  Send,
-  Sparkles,
-  Phone,
   UserCheck,
   Zap,
   Building2,
-  ExternalLink,
-  ChevronUp
+  ExternalLink
 } from 'lucide-react';
 
 export const WhatsAppWidget: React.FC = () => {
@@ -75,7 +70,7 @@ export const WhatsAppWidget: React.FC = () => {
                   <h4 className="text-sm font-bold font-['Outfit']">Chat on WhatsApp</h4>
                   <p className="text-[10px] text-emerald-100 flex items-center gap-1">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-300 animate-pulse"></span>
-                    <span>Direct Team Enquiry • Instant Response</span>
+                    <span>Global InfoSoft Support • Jamshedpur</span>
                   </p>
                 </div>
               </div>
@@ -90,9 +85,9 @@ export const WhatsAppWidget: React.FC = () => {
           </div>
 
           {/* Body */}
-          <div className="p-4 space-y-3 bg-slate-900/95 max-h-[70vh] overflow-y-auto">
-            <div className="text-[11px] font-semibold text-slate-300">
-              Select Contact to Enquiry with Pre-written Message:
+          <div className="p-4 space-y-3 bg-white dark:bg-slate-900 max-h-[70vh] overflow-y-auto text-left">
+            <div className="text-[11px] font-semibold text-slate-700 dark:text-slate-300">
+              Select Contact for Pre-filled Message:
             </div>
 
             {/* Quick Contact Selector Buttons */}
@@ -109,25 +104,25 @@ export const WhatsAppWidget: React.FC = () => {
                     }}
                     className={`w-full text-left p-2.5 rounded-xl text-xs transition-all flex items-center justify-between border ${
                       isSelected
-                        ? 'bg-emerald-500/15 border-emerald-500/50 text-white shadow-sm'
-                        : 'bg-white/[0.03] border-white/5 text-slate-300 hover:bg-white/[0.06] hover:text-white'
+                        ? 'bg-emerald-500/15 border-emerald-500 text-slate-900 dark:text-white shadow-sm'
+                        : 'bg-slate-50 dark:bg-white/[0.03] border-slate-200 dark:border-white/5 text-slate-700 dark:text-slate-300 hover:border-emerald-500/40'
                     }`}
                   >
                     <div className="flex items-center gap-2.5">
                       <div
                         className={`w-7 h-7 rounded-lg flex items-center justify-center ${
-                          isSelected ? 'bg-emerald-500/30 text-emerald-300' : 'bg-white/5 text-slate-400'
+                          isSelected ? 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-300' : 'bg-slate-200/60 dark:bg-white/5 text-slate-500 dark:text-slate-400'
                         }`}
                       >
                         <IconComponent className="w-3.5 h-3.5" />
                       </div>
                       <div>
-                        <div className="font-semibold text-xs">{item.label}</div>
-                        <div className="text-[10px] font-mono text-slate-400">{item.phone}</div>
+                        <div className="font-semibold text-xs text-slate-900 dark:text-white">{item.label}</div>
+                        <div className="text-[10px] font-mono text-slate-500 dark:text-slate-400">{item.phone}</div>
                       </div>
                     </div>
                     {isSelected && (
-                      <span className="text-[9px] font-bold text-emerald-400 uppercase tracking-wider bg-emerald-500/20 px-2 py-0.5 rounded">
+                      <span className="text-[9px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider bg-emerald-500/20 px-2 py-0.5 rounded">
                         Selected
                       </span>
                     )}
@@ -137,17 +132,17 @@ export const WhatsAppWidget: React.FC = () => {
             </div>
 
             {/* Custom Message Box & Direct Action */}
-            <form onSubmit={handleSendCustom} className="pt-2 space-y-2.5 border-t border-white/10">
-              <div className="flex items-center justify-between text-[11px] text-slate-400">
-                <span>Pre-written Enquiry Message:</span>
-                <span className="text-[10px] text-emerald-400 font-mono">Editable</span>
+            <form onSubmit={handleSendCustom} className="pt-2 space-y-2.5 border-t border-slate-200 dark:border-white/10">
+              <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
+                <span>Message Preview:</span>
+                <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-mono">Editable</span>
               </div>
               <textarea
                 value={customMessage || currentTarget.preset}
                 onChange={(e) => setCustomMessage(e.target.value)}
                 rows={3}
-                className="w-full text-xs bg-slate-950/80 border border-white/10 rounded-xl p-2.5 text-slate-200 placeholder:text-slate-500 focus:outline-none focus:border-emerald-500/50 resize-none font-sans leading-relaxed"
-                placeholder="Type your custom enquiry message..."
+                className="w-full text-xs bg-slate-50 dark:bg-slate-950/80 border border-slate-200 dark:border-white/10 rounded-xl p-2.5 text-slate-900 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-emerald-500/50 resize-none font-sans leading-relaxed"
+                placeholder="Type your enquiry message..."
               />
 
               <button
@@ -160,8 +155,8 @@ export const WhatsAppWidget: React.FC = () => {
               </button>
             </form>
 
-            <div className="text-[10px] text-center text-slate-500">
-              Clicking directly opens your WhatsApp Web or App with pre-filled enquiry.
+            <div className="text-[10px] text-center text-slate-400 dark:text-slate-500">
+              Direct connection to Global InfoSoft team on WhatsApp.
             </div>
           </div>
         </div>
@@ -170,7 +165,7 @@ export const WhatsAppWidget: React.FC = () => {
       {/* Floating Trigger Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="group relative flex items-center gap-2.5 py-3 px-4 sm:px-4.5 rounded-full bg-emerald-500 hover:bg-emerald-400 text-white font-bold text-xs shadow-xl shadow-emerald-500/30 hover:shadow-emerald-500/50 hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2 focus:ring-offset-slate-950"
+        className="group relative flex items-center gap-2.5 py-3 px-4 sm:px-4.5 rounded-full bg-emerald-500 hover:bg-emerald-400 text-white font-bold text-xs shadow-xl shadow-emerald-500/30 hover:shadow-emerald-500/50 hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2"
         aria-label="Open WhatsApp enquiry chat"
       >
         <span className="relative flex h-3 w-3">

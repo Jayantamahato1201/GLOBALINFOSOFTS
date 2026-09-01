@@ -222,32 +222,32 @@ export const FloatingProductCore: React.FC<{ className?: string; onSelectService
   }, [activePreset]);
 
   return (
-    <div className={`grid grid-cols-1 lg:grid-cols-12 gap-8 items-center glass-card-static rounded-3xl p-6 lg:p-10 shadow-2xl ${className}`}>
+    <div className={`grid grid-cols-1 lg:grid-cols-12 gap-8 items-center glass-card-static rounded-3xl p-6 lg:p-10 shadow-2xl border border-slate-200/80 dark:border-white/10 ${className}`}>
       {/* Interactive 3D Canvas Box */}
-      <div className="lg:col-span-6 relative flex flex-col items-center justify-center min-h-[360px] lg:min-h-[420px] rounded-2xl bg-slate-950/50 border border-white/10 overflow-hidden group">
-        <div className="absolute top-4 left-4 z-10 flex items-center gap-2 px-3 py-1 rounded-full glass-card text-xs font-mono text-indigo-300">
-          <span className="w-2 h-2 rounded-full bg-indigo-400 animate-pulse" />
+      <div className="lg:col-span-6 relative flex flex-col items-center justify-center min-h-[360px] lg:min-h-[420px] rounded-2xl bg-slate-100 dark:bg-slate-950/50 border border-slate-200/80 dark:border-white/10 overflow-hidden group">
+        <div className="absolute top-4 left-4 z-10 flex items-center gap-2 px-3 py-1 rounded-full glass-card text-xs font-mono text-cyan-700 dark:text-cyan-300 border-cyan-500/30">
+          <span className="w-2 h-2 rounded-full bg-cyan-500 animate-pulse" />
           <span>3D Architecture Matrix</span>
         </div>
 
         <div ref={containerRef} className="w-full h-full min-h-[360px]" />
 
-        <div className="absolute bottom-4 right-4 z-10 text-[11px] text-slate-400 glass-card px-2.5 py-1 rounded-md">
+        <div className="absolute bottom-4 right-4 z-10 text-[11px] text-slate-500 dark:text-slate-400 glass-card px-2.5 py-1 rounded-md border border-slate-200 dark:border-white/10">
           WebGL Live Shader
         </div>
       </div>
 
       {/* Preset Switcher & Descriptions */}
-      <div className="lg:col-span-6 space-y-6">
+      <div className="lg:col-span-6 space-y-6 text-left">
         <div className="space-y-2">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass-card text-indigo-300 text-xs font-medium tracking-wide">
-            <span className="w-1.5 h-1.5 rounded-full bg-indigo-400"></span>
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass-card text-cyan-700 dark:text-cyan-300 text-xs font-medium tracking-wide border-cyan-500/30">
+            <span className="w-1.5 h-1.5 rounded-full bg-cyan-500"></span>
             <span>Interactive Digital Architecture</span>
           </div>
-          <h3 className="text-2xl lg:text-3xl font-bold tracking-tight text-white font-['Outfit']">
+          <h3 className="text-2xl lg:text-3xl font-bold tracking-tight text-slate-900 dark:text-white font-['Outfit']">
             Engineered For Scale, Speed & Bulletproof Reliability
           </h3>
-          <p className="text-slate-400 text-sm leading-relaxed">
+          <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
             Select a solution layer to inspect our architectural benchmarks and engineering stack:
           </p>
         </div>
@@ -264,20 +264,20 @@ export const FloatingProductCore: React.FC<{ className?: string; onSelectService
                 onClick={() => setActiveTab(preset.id)}
                 className={`flex items-center gap-3 p-3.5 rounded-2xl text-left transition-all duration-200 ${
                   isSelected
-                    ? 'bg-indigo-600/20 border border-indigo-500/60 text-white shadow-lg shadow-indigo-500/15 ring-1 ring-indigo-500/40 backdrop-blur-xl'
-                    : 'glass-card text-slate-400 hover:text-slate-200'
+                    ? 'bg-cyan-500/15 dark:bg-cyan-600/20 border border-cyan-500/60 text-slate-900 dark:text-white shadow-md ring-1 ring-cyan-400'
+                    : 'glass-card text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 border-slate-200 dark:border-white/10'
                 }`}
               >
                 <div
                   className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
-                    isSelected ? 'bg-indigo-500/30 text-indigo-300' : 'bg-white/5 text-slate-400'
+                    isSelected ? 'bg-cyan-500/30 text-cyan-700 dark:text-cyan-300' : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400'
                   }`}
                 >
                   <Icon className="w-5 h-5" />
                 </div>
                 <div className="min-w-0">
-                  <div className="text-xs font-semibold truncate text-white">{preset.name.split(' ')[0]} {preset.name.split(' ')[1]}</div>
-                  <div className="text-[11px] text-slate-400 truncate">{preset.tag}</div>
+                  <div className="text-xs font-semibold truncate text-slate-900 dark:text-white">{preset.name.split(' ')[0]} {preset.name.split(' ')[1]}</div>
+                  <div className="text-[11px] text-slate-500 dark:text-slate-400 truncate">{preset.tag}</div>
                 </div>
               </button>
             );
@@ -285,14 +285,14 @@ export const FloatingProductCore: React.FC<{ className?: string; onSelectService
         </div>
 
         {/* Selected Layer Info */}
-        <div className="p-5 rounded-2xl glass-card space-y-4">
+        <div className="p-5 rounded-2xl glass-card space-y-4 border border-slate-200/80 dark:border-white/10">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-indigo-300 uppercase tracking-wider">{activePreset.tag}</span>
-            <span className="text-xs font-mono px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-medium">
+            <span className="text-xs font-semibold text-cyan-700 dark:text-cyan-300 uppercase tracking-wider">{activePreset.tag}</span>
+            <span className="text-xs font-mono px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 font-medium">
               {activePreset.stats}
             </span>
           </div>
-          <p className="text-slate-300 text-sm leading-relaxed">
+          <p className="text-slate-700 dark:text-slate-300 text-sm leading-relaxed">
             {activePreset.description}
           </p>
 
@@ -300,7 +300,7 @@ export const FloatingProductCore: React.FC<{ className?: string; onSelectService
             <button
               id="btn-explore-layer-service"
               onClick={() => onSelectService?.(activePreset.id)}
-              className="inline-flex items-center gap-2 text-xs font-semibold text-indigo-300 hover:text-indigo-200 transition-colors group/link"
+              className="inline-flex items-center gap-2 text-xs font-semibold text-cyan-700 dark:text-cyan-300 hover:text-cyan-600 dark:hover:text-cyan-200 transition-colors group/link"
             >
               <span>Explore full technical specs & deliverables</span>
               <ArrowRight className="w-4 h-4 transition-transform group-hover/link:translate-x-1" />

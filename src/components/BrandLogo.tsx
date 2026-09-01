@@ -25,7 +25,7 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
         />
       )}
 
-      {/* Exact Vector Emblem of Global InfoSofts Logo */}
+      {/* Exact Vector Emblem of Global InfoSoft Logo */}
       <svg
         viewBox="0 0 500 500"
         className="w-full h-full relative z-10 drop-shadow-md"

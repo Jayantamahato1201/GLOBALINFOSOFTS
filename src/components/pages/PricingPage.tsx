@@ -1,14 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { PRICING_PLANS } from '../../data/companyData';
 import {
   Sparkles,
   CheckCircle2,
   XCircle,
-  ArrowRight,
-  ShieldCheck,
-  Zap,
-  HelpCircle,
-  PhoneCall
+  ArrowRight
 } from 'lucide-react';
 
 interface PricingPageProps {
@@ -16,8 +12,6 @@ interface PricingPageProps {
 }
 
 export const PricingPage: React.FC<PricingPageProps> = ({ onOpenContact }) => {
-  const [billingCycle, setBillingCycle] = useState<'onetime' | 'monthly'>('onetime');
-
   const comparisonRows = [
     { feature: 'Core Billing & POS Engine', starter: true, pro: true, enterprise: true },
     { feature: 'Real-Time Inventory Management', starter: true, pro: true, enterprise: true },
@@ -25,69 +19,76 @@ export const PricingPage: React.FC<PricingPageProps> = ({ onOpenContact }) => {
     { feature: 'GST Tax & E-Invoice Compliance', starter: true, pro: true, enterprise: true },
     { feature: 'Multi-Location Cloud Sync', starter: false, pro: true, enterprise: true },
     { feature: 'Custom ERP Module Development', starter: false, pro: true, enterprise: true },
-    { feature: 'Dedicated Account Manager', starter: false, pro: true, enterprise: true },
-    { feature: 'Custom Mobile App (iOS / Android)', starter: false, pro: 'Add-on', enterprise: true },
+    { feature: 'Dedicated Support Engineer', starter: false, pro: true, enterprise: true },
+    { feature: 'Custom Mobile App (Android / iOS)', starter: false, pro: 'Add-on', enterprise: true },
     { feature: '100% IP & Source Code Transfer', starter: true, pro: true, enterprise: true },
     { feature: 'Free Warranty & Support SLA', starter: '3 Months', pro: '6 Months', enterprise: '1 Year 24/7' }
   ];
 
   return (
-    <div className="pt-24 pb-20 mesh-bg min-h-screen">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
-        {/* Page Header */}
-        <div className="text-center max-w-3xl mx-auto space-y-4">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full glass-card text-indigo-300 text-xs font-semibold uppercase tracking-wider font-mono">
-            <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
-            <span>Transparent Investment Roadmaps</span>
+    <div className="pt-24 pb-20 mesh-bg min-h-screen w-full overflow-hidden transition-colors duration-300">
+      <div className="w-full max-w-[1536px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 space-y-14 relative z-10">
+        {/* Page Header - Asymmetric Full-width */}
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 text-left">
+          <div className="max-w-3xl space-y-3">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full glass-card text-cyan-700 dark:text-cyan-400 text-xs font-semibold uppercase tracking-wider font-mono border-slate-200 dark:border-slate-800">
+              <Sparkles className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" />
+              <span>Transparent Software Packages</span>
+            </div>
+            <h1 className="text-3xl sm:text-5xl font-extrabold text-slate-900 dark:text-white font-['Outfit']">
+              Affordable & Predictable Pricing
+            </h1>
+            <p className="text-slate-600 dark:text-slate-300 text-sm sm:text-base leading-relaxed">
+              No hidden annual traps. Every software delivery from Global InfoSoft includes complete data ownership, free installation and training, and complimentary post-launch support warranty.
+            </p>
           </div>
-          <h1 className="text-3xl sm:text-5xl font-extrabold text-white font-['Outfit']">
-            Clear, Predictable Enterprise Pricing
-          </h1>
-          <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
-            No surprise license renewals. Every custom software package includes 100% source code ownership, complete database sovereignty, and complimentary post-launch support.
-          </p>
+
+          <div className="hidden lg:flex items-center gap-3 px-4 py-2.5 rounded-xl glass-card text-xs text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-800 shrink-0">
+            <span className="w-2 h-2 rounded-full bg-emerald-500" />
+            <span>100% Data Sovereignty • Zero Forced Vendor Lock-In</span>
+          </div>
         </div>
 
         {/* Pricing Cards Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch w-full">
           {PRICING_PLANS.map((plan) => (
             <div
               key={plan.id}
-              className={`p-6 sm:p-8 rounded-3xl glass-panel border flex flex-col justify-between relative transition-all duration-300 ${
+              className={`p-6 sm:p-8 rounded-2xl glass-panel border flex flex-col justify-between relative transition-all duration-200 text-left ${
                 plan.popular
-                  ? 'border-indigo-500/60 shadow-2xl shadow-indigo-500/20 lg:-translate-y-2'
-                  : 'border-white/15 hover:border-indigo-500/30'
+                  ? 'border-cyan-500/60 dark:border-cyan-400/60 shadow-lg'
+                  : 'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
               }`}
             >
               {plan.popular && (
-                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-mono text-[10px] font-bold uppercase tracking-wider shadow-md">
-                  Most Popular for Growing Enterprises
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full btn-primary text-white font-mono text-[10px] font-bold uppercase tracking-wider shadow-sm">
+                  Recommended For Retail & SMEs
                 </div>
               )}
 
               <div>
                 <div className="mb-4">
-                  <h3 className="text-2xl font-bold text-white font-['Outfit']">{plan.name}</h3>
-                  <p className="text-xs text-slate-400 mt-1 min-h-[32px]">{plan.tagline}</p>
+                  <h3 className="text-2xl font-bold text-slate-900 dark:text-white font-['Outfit']">{plan.name}</h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 min-h-[32px]">{plan.tagline}</p>
                 </div>
 
-                <div className="my-6 pb-6 border-b border-white/10">
+                <div className="my-6 pb-6 border-b border-slate-200 dark:border-slate-800">
                   <div className="flex items-baseline gap-1">
-                    <span className="text-4xl sm:text-5xl font-extrabold text-white font-mono tracking-tight">
+                    <span className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white font-mono tracking-tight">
                       {plan.price}
                     </span>
                   </div>
-                  <div className="text-xs text-slate-400 mt-1">{plan.period}</div>
+                  <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">{plan.period}</div>
                 </div>
 
                 {/* Deliverables List */}
-                <div className="space-y-3 mb-8">
-                  <div className="text-[11px] font-mono font-semibold uppercase tracking-wider text-indigo-300">
+                <div className="space-y-2.5 mb-8">
+                  <div className="text-[11px] font-mono font-bold uppercase tracking-wider text-cyan-700 dark:text-cyan-400">
                     Included in Package:
                   </div>
                   {plan.deliverables.map((item, idx) => (
-                    <div key={idx} className="flex items-start gap-2.5 text-xs text-slate-300">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                    <div key={idx} className="flex items-start gap-2.5 text-xs text-slate-700 dark:text-slate-300">
+                      <CheckCircle2 className="w-4 h-4 text-cyan-600 dark:text-cyan-400 shrink-0 mt-0.5" />
                       <span>{item}</span>
                     </div>
                   ))}
@@ -95,20 +96,20 @@ export const PricingPage: React.FC<PricingPageProps> = ({ onOpenContact }) => {
               </div>
 
               {/* Action Button */}
-              <div className="pt-4 border-t border-white/10 space-y-3">
+              <div className="pt-4 border-t border-slate-200 dark:border-slate-800 space-y-2.5">
                 <button
                   onClick={() => onOpenContact(`Inquiry for Pricing Plan: ${plan.name} (${plan.price})`)}
-                  className={`w-full py-3.5 px-4 rounded-xl font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all ${
+                  className={`w-full py-3 px-4 rounded-xl font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all ${
                     plan.popular
-                      ? 'btn-primary text-white shadow-xl'
-                      : 'glass-card text-white hover:bg-white/10 hover:border-indigo-500/40'
+                      ? 'btn-primary text-white'
+                      : 'glass-card text-slate-900 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800 border-slate-200 dark:border-slate-800'
                   }`}
                 >
                   <span>Select {plan.name}</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </button>
-                <div className="text-center text-[11px] text-slate-400 font-mono">
-                  SLA: {plan.supportLevel}
+                <div className="text-center text-[11px] text-slate-500 dark:text-slate-400 font-mono">
+                  SLA Support: {plan.supportLevel}
                 </div>
               </div>
             </div>
@@ -116,59 +117,59 @@ export const PricingPage: React.FC<PricingPageProps> = ({ onOpenContact }) => {
         </div>
 
         {/* Feature Comparison Table */}
-        <div className="p-6 sm:p-8 rounded-3xl glass-panel border border-white/15 space-y-6">
-          <div className="text-center sm:text-left">
-            <h2 className="text-2xl font-bold text-white font-['Outfit']">Detailed Package Comparison</h2>
-            <p className="text-xs sm:text-sm text-slate-400">
+        <div className="p-6 sm:p-8 rounded-2xl glass-panel border border-slate-200 dark:border-slate-800 space-y-6 w-full text-left">
+          <div className="text-left">
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white font-['Outfit']">Detailed Package Comparison</h2>
+            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
               Evaluate features across our core software tiers to find the perfect fit for your operational scale.
             </p>
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs text-slate-300 border-collapse">
+            <table className="w-full text-left text-xs text-slate-700 dark:text-slate-300 border-collapse">
               <thead>
-                <tr className="border-b border-white/10 text-[11px] font-mono uppercase tracking-wider text-slate-400">
+                <tr className="border-b border-slate-200 dark:border-slate-800 text-[11px] font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400">
                   <th className="py-3 px-4">Feature / Deliverable</th>
-                  <th className="py-3 px-4 text-center">Starter Business</th>
-                  <th className="py-3 px-4 text-center text-indigo-300">Professional Suite</th>
+                  <th className="py-3 px-4 text-center">Starter POS</th>
+                  <th className="py-3 px-4 text-center text-cyan-700 dark:text-cyan-400">Professional Suite</th>
                   <th className="py-3 px-4 text-center">Enterprise Custom</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/5">
+              <tbody className="divide-y divide-slate-200 dark:border-slate-800">
                 {comparisonRows.map((row, idx) => (
-                  <tr key={idx} className="hover:bg-white/[0.02] transition-colors">
-                    <td className="py-3.5 px-4 font-medium text-white">{row.feature}</td>
+                  <tr key={idx} className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
+                    <td className="py-3.5 px-4 font-medium text-slate-900 dark:text-white">{row.feature}</td>
                     <td className="py-3.5 px-4 text-center">
                       {typeof row.starter === 'boolean' ? (
                         row.starter ? (
-                          <CheckCircle2 className="w-4 h-4 text-emerald-400 mx-auto" />
+                          <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 mx-auto" />
                         ) : (
-                          <XCircle className="w-4 h-4 text-slate-600 mx-auto" />
+                          <XCircle className="w-4 h-4 text-slate-300 dark:text-slate-600 mx-auto" />
                         )
                       ) : (
-                        <span className="font-mono text-slate-400">{row.starter}</span>
+                        <span className="font-mono text-slate-500 dark:text-slate-400">{row.starter}</span>
                       )}
                     </td>
-                    <td className="py-3.5 px-4 text-center bg-indigo-500/5">
+                    <td className="py-3.5 px-4 text-center bg-cyan-500/5">
                       {typeof row.pro === 'boolean' ? (
                         row.pro ? (
-                          <CheckCircle2 className="w-4 h-4 text-indigo-400 mx-auto" />
+                          <CheckCircle2 className="w-4 h-4 text-cyan-600 dark:text-cyan-400 mx-auto" />
                         ) : (
-                          <XCircle className="w-4 h-4 text-slate-600 mx-auto" />
+                          <XCircle className="w-4 h-4 text-slate-300 dark:text-slate-600 mx-auto" />
                         )
                       ) : (
-                        <span className="font-mono text-indigo-300 font-semibold">{row.pro}</span>
+                        <span className="font-mono text-cyan-700 dark:text-cyan-400 font-semibold">{row.pro}</span>
                       )}
                     </td>
                     <td className="py-3.5 px-4 text-center">
                       {typeof row.enterprise === 'boolean' ? (
                         row.enterprise ? (
-                          <CheckCircle2 className="w-4 h-4 text-emerald-400 mx-auto" />
+                          <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 mx-auto" />
                         ) : (
-                          <XCircle className="w-4 h-4 text-slate-600 mx-auto" />
+                          <XCircle className="w-4 h-4 text-slate-300 dark:text-slate-600 mx-auto" />
                         )
                       ) : (
-                        <span className="font-mono text-emerald-400 font-semibold">{row.enterprise}</span>
+                        <span className="font-mono text-emerald-600 dark:text-emerald-400 font-semibold">{row.enterprise}</span>
                       )}
                     </td>
                   </tr>
