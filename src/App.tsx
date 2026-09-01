@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Analytics } from '@vercel/analytics/react';
 import { ThemeProvider } from './context/ThemeContext';
 import { Navbar } from './components/Navbar';
 import { HomePage } from './components/pages/HomePage';
@@ -273,6 +274,9 @@ function MainAppContent() {
 
       {/* Floating WhatsApp Enquiry Widget */}
       <WhatsAppWidget />
+
+      {/* Vercel Web Analytics */}
+      <Analytics />
     </div>
   );
 }
