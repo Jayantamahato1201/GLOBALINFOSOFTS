@@ -44,25 +44,25 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({ onOpenProject }) => 
       <div
         key={project.id}
         onClick={() => onOpenProject(project)}
-        className="h-full min-h-[375px] rounded-2xl project-card-gradient border border-slate-200 dark:border-slate-800 hover:border-cyan-500 dark:hover:border-cyan-400/80 transition-all duration-250 overflow-hidden cursor-pointer group flex flex-col justify-between text-left"
+        className="h-full rounded-xl project-card-gradient border border-slate-200 dark:border-slate-800 hover:border-cyan-500 dark:hover:border-cyan-400/80 transition-all duration-200 overflow-hidden cursor-pointer group flex flex-col justify-between text-left"
       >
-        <div className="p-5 space-y-3 flex-1 flex flex-col justify-between">
+        <div className="p-3.5 sm:p-4 space-y-2 flex-1 flex flex-col justify-between">
           {/* Header & Client */}
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             <div className="flex items-center justify-between gap-2 flex-wrap">
-              <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider border ${badgeColors[idx % 4]}`}>
+              <span className={`px-2 py-0.5 rounded-full text-[9.5px] font-mono font-bold uppercase tracking-wider border ${badgeColors[idx % 4]}`}>
                 {project.industry}
               </span>
-              <span className="text-[11px] text-slate-500 dark:text-slate-400 font-mono font-medium">
+              <span className="text-[10.5px] text-slate-500 dark:text-slate-400 font-mono font-medium">
                 {project.duration}
               </span>
             </div>
 
             <div>
-              <div className="text-[11px] text-cyan-700 dark:text-cyan-400 font-mono font-semibold uppercase tracking-wider mb-0.5">
+              <div className="text-[10px] text-cyan-700 dark:text-cyan-400 font-mono font-semibold uppercase tracking-wider mb-0.5">
                 Client: {project.client}
               </div>
-              <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white group-hover:text-cyan-600 dark:group-hover:text-cyan-300 transition-colors font-['Outfit'] leading-snug line-clamp-1">
+              <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white group-hover:text-cyan-600 dark:group-hover:text-cyan-300 transition-colors font-['Outfit'] leading-snug line-clamp-1">
                 {project.title}
               </h3>
             </div>
@@ -72,27 +72,27 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({ onOpenProject }) => 
             </p>
 
             {/* Compact Solution box */}
-            <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/70 border border-slate-200/90 dark:border-slate-800 text-xs space-y-0.5">
-              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-700 dark:text-cyan-400 block">
+            <div className="p-2 rounded-lg bg-slate-50 dark:bg-slate-900/70 border border-slate-200/90 dark:border-slate-800 text-xs space-y-0.5">
+              <span className="text-[9.5px] font-mono font-bold uppercase tracking-wider text-slate-700 dark:text-cyan-400 block">
                 Delivered Solution:
               </span>
-              <p className="text-slate-600 dark:text-slate-300 text-[11px] line-clamp-2 leading-tight">
+              <p className="text-slate-600 dark:text-slate-300 text-[10.5px] line-clamp-2 leading-tight">
                 {project.solution}
               </p>
             </div>
           </div>
 
           {/* Footer / Tech Stack & CTA */}
-          <div className="space-y-2.5 pt-2.5 border-t border-slate-200 dark:border-slate-800/80">
+          <div className="space-y-1.5 pt-1.5 border-t border-slate-200 dark:border-slate-800/80">
             {/* Tech stack */}
             <div className="flex flex-wrap gap-1">
               {project.technologies.slice(0, 3).map((tech, i) => (
-                <span key={i} className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-mono text-[10px]">
+                <span key={i} className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-mono text-[9.5px]">
                   {tech}
                 </span>
               ))}
               {project.technologies.length > 3 && (
-                <span className="px-1.5 py-0.5 text-[10px] font-mono text-slate-500 dark:text-slate-400 font-medium">
+                <span className="px-1 py-0.5 text-[9.5px] font-mono text-slate-500 dark:text-slate-400 font-medium">
                   +{project.technologies.length - 3}
                 </span>
               )}
@@ -100,7 +100,7 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({ onOpenProject }) => 
 
             <div className="flex items-center justify-between text-xs text-cyan-700 dark:text-cyan-400 font-bold group-hover:text-cyan-800 dark:group-hover:text-cyan-300 transition-colors">
               <span>View Case Study</span>
-              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
             </div>
           </div>
         </div>
@@ -109,16 +109,16 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({ onOpenProject }) => 
   };
 
   return (
-    <div className="pt-24 pb-20 mesh-bg min-h-screen w-full overflow-hidden transition-colors duration-300">
-      <div className="w-full max-w-[1536px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 space-y-10 relative z-10">
+    <div className="pt-16 sm:pt-20 pb-8 mesh-bg w-full overflow-hidden transition-colors duration-300">
+      <div className="w-full max-w-[1536px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 space-y-3.5 relative z-10">
         {/* Header - Asymmetric Full-width */}
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 text-left">
-          <div className="max-w-3xl space-y-2.5">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full glass-card text-cyan-700 dark:text-cyan-300 text-xs font-semibold uppercase tracking-wider font-mono border-cyan-500/30">
-              <Briefcase className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" />
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-2 text-left">
+          <div className="max-w-3xl space-y-1">
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full glass-card text-cyan-700 dark:text-cyan-300 text-[11px] font-semibold uppercase tracking-wider font-mono border-cyan-500/30">
+              <Briefcase className="w-3 h-3 text-cyan-600 dark:text-cyan-400" />
               <span>Proven Software Deployments</span>
             </div>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 dark:text-white font-['Outfit']">
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-slate-900 dark:text-white font-['Outfit']">
               Featured Client Projects & Case Studies
             </h1>
             <p className="text-slate-600 dark:text-slate-300 text-xs sm:text-sm leading-relaxed">
@@ -128,13 +128,13 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({ onOpenProject }) => 
         </div>
 
         {/* Filter Bar */}
-        <div className="p-3.5 rounded-2xl glass-panel border border-slate-200 dark:border-slate-800 flex flex-col md:flex-row items-center justify-between gap-3 w-full">
-          <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 scrollbar-none">
+        <div className="p-2 sm:p-2.5 rounded-xl glass-panel border border-slate-200 dark:border-slate-800 flex flex-col md:flex-row items-center justify-between gap-2 w-full">
+          <div className="flex items-center gap-1.5 overflow-x-auto w-full md:w-auto pb-0.5 md:pb-0 scrollbar-none">
             {categories.map((cat) => (
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
+                className={`px-2.5 py-1 rounded-lg text-xs font-semibold whitespace-nowrap transition-all ${
                   selectedCategory === cat
                     ? 'btn-primary text-white shadow-sm'
                     : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white glass-card'
@@ -145,25 +145,25 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({ onOpenProject }) => 
             ))}
           </div>
 
-          <div className="relative w-full md:w-72">
-            <Search className="w-4 h-4 text-cyan-600 dark:text-cyan-400 absolute left-3 top-1/2 -translate-y-1/2" />
+          <div className="relative w-full md:w-64">
+            <Search className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               placeholder="Search case studies..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 rounded-xl glass-input text-xs"
+              className="w-full pl-8 pr-2.5 py-1 rounded-lg glass-input text-xs"
             />
           </div>
         </div>
 
         {/* Projects Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-3.5 w-full">
           {filteredProjects.map((project, idx) => renderProjectCard(project, idx))}
         </div>
 
         {/* 6-Stage Engineering Process Lifecycle */}
-        <div className="pt-8 w-full">
+        <div className="pt-2 w-full">
           <ProcessSection />
         </div>
       </div>

@@ -172,7 +172,7 @@ function MainAppContent() {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--bg-body)] text-[var(--text-body)] selection:bg-cyan-500/30 selection:text-cyan-200 flex flex-col justify-between transition-colors duration-300">
+    <div className="min-h-screen bg-[var(--bg-body)] text-[var(--text-body)] selection:bg-cyan-500/30 selection:text-cyan-200 flex flex-col transition-colors duration-300">
       {/* Universal Fixed Navigation with Theme Toggle */}
       <Navbar
         currentPage={currentPage}
@@ -182,7 +182,7 @@ function MainAppContent() {
       />
 
       {/* Main Page View Switcher */}
-      <main className="flex-grow">
+      <main className="flex-1 w-full">
         {currentPage === 'home' && (
           <HomePage
             onNavigatePage={(page) => navigateToPage(page)}
@@ -194,7 +194,7 @@ function MainAppContent() {
         )}
 
         {currentPage === 'services' && (
-          <div className="pt-24 pb-16 mesh-bg min-h-screen">
+          <div className="pt-16 sm:pt-20 pb-8 mesh-bg w-full">
             <ServicesSection
               onSelectService={(service) => openServiceModal(service)}
               onExplore3DModel={() => navigateToPage('solutions')}
@@ -222,7 +222,7 @@ function MainAppContent() {
         )}
 
         {currentPage === 'about' && (
-          <div className="pt-24 pb-16 mesh-bg min-h-screen">
+          <div className="pt-16 sm:pt-20 pb-8 mesh-bg w-full">
             <AboutSection />
           </div>
         )}
@@ -243,7 +243,7 @@ function MainAppContent() {
         )}
 
         {currentPage === 'contact' && (
-          <div className="pt-24 pb-16 mesh-bg min-h-screen">
+          <div className="pt-16 sm:pt-20 pb-8 mesh-bg w-full">
             <ContactSection prefilledScope={prefilledContactScope} />
           </div>
         )}

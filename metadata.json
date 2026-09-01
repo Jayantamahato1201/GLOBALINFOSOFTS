@@ -1,6 +1,8 @@
 {
-  "name": "Global InfoSofts - Retail POS, Billing & Custom Software Jamshedpur",
-  "description": "Global InfoSofts: Official software development company in Jamshedpur providing Retail POS, Supermarket Billing, Optical Store Software, Custom ERPs & Web Development.",
+  "name": "Remix Global InfoSofts - Enterprise Software \u0026 Digital Solutions",
+  "description": "Global InfoSofts: Enterprise Software Engineering, Custom Web \u0026 Mobile Applications, ERP/CRM Systems, Retail POS \u0026 24/7 Technical Support.",
   "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
 }

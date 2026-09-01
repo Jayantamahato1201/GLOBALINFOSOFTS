@@ -156,6 +156,40 @@ html.light .mesh-bg-ambient, [data-theme="light"] .mesh-bg-ambient {
     radial-gradient(at 95% 15%, rgba(2, 132, 199, 0.02) 0, transparent 35%);
 }
 
+/* Ambient Abstract Floating Blur Shapes */
+.abstract-shape-blue {
+  position: absolute;
+  border-radius: 9999px;
+  pointer-events: none;
+  filter: blur(80px);
+  background: radial-gradient(circle, rgba(14, 165, 233, 0.14) 0%, rgba(2, 132, 199, 0.04) 70%, transparent 100%);
+  z-index: 0;
+}
+
+.abstract-shape-pink {
+  position: absolute;
+  border-radius: 9999px;
+  pointer-events: none;
+  filter: blur(80px);
+  background: radial-gradient(circle, rgba(236, 72, 153, 0.10) 0%, rgba(219, 39, 119, 0.03) 70%, transparent 100%);
+  z-index: 0;
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    opacity: 0.35;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.65;
+    transform: scale(1.08);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 8s ease-in-out infinite;
+}
+
 /* Glass Card & Surfaces */
 .glass-card {
   background-color: var(--surface);
