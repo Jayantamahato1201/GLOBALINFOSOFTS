@@ -201,9 +201,6 @@ export const ServicesCarousel: React.FC<ServicesCarouselProps> = ({
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
-            <div className="text-[11px] font-mono text-slate-500 dark:text-slate-400 px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10">
-              Hover over cards to pause • Drag to explore
-            </div>
             <button
               onClick={scrollRight}
               className="w-8 h-8 rounded-full glass-panel flex items-center justify-center text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:border-cyan-500/50 transition-all shadow-sm active:scale-95 cursor-pointer"

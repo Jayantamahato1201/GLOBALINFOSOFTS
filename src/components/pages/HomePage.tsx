@@ -153,7 +153,7 @@ const FacetedProjectRibbon: React.FC<{
       <svg
         viewBox="0 0 500 200"
         preserveAspectRatio="none"
-        className={`w-full ${isLarge ? 'h-24 sm:h-28 md:h-32' : 'h-18 sm:h-20 md:h-22'}`}
+        className={`w-full ${isLarge ? 'h-14 sm:h-16 md:h-18' : 'h-9 sm:h-10 md:h-11'}`}
       >
         <defs>
           <linearGradient id={`gradFront-${idKey}`} x1="0%" y1="0%" x2="100%" y2="100%">
@@ -193,10 +193,10 @@ const FacetedProjectRibbon: React.FC<{
       </svg>
 
       {/* Label Content */}
-      <div className={`absolute inset-x-0 bottom-0 ${isLarge ? 'p-5 sm:p-6' : 'p-3.5 sm:p-4'} text-left`}>
+      <div className={`absolute inset-x-0 bottom-0 ${isLarge ? 'p-3 sm:p-4' : 'px-3 py-1 sm:px-3.5 sm:py-1.5'} text-left`}>
         <h3
-          className={`text-white font-['Sora'] font-extrabold tracking-tight leading-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)] ${
-            isLarge ? 'text-xl sm:text-2xl md:text-3xl' : 'text-sm sm:text-base md:text-lg'
+          className={`text-white font-['Sora'] font-extrabold tracking-tight leading-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] ${
+            isLarge ? 'text-sm sm:text-base md:text-lg' : 'text-xs sm:text-[13px]'
           }`}
         >
           {title}
@@ -436,22 +436,22 @@ export const HomePage: React.FC<HomePageProps> = ({
       {/* 3. OUR SOFTWARE SOLUTIONS (3 LIVE BROWSER MOCKUPS) */}
       <SoftwareSolutionsBrowserSection onSelectProject={onSelectProject} />
 
-      {/* 2. PROJECTS SECTION (5-CARD FACETED GRID) */}
+      {/* 2. PROJECTS SECTION (COMPACT 5-CARD FACETED GRID) */}
       <section id="projects" className="py-6 sm:py-8 relative z-10 border-t border-slate-200/60 dark:border-slate-800/60 bg-[var(--bg-body)]">
-        <div className="w-full px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Section Header */}
           <motion.div
-            initial={{ opacity: 0, y: 30, scale: 0.96 }}
+            initial={{ opacity: 0, y: 25, scale: 0.97 }}
             whileInView={{ opacity: 1, y: 0, scale: 1 }}
             viewport={{ once: false, amount: 0.15 }}
-            transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
             className="mb-4 sm:mb-5 flex flex-col md:flex-row justify-between items-start md:items-end gap-2.5 text-left"
           >
             <div>
               <span className="font-['JetBrains_Mono'] text-xs font-semibold text-cyan-600 dark:text-cyan-400 tracking-widest uppercase mb-1 block">
                 Our Software Solutions
               </span>
-              <h2 className="font-['Sora'] text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 dark:text-white tracking-tight">
+              <h2 className="font-['Sora'] text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
                 Projects
               </h2>
             </div>
@@ -465,163 +465,173 @@ export const HomePage: React.FC<HomePageProps> = ({
             </button>
           </motion.div>
 
-          {/* 5-Card Faceted Ribbon Grid: 1 Large Left Card + 2x2 Right Cards */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5 items-stretch">
-            {/* Left Column: 1 Large Full-Height Card - "Web Development Projects" */}
+          {/* 5-Card Faceted Ribbon Grid: Compact & Balanced */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3.5 sm:gap-4 items-stretch">
+            {/* Left Column: 1 Featured Card - "Web Development Projects" */}
             <motion.div
-              initial={{ opacity: 0, y: 35, scale: 0.94 }}
+              initial={{ opacity: 0, y: 25, scale: 0.96 }}
               whileInView={{ opacity: 1, y: 0, scale: 1 }}
               viewport={{ once: false, amount: 0.15 }}
-              transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-              whileHover={{ y: -6, transition: { duration: 0.25 } }}
-              className="relative rounded-2xl sm:rounded-3xl overflow-hidden group cursor-default shadow-lg border border-slate-200/80 dark:border-white/10 hover:border-[#FF0055]/70 transition-all duration-300 min-h-[360px] sm:min-h-[440px] lg:min-h-[500px] h-full flex flex-col select-none bg-slate-950"
+              transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+              whileHover={{ y: -4, transition: { duration: 0.2 } }}
+              onClick={() => onNavigatePage('projects')}
+              className="relative rounded-2xl overflow-hidden group cursor-pointer shadow-md hover:shadow-xl border border-slate-200/80 dark:border-white/10 hover:border-[#FF0055]/70 transition-all duration-300 h-[260px] sm:h-[300px] lg:h-[316px] flex flex-col select-none bg-slate-950"
             >
               {/* Browser Window Header Mockup */}
-              <div className="bg-slate-900/95 dark:bg-[#060913] border-b border-white/10 px-4 py-2 flex items-center justify-between z-10 shrink-0">
+              <div className="bg-slate-900/95 dark:bg-[#060913] border-b border-white/10 px-3.5 py-1.5 flex items-center justify-between z-10 shrink-0">
                 <div className="flex items-center gap-1.5">
-                  <div className="w-2.5 h-2.5 rounded-full bg-rose-500/90" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-amber-500/90" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/90" />
+                  <div className="w-2 h-2 rounded-full bg-rose-500/90" />
+                  <div className="w-2 h-2 rounded-full bg-amber-500/90" />
+                  <div className="w-2 h-2 rounded-full bg-emerald-500/90" />
                 </div>
-                <div className="bg-slate-800/90 dark:bg-white/5 text-[11px] font-['JetBrains_Mono'] text-slate-300 px-3 py-0.5 rounded-full flex items-center gap-1.5 border border-white/5">
-                  <span className="text-emerald-400 text-[8px] animate-pulse">●</span>
-                  <span>sevenfinancials.in</span>
+                <div className="bg-slate-800/90 dark:bg-white/5 text-[10px] font-['JetBrains_Mono'] text-slate-300 px-2.5 py-0.5 rounded-full flex items-center gap-1.5 border border-white/5 truncate max-w-[190px]">
+                  <span className="text-emerald-400 text-[7px] animate-pulse">●</span>
+                  <span className="truncate">sevenfinancials.in</span>
                 </div>
-                <span className="text-[10px] font-['JetBrains_Mono'] font-bold text-cyan-400 uppercase tracking-wider">
+                <span className="text-[9px] font-['JetBrains_Mono'] font-bold text-cyan-400 uppercase tracking-wider">
                   LIVE DEMO
                 </span>
               </div>
 
-              <div className="relative flex-1 w-full h-full overflow-hidden">
+              <div className="relative flex-1 w-full h-full overflow-hidden bg-slate-950">
                 <img
-                  src="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=1200&q=80"
+                  src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80"
                   alt="Web Development Projects"
                   referrerPolicy="no-referrer"
-                  className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out pointer-events-none"
+                  loading="lazy"
+                  className="w-full h-full object-cover object-top filter brightness-95 group-hover:scale-105 transition-transform duration-500 ease-out pointer-events-none"
                 />
-                <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-70 group-hover:opacity-40 transition-opacity" />
+                <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-60 group-hover:opacity-30 transition-opacity" />
               </div>
               <FacetedProjectRibbon title="Web Development Projects" idKey="web-dev" isLarge />
             </motion.div>
 
-            {/* Right Column: 2x2 Grid of 4 Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
+            {/* Right Column: 2x2 Grid of 4 Compact Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4">
               {/* Card 1: Mobile Applications */}
               <motion.div
-                initial={{ opacity: 0, y: 30, scale: 0.93 }}
+                initial={{ opacity: 0, y: 20, scale: 0.96 }}
                 whileInView={{ opacity: 1, y: 0, scale: 1 }}
                 viewport={{ once: false, amount: 0.15 }}
-                transition={{ duration: 0.45, delay: 0.05, ease: [0.22, 1, 0.36, 1] }}
-                whileHover={{ y: -5, transition: { duration: 0.2 } }}
-                className="relative rounded-2xl sm:rounded-3xl overflow-hidden group cursor-default shadow-lg border border-slate-200/80 dark:border-white/10 hover:border-[#FF0055]/70 transition-all duration-300 h-[220px] sm:h-[240px] lg:h-[245px] flex flex-col select-none bg-slate-950"
+                transition={{ duration: 0.4, delay: 0.05, ease: [0.22, 1, 0.36, 1] }}
+                whileHover={{ y: -3, transition: { duration: 0.2 } }}
+                onClick={() => onNavigatePage('projects')}
+                className="relative rounded-xl sm:rounded-2xl overflow-hidden group cursor-pointer shadow-sm hover:shadow-lg border border-slate-200/80 dark:border-white/10 hover:border-[#FF0055]/70 transition-all duration-300 h-[125px] sm:h-[142px] lg:h-[150px] flex flex-col select-none bg-slate-950"
               >
-                <div className="bg-slate-900/95 dark:bg-[#060913] border-b border-white/10 px-3 py-1 flex items-center justify-between z-10 shrink-0">
-                  <div className="flex items-center gap-1.5">
-                    <div className="w-2 h-2 rounded-full bg-rose-500/90" />
-                    <div className="w-2 h-2 rounded-full bg-amber-500/90" />
-                    <div className="w-2 h-2 rounded-full bg-emerald-500/90" />
+                <div className="bg-slate-900/95 dark:bg-[#060913] border-b border-white/10 px-2.5 py-1 flex items-center justify-between z-10 shrink-0">
+                  <div className="flex items-center gap-1">
+                    <div className="w-1.5 h-1.5 rounded-full bg-rose-500/90" />
+                    <div className="w-1.5 h-1.5 rounded-full bg-amber-500/90" />
+                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500/90" />
                   </div>
-                  <span className="text-[9px] font-['JetBrains_Mono'] text-slate-400">app.globalinfosofts.com</span>
-                  <span className="text-[9px] font-['JetBrains_Mono'] font-bold text-violet-400">APP DEMO</span>
+                  <span className="text-[9px] font-['JetBrains_Mono'] text-slate-400 truncate max-w-[120px]">app.globalinfosofts.com</span>
+                  <span className="text-[8px] font-['JetBrains_Mono'] font-bold text-violet-400">APP</span>
                 </div>
-                <div className="relative flex-1 overflow-hidden">
+                <div className="relative flex-1 overflow-hidden bg-slate-950">
                   <img
-                    src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=1200&q=80"
+                    src="https://images.unsplash.com/photo-1551650975-87deedd944c3?auto=format&fit=crop&w=800&q=80"
                     alt="Mobile Applications"
                     referrerPolicy="no-referrer"
-                    className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out pointer-events-none"
+                    loading="lazy"
+                    className="w-full h-full object-cover object-center filter brightness-95 group-hover:scale-105 transition-transform duration-500 ease-out pointer-events-none"
                   />
-                  <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity" />
+                  <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-black/45 via-transparent to-transparent opacity-60 group-hover:opacity-30 transition-opacity" />
                 </div>
                 <FacetedProjectRibbon title="Mobile Applications" idKey="mobile-app" />
               </motion.div>
 
               {/* Card 2: Digital Marketing */}
               <motion.div
-                initial={{ opacity: 0, y: 30, scale: 0.93 }}
+                initial={{ opacity: 0, y: 20, scale: 0.96 }}
                 whileInView={{ opacity: 1, y: 0, scale: 1 }}
                 viewport={{ once: false, amount: 0.15 }}
-                transition={{ duration: 0.45, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
-                whileHover={{ y: -5, transition: { duration: 0.2 } }}
-                className="relative rounded-2xl sm:rounded-3xl overflow-hidden group cursor-default shadow-lg border border-slate-200/80 dark:border-white/10 hover:border-[#FF0055]/70 transition-all duration-300 h-[220px] sm:h-[240px] lg:h-[245px] flex flex-col select-none bg-slate-950"
+                transition={{ duration: 0.4, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+                whileHover={{ y: -3, transition: { duration: 0.2 } }}
+                onClick={() => onNavigatePage('projects')}
+                className="relative rounded-xl sm:rounded-2xl overflow-hidden group cursor-pointer shadow-sm hover:shadow-lg border border-slate-200/80 dark:border-white/10 hover:border-[#FF0055]/70 transition-all duration-300 h-[125px] sm:h-[142px] lg:h-[150px] flex flex-col select-none bg-slate-950"
               >
-                <div className="bg-slate-900/95 dark:bg-[#060913] border-b border-white/10 px-3 py-1 flex items-center justify-between z-10 shrink-0">
-                  <div className="flex items-center gap-1.5">
-                    <div className="w-2 h-2 rounded-full bg-rose-500/90" />
-                    <div className="w-2 h-2 rounded-full bg-amber-500/90" />
-                    <div className="w-2 h-2 rounded-full bg-emerald-500/90" />
+                <div className="bg-slate-900/95 dark:bg-[#060913] border-b border-white/10 px-2.5 py-1 flex items-center justify-between z-10 shrink-0">
+                  <div className="flex items-center gap-1">
+                    <div className="w-1.5 h-1.5 rounded-full bg-rose-500/90" />
+                    <div className="w-1.5 h-1.5 rounded-full bg-amber-500/90" />
+                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500/90" />
                   </div>
-                  <span className="text-[9px] font-['JetBrains_Mono'] text-slate-400">growth.analytics.io</span>
-                  <span className="text-[9px] font-['JetBrains_Mono'] font-bold text-fuchsia-400">ANALYTICS</span>
+                  <span className="text-[9px] font-['JetBrains_Mono'] text-slate-400 truncate max-w-[120px]">growth.analytics.io</span>
+                  <span className="text-[8px] font-['JetBrains_Mono'] font-bold text-fuchsia-400">SEO</span>
                 </div>
-                <div className="relative flex-1 overflow-hidden">
+                <div className="relative flex-1 overflow-hidden bg-slate-950">
                   <img
-                    src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80"
+                    src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80"
                     alt="Digital Marketing"
                     referrerPolicy="no-referrer"
-                    className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out pointer-events-none"
+                    loading="lazy"
+                    className="w-full h-full object-cover object-center filter brightness-95 group-hover:scale-105 transition-transform duration-500 ease-out pointer-events-none"
                   />
-                  <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity" />
+                  <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-black/45 via-transparent to-transparent opacity-60 group-hover:opacity-30 transition-opacity" />
                 </div>
                 <FacetedProjectRibbon title="Digital Marketing" idKey="digital-marketing" />
               </motion.div>
 
               {/* Card 3: E-Commerce Solutions */}
               <motion.div
-                initial={{ opacity: 0, y: 30, scale: 0.93 }}
+                initial={{ opacity: 0, y: 20, scale: 0.96 }}
                 whileInView={{ opacity: 1, y: 0, scale: 1 }}
                 viewport={{ once: false, amount: 0.15 }}
-                transition={{ duration: 0.45, delay: 0.19, ease: [0.22, 1, 0.36, 1] }}
-                whileHover={{ y: -5, transition: { duration: 0.2 } }}
-                className="relative rounded-2xl sm:rounded-3xl overflow-hidden group cursor-default shadow-lg border border-slate-200/80 dark:border-white/10 hover:border-[#FF0055]/70 transition-all duration-300 h-[220px] sm:h-[240px] lg:h-[245px] flex flex-col select-none bg-slate-950"
+                transition={{ duration: 0.4, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+                whileHover={{ y: -3, transition: { duration: 0.2 } }}
+                onClick={() => onNavigatePage('projects')}
+                className="relative rounded-xl sm:rounded-2xl overflow-hidden group cursor-pointer shadow-sm hover:shadow-lg border border-slate-200/80 dark:border-white/10 hover:border-[#FF0055]/70 transition-all duration-300 h-[125px] sm:h-[142px] lg:h-[150px] flex flex-col select-none bg-slate-950"
               >
-                <div className="bg-slate-900/95 dark:bg-[#060913] border-b border-white/10 px-3 py-1 flex items-center justify-between z-10 shrink-0">
-                  <div className="flex items-center gap-1.5">
-                    <div className="w-2 h-2 rounded-full bg-rose-500/90" />
-                    <div className="w-2 h-2 rounded-full bg-amber-500/90" />
-                    <div className="w-2 h-2 rounded-full bg-emerald-500/90" />
+                <div className="bg-slate-900/95 dark:bg-[#060913] border-b border-white/10 px-2.5 py-1 flex items-center justify-between z-10 shrink-0">
+                  <div className="flex items-center gap-1">
+                    <div className="w-1.5 h-1.5 rounded-full bg-rose-500/90" />
+                    <div className="w-1.5 h-1.5 rounded-full bg-amber-500/90" />
+                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500/90" />
                   </div>
-                  <span className="text-[9px] font-['JetBrains_Mono'] text-slate-400">store.sevenfinancials.in</span>
-                  <span className="text-[9px] font-['JetBrains_Mono'] font-bold text-emerald-400">STORE DEMO</span>
+                  <span className="text-[9px] font-['JetBrains_Mono'] text-slate-400 truncate max-w-[120px]">store.sevenfinancials.in</span>
+                  <span className="text-[8px] font-['JetBrains_Mono'] font-bold text-emerald-400">SHOP</span>
                 </div>
-                <div className="relative flex-1 overflow-hidden">
+                <div className="relative flex-1 overflow-hidden bg-slate-950">
                   <img
-                    src="https://images.unsplash.com/photo-1556742049-0a67e5572263?auto=format&fit=crop&w=1200&q=80"
+                    src="https://images.unsplash.com/photo-1556740758-90de374c12ad?auto=format&fit=crop&w=800&q=80"
                     alt="E-Commerce Solutions"
                     referrerPolicy="no-referrer"
-                    className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out pointer-events-none"
+                    loading="lazy"
+                    className="w-full h-full object-cover object-center filter brightness-95 group-hover:scale-105 transition-transform duration-500 ease-out pointer-events-none"
                   />
-                  <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity" />
+                  <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-black/45 via-transparent to-transparent opacity-60 group-hover:opacity-30 transition-opacity" />
                 </div>
                 <FacetedProjectRibbon title="E-Commerce Solutions" idKey="ecommerce-sol" />
               </motion.div>
 
               {/* Card 4: UI/UX Design */}
               <motion.div
-                initial={{ opacity: 0, y: 30, scale: 0.93 }}
+                initial={{ opacity: 0, y: 20, scale: 0.96 }}
                 whileInView={{ opacity: 1, y: 0, scale: 1 }}
                 viewport={{ once: false, amount: 0.15 }}
-                transition={{ duration: 0.45, delay: 0.26, ease: [0.22, 1, 0.36, 1] }}
-                whileHover={{ y: -5, transition: { duration: 0.2 } }}
-                className="relative rounded-2xl sm:rounded-3xl overflow-hidden group cursor-default shadow-lg border border-slate-200/80 dark:border-white/10 hover:border-[#FF0055]/70 transition-all duration-300 h-[220px] sm:h-[240px] lg:h-[245px] flex flex-col select-none bg-slate-950"
+                transition={{ duration: 0.4, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+                whileHover={{ y: -3, transition: { duration: 0.2 } }}
+                onClick={() => onNavigatePage('projects')}
+                className="relative rounded-xl sm:rounded-2xl overflow-hidden group cursor-pointer shadow-sm hover:shadow-lg border border-slate-200/80 dark:border-white/10 hover:border-[#FF0055]/70 transition-all duration-300 h-[125px] sm:h-[142px] lg:h-[150px] flex flex-col select-none bg-slate-950"
               >
-                <div className="bg-slate-900/95 dark:bg-[#060913] border-b border-white/10 px-3 py-1 flex items-center justify-between z-10 shrink-0">
-                  <div className="flex items-center gap-1.5">
-                    <div className="w-2 h-2 rounded-full bg-rose-500/90" />
-                    <div className="w-2 h-2 rounded-full bg-amber-500/90" />
-                    <div className="w-2 h-2 rounded-full bg-emerald-500/90" />
+                <div className="bg-slate-900/95 dark:bg-[#060913] border-b border-white/10 px-2.5 py-1 flex items-center justify-between z-10 shrink-0">
+                  <div className="flex items-center gap-1">
+                    <div className="w-1.5 h-1.5 rounded-full bg-rose-500/90" />
+                    <div className="w-1.5 h-1.5 rounded-full bg-amber-500/90" />
+                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500/90" />
                   </div>
-                  <span className="text-[9px] font-['JetBrains_Mono'] text-slate-400">design.globalinfosofts.com</span>
-                  <span className="text-[9px] font-['JetBrains_Mono'] font-bold text-sky-400">UI SYSTEM</span>
+                  <span className="text-[9px] font-['JetBrains_Mono'] text-slate-400 truncate max-w-[120px]">design.globalinfosofts.com</span>
+                  <span className="text-[8px] font-['JetBrains_Mono'] font-bold text-sky-400">UI/UX</span>
                 </div>
-                <div className="relative flex-1 overflow-hidden">
+                <div className="relative flex-1 overflow-hidden bg-slate-950">
                   <img
-                    src="https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&w=1200&q=80"
+                    src="https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?auto=format&fit=crop&w=800&q=80"
                     alt="UI/UX Design"
                     referrerPolicy="no-referrer"
-                    className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out pointer-events-none"
+                    loading="lazy"
+                    className="w-full h-full object-cover object-center filter brightness-95 group-hover:scale-105 transition-transform duration-500 ease-out pointer-events-none"
                   />
-                  <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity" />
+                  <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-black/45 via-transparent to-transparent opacity-60 group-hover:opacity-30 transition-opacity" />
                 </div>
                 <FacetedProjectRibbon title="UI/UX Design" idKey="ui-ux" />
               </motion.div>

@@ -23,8 +23,8 @@ export const COMPANY_INFO = {
   activeClients: '150+',
   uptimeSla: '99.9%',
   clientSatisfaction: '99.2%',
-  contactEmail: 'kumarrajnish531@gmail.com',
-  supportEmail: 'kumarrajnish531@gmail.com',
+  contactEmail: 'info@globalinfosofts.com',
+  supportEmail: 'info@globalinfosofts.com',
   officialEmail: 'info@globalinfosofts.com',
   primaryPhone: '+91-9431515806',
   altPhone: '+91-7654730090',
@@ -52,13 +52,13 @@ export const LEADERSHIP_CONTACTS: LeadershipContact[] = [
     name: 'Rajnish Kumar',
     role: 'Founder & Chief Executive Officer',
     phone: '+91-9431515806',
-    email: 'kumarrajnish531@gmail.com'
+    email: 'info@globalinfosofts.com'
   },
   {
     name: 'Manoj Mahato',
     role: 'Technical Director & Lead Architect',
     phone: '+91-7654730090',
-    email: 'kumarrajnish531@gmail.com'
+    email: 'info@globalinfosofts.com'
   }
 ];
 
@@ -68,7 +68,7 @@ export const HEAD_OFFICE = {
   address: 'Floor 2, House 7, Dayal Apartment, Transport Nagar, Dimna Road, Mango, Jamshedpur 831012, Jharkhand',
   phone: '+91-9431515806',
   altPhone: '+91-7654730090',
-  email: 'kumarrajnish531@gmail.com',
+  email: 'info@globalinfosofts.com',
   hours: 'Mon - Sat: 9:30 AM - 6:30 PM IST'
 };
 
@@ -692,7 +692,7 @@ export const OFFICE_LOCATIONS: OfficeLocation[] = [
     country: 'Jharkhand, India',
     address: 'Floor 2, House 7, Dayal Apartment, Transport Nagar, Dimna Road, Mango, Jamshedpur 831012',
     phone: '+91-9431515806',
-    email: 'kumarrajnish531@gmail.com',
+    email: 'info@globalinfosofts.com',
     hours: 'Mon - Sat: 9:30 AM - 6:30 PM IST',
     isHQ: true
   }
