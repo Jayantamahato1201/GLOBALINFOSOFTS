@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import { ThemeProvider } from './context/ThemeContext';
 import { Navbar } from './components/Navbar';
 import { HomePage } from './components/pages/HomePage';
@@ -15,11 +16,13 @@ import { Footer } from './components/Footer';
 import { DetailModal } from './components/DetailModal';
 import { QuickSearchModal } from './components/QuickSearchModal';
 import { WhatsAppWidget } from './components/WhatsAppWidget';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import { SERVICES_DATA, SOLUTIONS_DATA, CASE_STUDIES } from './data/companyData';
 import { ServiceItem, CaseStudy, SoftwareSolution, DetailModalData, PageId } from './types';
 
 function MainAppContent() {
   const [currentPage, setCurrentPage] = useState<PageId>('home');
+  const [blogArticleSlug, setBlogArticleSlug] = useState<string | null>(null);
   const [modalData, setModalData] = useState<DetailModalData | null>(null);
   const [searchOpen, setSearchOpen] = useState<boolean>(false);
   const [prefilledContactScope, setPrefilledContactScope] = useState<string>('');
@@ -27,7 +30,23 @@ function MainAppContent() {
   // Handle URL hash changes
   useEffect(() => {
     const handleHashChange = () => {
-      const hash = window.location.hash.replace('#', '').toLowerCase();
+      const rawHash = window.location.hash.replace(/^#\/?/, '').toLowerCase();
+      const rawPath = window.location.pathname.replace(/^\//, '').toLowerCase();
+      const target = rawHash || rawPath;
+
+      if (target.startsWith('blog/') || target.startsWith('blog-')) {
+        const slug = target.replace(/^blog[\/-]/, '');
+        setCurrentPage('blog');
+        setBlogArticleSlug(slug || null);
+        return;
+      }
+
+      if (target === 'blog') {
+        setCurrentPage('blog');
+        setBlogArticleSlug(null);
+        return;
+      }
+
       const validPages: PageId[] = [
         'home',
         'services',
@@ -40,8 +59,9 @@ function MainAppContent() {
         'blog',
         'contact'
       ];
-      if (validPages.includes(hash as PageId)) {
-        setCurrentPage(hash as PageId);
+      if (validPages.includes(target as PageId)) {
+        setCurrentPage(target as PageId);
+        setBlogArticleSlug(null);
       }
     };
 
@@ -52,10 +72,21 @@ function MainAppContent() {
 
   const navigateToPage = (page: PageId, detailId?: string) => {
     setCurrentPage(page);
-    window.location.hash = page;
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (page === 'blog') {
+      if (detailId) {
+        setBlogArticleSlug(detailId);
+        window.location.hash = `/blog/${detailId}`;
+      } else {
+        setBlogArticleSlug(null);
+        window.location.hash = 'blog';
+      }
+    } else {
+      setBlogArticleSlug(null);
+      window.location.hash = page;
+    }
+    window.scrollTo({ top: 0, behavior: 'instant' });
 
-    if (detailId) {
+    if (detailId && page !== 'blog') {
       if (page === 'services') {
         const found = SERVICES_DATA.find((s) => s.id === detailId);
         if (found) openServiceModal(found);
@@ -105,6 +136,9 @@ function MainAppContent() {
       category: service.category ? service.category.toUpperCase() : 'SERVICE',
       title: service.title,
       description: service.shortDesc,
+      longDesc: service.longDesc,
+      iconName: service.iconName,
+      deliverables: service.deliverables,
       duration: service.duration || '2 - 4 Weeks',
       metadata: service.metrics,
       image: service.image || 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1200&q=80',
@@ -127,6 +161,10 @@ function MainAppContent() {
       category: solution.industry,
       title: solution.title,
       description: solution.shortDesc,
+      longDesc: solution.fullDesc,
+      iconName: solution.iconName,
+      features: solution.features,
+      benefits: solution.benefits,
       duration: solution.duration || 'Turnkey Setup',
       metadata: solution.compliance,
       image: solution.image || 'https://images.unsplash.com/photo-1556742049-0a67e5572263?auto=format&fit=crop&w=1200&q=80',
@@ -171,6 +209,94 @@ function MainAppContent() {
     }
   };
 
+  const renderCurrentPageContent = () => {
+    switch (currentPage) {
+      case 'home':
+        return (
+          <HomePage
+            onNavigatePage={(page) => navigateToPage(page)}
+            onOpenContact={(scope) => handleOpenContact(scope)}
+            onSelectService={handleSelectServiceById}
+            onSelectServiceItem={(service) => openServiceModal(service)}
+            onSelectProject={handleSelectProjectById}
+            onSelectSolution={handleSelectSolutionById}
+          />
+        );
+      case 'services':
+        return (
+          <div className="pt-16 sm:pt-20 pb-8 mesh-bg w-full">
+            <ServicesSection
+              onSelectService={(service) => openServiceModal(service)}
+              onExplore3DModel={() => navigateToPage('solutions')}
+            />
+          </div>
+        );
+      case 'solutions':
+        return (
+          <SolutionsPage
+            onSelectSolution={(sol) => openSolutionModal(sol)}
+            onOpenContact={(scope) => handleOpenContact(scope)}
+            onSelectServiceById={handleSelectServiceById}
+          />
+        );
+      case 'projects':
+        return (
+          <ProjectsPage
+            onOpenProject={(proj) => openProjectModal(proj)}
+            onOpenContact={(scope) => handleOpenContact(scope)}
+          />
+        );
+      case 'pricing':
+        return (
+          <PricingPage onOpenContact={(scope) => handleOpenContact(scope)} />
+        );
+      case 'about':
+        return (
+          <div className="pt-16 sm:pt-20 pb-8 bg-slate-50 dark:bg-[#07090F] text-slate-900 dark:text-slate-100 w-full min-h-screen transition-colors duration-300">
+            <AboutSection
+              onOpenContact={(scope) => handleOpenContact(scope)}
+              onSelectProject={(id) => navigateToPage('projects', id)}
+              onNavigatePage={(page) => navigateToPage(page)}
+            />
+          </div>
+        );
+      case 'team':
+        return (
+          <TeamPage
+            onNavigatePage={(page) => navigateToPage(page)}
+            onOpenContact={(scope) => handleOpenContact(scope)}
+          />
+        );
+      case 'support':
+        return (
+          <TechSupportPage onOpenContact={(scope) => handleOpenContact(scope)} />
+        );
+      case 'blog':
+        return (
+          <BlogPage
+            initialSlug={blogArticleSlug}
+            onNavigateArticle={(slug) => {
+              setBlogArticleSlug(slug);
+              if (slug) {
+                window.location.hash = `/blog/${slug}`;
+              } else {
+                window.location.hash = 'blog';
+              }
+            }}
+            onOpenContact={(scope) => handleOpenContact(scope)}
+          />
+        );
+      case 'contact':
+        return (
+          <div className="pt-16 sm:pt-20 pb-8 bg-slate-50 dark:bg-[#07090F] text-slate-900 dark:text-slate-100 w-full min-h-screen transition-colors duration-300">
+            <ContactSection prefilledScope={prefilledContactScope} />
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[var(--bg-body)] text-[var(--text-body)] selection:bg-cyan-500/30 selection:text-cyan-200 flex flex-col transition-colors duration-300">
       {/* Universal Fixed Navigation with Theme Toggle */}
@@ -181,72 +307,20 @@ function MainAppContent() {
         onOpenContact={() => handleOpenContact()}
       />
 
-      {/* Main Page View Switcher */}
-      <main className="flex-1 w-full">
-        {currentPage === 'home' && (
-          <HomePage
-            onNavigatePage={(page) => navigateToPage(page)}
-            onOpenContact={(scope) => handleOpenContact(scope)}
-            onSelectService={handleSelectServiceById}
-            onSelectProject={handleSelectProjectById}
-            onSelectSolution={handleSelectSolutionById}
-          />
-        )}
-
-        {currentPage === 'services' && (
-          <div className="pt-16 sm:pt-20 pb-8 mesh-bg w-full">
-            <ServicesSection
-              onSelectService={(service) => openServiceModal(service)}
-              onExplore3DModel={() => navigateToPage('solutions')}
-            />
-          </div>
-        )}
-
-        {currentPage === 'solutions' && (
-          <SolutionsPage
-            onSelectSolution={(sol) => openSolutionModal(sol)}
-            onOpenContact={(scope) => handleOpenContact(scope)}
-            onSelectServiceById={handleSelectServiceById}
-          />
-        )}
-
-        {currentPage === 'projects' && (
-          <ProjectsPage
-            onOpenProject={(proj) => openProjectModal(proj)}
-            onOpenContact={(scope) => handleOpenContact(scope)}
-          />
-        )}
-
-        {currentPage === 'pricing' && (
-          <PricingPage onOpenContact={(scope) => handleOpenContact(scope)} />
-        )}
-
-        {currentPage === 'about' && (
-          <div className="pt-16 sm:pt-20 pb-8 mesh-bg w-full">
-            <AboutSection />
-          </div>
-        )}
-
-        {currentPage === 'team' && (
-          <TeamPage
-            onNavigatePage={(page) => navigateToPage(page)}
-            onOpenContact={(scope) => handleOpenContact(scope)}
-          />
-        )}
-
-        {currentPage === 'support' && (
-          <TechSupportPage onOpenContact={(scope) => handleOpenContact(scope)} />
-        )}
-
-        {currentPage === 'blog' && (
-          <BlogPage onOpenContact={(scope) => handleOpenContact(scope)} />
-        )}
-
-        {currentPage === 'contact' && (
-          <div className="pt-16 sm:pt-20 pb-8 mesh-bg w-full">
-            <ContactSection prefilledScope={prefilledContactScope} />
-          </div>
-        )}
+      {/* Main Page View Switcher with Snappy, Instant Transitions */}
+      <main className="flex-1 w-full relative">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentPage}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15, ease: 'easeOut' }}
+            className="w-full flex-1"
+          >
+            {renderCurrentPageContent()}
+          </motion.div>
+        </AnimatePresence>
       </main>
 
       {/* Modern Footer */}
@@ -279,8 +353,10 @@ function MainAppContent() {
 
 export default function App() {
   return (
-    <ThemeProvider>
-      <MainAppContent />
-    </ThemeProvider>
+    <ErrorBoundary>
+      <ThemeProvider>
+        <MainAppContent />
+      </ThemeProvider>
+    </ErrorBoundary>
   );
 }

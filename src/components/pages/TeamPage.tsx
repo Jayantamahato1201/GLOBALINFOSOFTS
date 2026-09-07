@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'motion/react';
 import { TEAM_MEMBERS } from '../../data/companyData';
 import { PageId } from '../../types';
 import {
@@ -39,9 +40,15 @@ export const TeamPage: React.FC<TeamPageProps> = ({ onOpenContact }) => {
       <div className="absolute abstract-shape-blue w-[500px] h-[500px] top-1/4 -left-20 animate-pulse-glow pointer-events-none" />
       <div className="absolute abstract-shape-pink w-[450px] h-[450px] bottom-1/4 -right-20 animate-pulse-glow pointer-events-none" style={{ animationDelay: '-3s' }} />
 
-      <div className="relative z-10 w-full max-w-[1536px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 space-y-4">
+      <div className="relative z-10 w-full px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20 space-y-4">
         {/* Header */}
-        <div className="max-w-3xl space-y-1 text-left">
+        <motion.div
+          initial={{ opacity: 0, y: 35, scale: 0.96 }}
+          whileInView={{ opacity: 1, y: 0, scale: 1 }}
+          viewport={{ once: false, amount: 0.15 }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          className="max-w-3xl space-y-1 text-left"
+        >
           <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full glass-card text-cyan-700 dark:text-cyan-300 text-[11px] font-semibold uppercase tracking-wider font-mono border-cyan-500/30">
             <Users className="w-3 h-3 text-cyan-600 dark:text-cyan-400" />
             <span>Our Team & Leadership</span>
@@ -52,13 +59,22 @@ export const TeamPage: React.FC<TeamPageProps> = ({ onOpenContact }) => {
           <p className="text-slate-600 dark:text-slate-300 text-xs sm:text-sm leading-relaxed">
             Our team of software developers, database architects, web designers, and technical support specialists is dedicated to delivering reliable software and IT solutions for our clients in Jamshedpur and across Jharkhand.
           </p>
-        </div>
+        </motion.div>
 
         {/* Team Members Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 text-left">
-          {TEAM_MEMBERS.map((member) => (
-            <div
+          {TEAM_MEMBERS.map((member, idx) => (
+            <motion.div
               key={member.id}
+              initial={{ opacity: 0, y: 35, scale: 0.93 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
+              viewport={{ once: false, amount: 0.15 }}
+              transition={{
+                duration: 0.45,
+                delay: idx * 0.08,
+                ease: [0.22, 1, 0.36, 1]
+              }}
+              whileHover={{ y: -6, scale: 1.015, transition: { duration: 0.2 } }}
               className="p-4 sm:p-4.5 rounded-xl glass-panel border border-slate-200/80 dark:border-white/15 project-card-gradient transition-all duration-200 flex flex-col justify-between group shadow-sm"
             >
               <div className="space-y-2">
@@ -93,9 +109,9 @@ export const TeamPage: React.FC<TeamPageProps> = ({ onOpenContact }) => {
                   Key Focus & Technologies:
                 </div>
                 <div className="flex flex-wrap gap-1">
-                  {member.skills.map((skill, idx) => (
+                  {member.skills.map((skill, sIdx) => (
                     <span
-                      key={idx}
+                      key={sIdx}
                       className="px-1.5 py-0.5 rounded-md bg-slate-100 dark:bg-white/5 text-[9.5px] font-mono text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-white/10 group-hover:border-cyan-500/30 transition-colors"
                     >
                       {skill}
@@ -103,12 +119,18 @@ export const TeamPage: React.FC<TeamPageProps> = ({ onOpenContact }) => {
                   ))}
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
 
         {/* Culture & Consultation Banner */}
-        <div className="p-4 sm:p-5 rounded-xl glass-panel border border-slate-200/80 dark:border-white/15 flex flex-col md:flex-row items-center justify-between gap-3.5 bg-gradient-to-r from-cyan-500/10 via-slate-500/5 to-pink-500/10 dark:from-cyan-950/30 dark:via-slate-900/60 dark:to-pink-950/30">
+        <motion.div
+          initial={{ opacity: 0, y: 35, scale: 0.96 }}
+          whileInView={{ opacity: 1, y: 0, scale: 1 }}
+          viewport={{ once: false, amount: 0.15 }}
+          transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+          className="p-4 sm:p-5 rounded-xl glass-panel border border-slate-200/80 dark:border-white/15 flex flex-col md:flex-row items-center justify-between gap-3.5 bg-gradient-to-r from-cyan-500/10 via-slate-500/5 to-pink-500/10 dark:from-cyan-950/30 dark:via-slate-900/60 dark:to-pink-950/30"
+        >
           <div className="space-y-1 max-w-2xl text-left">
             <h2 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white font-['Outfit']">
               Have a Project in Mind?
@@ -119,12 +141,12 @@ export const TeamPage: React.FC<TeamPageProps> = ({ onOpenContact }) => {
           </div>
           <button
             onClick={() => onOpenContact('Discussion with Software Team')}
-            className="px-4 py-2 sm:px-5 sm:py-2.5 rounded-lg btn-primary text-white font-bold text-xs uppercase tracking-wider flex items-center gap-1.5 whitespace-nowrap shadow-sm shrink-0"
+            className="px-4 py-2 sm:px-5 sm:py-2.5 rounded-lg btn-primary text-white font-bold text-xs uppercase tracking-wider flex items-center gap-1.5 whitespace-nowrap shadow-sm shrink-0 cursor-pointer"
           >
             <span>Contact Our Team</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </button>
-        </div>
+        </motion.div>
       </div>
     </div>
   );

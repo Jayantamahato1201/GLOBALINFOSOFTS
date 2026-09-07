@@ -12,34 +12,55 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [theme, setThemeState] = useState<Theme>(() => {
-    // Check saved theme in localStorage
-    if (typeof window !== 'undefined') {
-      const savedTheme = localStorage.getItem('gis_theme') as Theme | null;
-      if (savedTheme === 'dark' || savedTheme === 'light') {
-        return savedTheme;
+    // Safely check saved theme in localStorage
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        const savedTheme = localStorage.getItem('gis_theme') as Theme | null;
+        if (savedTheme === 'dark' || savedTheme === 'light') {
+          return savedTheme;
+        }
       }
-      // Check system preference
-      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+    } catch {
+      // Storage access may be denied in sandboxed iframes
+    }
+
+    // Safely check system preference
+    try {
+      if (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
         return 'light';
       }
+    } catch {
+      // matchMedia may not be supported or allowed
     }
+
     return 'dark'; // Default to sleek dark theme
   });
 
   useEffect(() => {
-    const root = document.documentElement;
-    if (theme === 'light') {
-      root.classList.remove('dark');
-      root.classList.add('light');
-      root.setAttribute('data-theme', 'light');
-      root.style.colorScheme = 'light';
-    } else {
-      root.classList.remove('light');
-      root.classList.add('dark');
-      root.setAttribute('data-theme', 'dark');
-      root.style.colorScheme = 'dark';
+    try {
+      const root = document.documentElement;
+      if (theme === 'light') {
+        root.classList.remove('dark');
+        root.classList.add('light');
+        root.setAttribute('data-theme', 'light');
+        root.style.colorScheme = 'light';
+      } else {
+        root.classList.remove('light');
+        root.classList.add('dark');
+        root.setAttribute('data-theme', 'dark');
+        root.style.colorScheme = 'dark';
+      }
+    } catch {
+      // safe fallback
     }
-    localStorage.setItem('gis_theme', theme);
+
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        localStorage.setItem('gis_theme', theme);
+      }
+    } catch {
+      // Storage access may be denied in sandboxed iframes
+    }
   }, [theme]);
 
   const toggleTheme = () => {

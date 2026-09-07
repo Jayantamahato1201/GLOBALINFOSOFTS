@@ -77,136 +77,169 @@ export const FloatingProductCore: React.FC<{ className?: string; onSelectService
     const container = containerRef.current;
     if (!container) return;
 
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(50, container.clientWidth / container.clientHeight, 0.1, 100);
-    camera.position.set(0, 0, 16);
+    let renderer: THREE.WebGLRenderer | null = null;
+    let animId: number | null = null;
+    let resizeObserver: ResizeObserver | null = null;
 
-    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: 'high-performance' });
-    renderer.setSize(container.clientWidth, container.clientHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    container.appendChild(renderer.domElement);
+    try {
+      const width = Math.max(container.clientWidth || 400, 1);
+      const height = Math.max(container.clientHeight || 400, 1);
 
-    const rootGroup = new THREE.Group();
-    scene.add(rootGroup);
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(50, width / height, 0.1, 100);
+      camera.position.set(0, 0, 16);
 
-    // 1. Central 3D Cube / Rounded geometry
-    const boxGeo = new THREE.BoxGeometry(5.2, 5.2, 5.2, 3, 3, 3);
-    const boxMat = new THREE.MeshStandardMaterial({
-      color: activePreset.color,
-      roughness: 0.2,
-      metalness: 0.85,
-      transparent: true,
-      opacity: 0.85,
-      wireframe: false
-    });
-    const cube = new THREE.Mesh(boxGeo, boxMat);
-    rootGroup.add(cube);
-    meshRef.current.cube = cube;
+      renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: 'default' });
+      renderer.setSize(width, height);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      container.appendChild(renderer.domElement);
 
-    // 2. Wireframe Cage
-    const wireGeo = new THREE.BoxGeometry(6.4, 6.4, 6.4);
-    const wireMat = new THREE.MeshBasicMaterial({
-      color: activePreset.secondaryColor,
-      wireframe: true,
-      transparent: true,
-      opacity: 0.35
-    });
-    const wireCube = new THREE.Mesh(wireGeo, wireMat);
-    rootGroup.add(wireCube);
-    meshRef.current.wireCube = wireCube;
+      const rootGroup = new THREE.Group();
+      scene.add(rootGroup);
 
-    // 3. Glowing Inner Sphere
-    const sphereGeo = new THREE.SphereGeometry(2.4, 32, 32);
-    const sphereMat = new THREE.MeshStandardMaterial({
-      color: 0xffffff,
-      roughness: 0.1,
-      metalness: 0.9,
-      emissive: activePreset.color,
-      emissiveIntensity: 0.5
-    });
-    const innerSphere = new THREE.Mesh(sphereGeo, sphereMat);
-    rootGroup.add(innerSphere);
-    meshRef.current.innerSphere = innerSphere;
-
-    // 4. Orbiting Satellite Nodes
-    const satellites: THREE.Mesh[] = [];
-    const satGeo = new THREE.OctahedronGeometry(0.7, 0);
-
-    for (let i = 0; i < 4; i++) {
-      const satMat = new THREE.MeshStandardMaterial({
-        color: i % 2 === 0 ? activePreset.color : activePreset.secondaryColor,
-        roughness: 0.3,
-        metalness: 0.7
+      // 1. Central 3D Cube / Rounded geometry
+      const boxGeo = new THREE.BoxGeometry(5.2, 5.2, 5.2, 3, 3, 3);
+      const boxMat = new THREE.MeshStandardMaterial({
+        color: activePreset.color,
+        roughness: 0.2,
+        metalness: 0.85,
+        transparent: true,
+        opacity: 0.85,
+        wireframe: false
       });
-      const satMesh = new THREE.Mesh(satGeo, satMat);
-      rootGroup.add(satMesh);
-      satellites.push(satMesh);
+      const cube = new THREE.Mesh(boxGeo, boxMat);
+      rootGroup.add(cube);
+      meshRef.current.cube = cube;
+
+      // 2. Wireframe Cage
+      const wireGeo = new THREE.BoxGeometry(6.4, 6.4, 6.4);
+      const wireMat = new THREE.MeshBasicMaterial({
+        color: activePreset.secondaryColor,
+        wireframe: true,
+        transparent: true,
+        opacity: 0.35
+      });
+      const wireCube = new THREE.Mesh(wireGeo, wireMat);
+      rootGroup.add(wireCube);
+      meshRef.current.wireCube = wireCube;
+
+      // 3. Glowing Inner Sphere
+      const sphereGeo = new THREE.SphereGeometry(2.4, 32, 32);
+      const sphereMat = new THREE.MeshStandardMaterial({
+        color: 0xffffff,
+        roughness: 0.1,
+        metalness: 0.9,
+        emissive: activePreset.color,
+        emissiveIntensity: 0.5
+      });
+      const innerSphere = new THREE.Mesh(sphereGeo, sphereMat);
+      rootGroup.add(innerSphere);
+      meshRef.current.innerSphere = innerSphere;
+
+      // 4. Orbiting Satellite Nodes
+      const satellites: THREE.Mesh[] = [];
+      const satGeo = new THREE.OctahedronGeometry(0.7, 0);
+
+      for (let i = 0; i < 4; i++) {
+        const satMat = new THREE.MeshStandardMaterial({
+          color: i % 2 === 0 ? activePreset.color : activePreset.secondaryColor,
+          roughness: 0.3,
+          metalness: 0.7
+        });
+        const satMesh = new THREE.Mesh(satGeo, satMat);
+        rootGroup.add(satMesh);
+        satellites.push(satMesh);
+      }
+      meshRef.current.satellites = satellites;
+
+      // 5. Lights
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
+      scene.add(ambientLight);
+
+      const light1 = new THREE.PointLight(activePreset.color, 4, 30);
+      light1.position.set(10, 10, 12);
+      scene.add(light1);
+      meshRef.current.light1 = light1;
+
+      const light2 = new THREE.PointLight(activePreset.secondaryColor, 3, 30);
+      light2.position.set(-10, -10, 10);
+      scene.add(light2);
+      meshRef.current.light2 = light2;
+
+      // Resize
+      const handleResize = () => {
+        try {
+          if (!container || !renderer) return;
+          const w = Math.max(container.clientWidth || 400, 1);
+          const h = Math.max(container.clientHeight || 400, 1);
+          camera.aspect = w / h;
+          camera.updateProjectionMatrix();
+          renderer.setSize(w, h);
+        } catch {
+          // ignore
+        }
+      };
+
+      if (typeof ResizeObserver !== 'undefined') {
+        resizeObserver = new ResizeObserver(handleResize);
+        resizeObserver.observe(container);
+      }
+
+      // Animation
+      const clock = new THREE.Clock();
+
+      const animate = () => {
+        try {
+          if (!renderer) return;
+          animId = requestAnimationFrame(animate);
+          const time = clock.getElapsedTime();
+
+          // Main rotation
+          rootGroup.rotation.x = time * 0.25;
+          rootGroup.rotation.y = time * 0.35;
+
+          wireCube.rotation.x = -time * 0.15;
+          wireCube.rotation.z = time * 0.2;
+
+          // Orbit satellites around cube
+          satellites.forEach((sat, idx) => {
+            const angle = time * 0.8 + (idx * Math.PI) / 2;
+            const radius = 5.2 + Math.sin(time + idx) * 0.5;
+            sat.position.x = Math.cos(angle) * radius;
+            sat.position.y = Math.sin(angle * 1.3) * (radius * 0.6);
+            sat.position.z = Math.sin(angle) * radius;
+            sat.rotation.x = time * 2;
+            sat.rotation.y = time * 1.5;
+          });
+
+          renderer.render(scene, camera);
+        } catch {
+          // gracefully stop loop on error
+        }
+      };
+
+      animate();
+    } catch (e) {
+      console.warn('FloatingProductCore WebGL fallback activated:', e);
     }
-    meshRef.current.satellites = satellites;
-
-    // 5. Lights
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
-    scene.add(ambientLight);
-
-    const light1 = new THREE.PointLight(activePreset.color, 4, 30);
-    light1.position.set(10, 10, 12);
-    scene.add(light1);
-    meshRef.current.light1 = light1;
-
-    const light2 = new THREE.PointLight(activePreset.secondaryColor, 3, 30);
-    light2.position.set(-10, -10, 10);
-    scene.add(light2);
-    meshRef.current.light2 = light2;
-
-    // Resize
-    const handleResize = () => {
-      if (!container) return;
-      camera.aspect = container.clientWidth / container.clientHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(container.clientWidth, container.clientHeight);
-    };
-
-    const resizeObserver = new ResizeObserver(handleResize);
-    resizeObserver.observe(container);
-
-    // Animation
-    let animId: number;
-    const clock = new THREE.Clock();
-
-    const animate = () => {
-      animId = requestAnimationFrame(animate);
-      const time = clock.getElapsedTime();
-
-      // Main rotation
-      rootGroup.rotation.x = time * 0.25;
-      rootGroup.rotation.y = time * 0.35;
-
-      wireCube.rotation.x = -time * 0.15;
-      wireCube.rotation.z = time * 0.2;
-
-      // Orbit satellites around cube
-      satellites.forEach((sat, idx) => {
-        const angle = time * 0.8 + (idx * Math.PI) / 2;
-        const radius = 5.2 + Math.sin(time + idx) * 0.5;
-        sat.position.x = Math.cos(angle) * radius;
-        sat.position.y = Math.sin(angle * 1.3) * (radius * 0.6);
-        sat.position.z = Math.sin(angle) * radius;
-        sat.rotation.x = time * 2;
-        sat.rotation.y = time * 1.5;
-      });
-
-      renderer.render(scene, camera);
-    };
-
-    animate();
 
     return () => {
-      resizeObserver.disconnect();
-      cancelAnimationFrame(animId);
-      if (container && renderer.domElement) {
-        container.removeChild(renderer.domElement);
+      try {
+        if (resizeObserver) {
+          resizeObserver.disconnect();
+        }
+        if (animId !== null) {
+          cancelAnimationFrame(animId);
+        }
+        if (renderer && renderer.domElement) {
+          if (renderer.domElement.parentNode) {
+            renderer.domElement.parentNode.removeChild(renderer.domElement);
+          }
+          renderer.dispose();
+        }
+      } catch {
+        // ignore cleanup errors
       }
-      renderer.dispose();
     };
   }, []);
 

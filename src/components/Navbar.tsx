@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { motion } from 'motion/react';
 import { COMPANY_INFO } from '../data/companyData';
 import { getWhatsAppUrl, WHATSAPP_MESSAGES } from '../utils/whatsapp';
 import { BrandLogo } from './BrandLogo';
@@ -9,7 +10,8 @@ import {
   X,
   ArrowRight,
   Phone,
-  ChevronDown
+  ChevronDown,
+  MessageSquare
 } from 'lucide-react';
 
 interface NavbarProps {
@@ -37,20 +39,20 @@ export const Navbar: React.FC<NavbarProps> = ({
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Main Navigation links matching reference screenshot
   const mainNavLinks: { label: string; page: PageId }[] = [
     { label: 'Home', page: 'home' },
-    { label: 'Services', page: 'services' },
-    { label: 'Solutions', page: 'solutions' },
-    { label: 'Projects', page: 'projects' },
+    { label: 'Tech Support', page: 'support' },
     { label: 'Pricing', page: 'pricing' },
-    { label: 'About', page: 'about' }
+    { label: 'Contact', page: 'contact' },
+    { label: 'About', page: 'about' },
+    { label: 'Blog', page: 'blog' }
   ];
 
+  // Secondary pages under 'More'
   const secondaryNavLinks: { label: string; page: PageId }[] = [
-    { label: 'Team', page: 'team' },
-    { label: 'Tech Support', page: 'support' },
-    { label: 'Blog', page: 'blog' },
-    { label: 'Contact', page: 'contact' }
+    { label: 'Projects', page: 'projects' },
+    { label: 'Team', page: 'team' }
   ];
 
   const allNavLinks = [...mainNavLinks, ...secondaryNavLinks];
@@ -62,125 +64,85 @@ export const Navbar: React.FC<NavbarProps> = ({
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const isSecondaryActive = secondaryNavLinks.some((l) => l.page === currentPage);
+
   return (
     <>
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
           scrolled
-            ? 'py-1.5 sm:py-2 bg-white/90 dark:bg-slate-950/85 backdrop-blur-2xl border-b border-slate-200/80 dark:border-white/10 shadow-md dark:shadow-xl dark:shadow-slate-950/60'
-            : 'py-2 sm:py-2.5 bg-transparent'
+            ? 'py-3 bg-white/90 dark:bg-[#0B0D14]/90 backdrop-blur-2xl border-b border-slate-200/90 dark:border-white/10 shadow-sm dark:shadow-[0_8px_30px_rgba(0,0,0,0.5)]'
+            : 'py-4 bg-transparent'
         }`}
       >
-        <div className="w-full max-w-[1536px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12">
-          <div className="flex items-center justify-between">
-            {/* Brand Logo */}
+        <div className="w-full px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20">
+          <div className="flex items-center justify-between gap-6">
+            {/* Brand Logo & Name */}
             <button
               onClick={() => handleNavClick('home')}
-              className="flex items-center gap-2.5 group focus:outline-none text-left"
+              className="flex items-center gap-3 group focus:outline-none text-left cursor-pointer select-none"
               aria-label="Global InfoSoft Home"
             >
-              <div className="relative">
-                <BrandLogo size={34} showGlow={true} className="transition-transform duration-300 group-hover:scale-105" />
-              </div>
-
-              <div>
-                <div className="flex items-center gap-1.5">
-                  <span className="text-base sm:text-lg font-extrabold tracking-tight text-slate-900 dark:text-white font-['Outfit'] group-hover:text-cyan-600 dark:group-hover:text-cyan-300 transition-colors">
-                    Global InfoSoft
-                  </span>
-                  <span className="px-1.5 py-0.2 rounded-full text-[8.5px] font-mono font-semibold bg-cyan-500/10 text-cyan-600 dark:text-cyan-300 border border-cyan-500/30 backdrop-blur-md">
-                    Jamshedpur
-                  </span>
-                </div>
-                <span className="text-[9.5px] text-slate-500 dark:text-slate-400 tracking-wider block uppercase font-medium leading-none">
-                  Custom Software, ERP & Web Solutions
-                </span>
-              </div>
+              <BrandLogo size={34} showGlow={true} className="transition-transform duration-300 group-hover:scale-105" />
+              <span className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white font-['Sora'] transition-colors duration-300">
+                Global Infosoft
+              </span>
             </button>
 
             {/* Desktop Navigation Links */}
-            <nav className="hidden lg:flex items-center gap-0.5 glass-card px-2.5 py-0.5 rounded-full shadow-md border-slate-200/80 dark:border-white/10">
+            <nav className="hidden lg:flex items-center gap-4 xl:gap-6 2xl:gap-7">
               {mainNavLinks.map((link) => {
                 const isActive = currentPage === link.page;
                 return (
                   <button
                     key={link.page}
                     onClick={() => handleNavClick(link.page)}
-                    className={`px-3 py-1 rounded-full text-xs font-medium transition-all duration-200 ${
+                    className={`relative text-sm font-medium transition-colors duration-200 cursor-pointer ${
                       isActive
-                        ? 'bg-gradient-to-r from-sky-500/20 to-cyan-500/20 text-cyan-700 dark:text-white font-semibold shadow-sm border border-cyan-500/40 dark:border-cyan-400/50'
-                        : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/80 dark:hover:bg-white/5'
+                        ? 'text-blue-600 dark:text-white font-semibold'
+                        : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
                     }`}
                   >
-                    {link.label}
+                    <span>{link.label}</span>
+                    {/* Clean underline for active item matching screenshot */}
+                    {isActive && (
+                      <motion.div
+                        layoutId="navActiveLine"
+                        className="absolute -bottom-1 left-0 right-0 h-[2px] bg-blue-600 dark:bg-white rounded-full"
+                        transition={{ type: 'spring', stiffness: 450, damping: 35 }}
+                      />
+                    )}
                   </button>
                 );
               })}
-
-              {/* More Dropdown for secondary pages */}
-              <div className="relative">
-                <button
-                  onClick={() => setMoreDropdownOpen(!moreDropdownOpen)}
-                  onBlur={() => setTimeout(() => setMoreDropdownOpen(false), 200)}
-                  className={`px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1 transition-all ${
-                    secondaryNavLinks.some((l) => l.page === currentPage)
-                      ? 'bg-gradient-to-r from-sky-500/20 to-cyan-500/20 text-cyan-700 dark:text-white font-semibold border border-cyan-500/40 dark:border-cyan-400/50'
-                      : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/80 dark:hover:bg-white/5'
-                  }`}
-                >
-                  <span>More</span>
-                  <ChevronDown className="w-3 h-3 text-slate-400" />
-                </button>
-
-                {moreDropdownOpen && (
-                  <div className="absolute top-full right-0 mt-2 w-44 rounded-2xl glass-panel border border-slate-200/80 dark:border-white/15 p-1.5 shadow-2xl space-y-0.5 animate-fadeIn">
-                    {secondaryNavLinks.map((link) => (
-                      <button
-                        key={link.page}
-                        onClick={() => handleNavClick(link.page)}
-                        className={`w-full text-left px-3 py-1.5 rounded-xl text-xs font-medium transition-colors flex items-center justify-between ${
-                          currentPage === link.page
-                            ? 'bg-cyan-500/15 text-cyan-700 dark:text-cyan-200 font-semibold'
-                            : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5'
-                        }`}
-                      >
-                        <span>{link.label}</span>
-                        {currentPage === link.page && (
-                          <span className="w-1.5 h-1.5 rounded-full bg-cyan-500 dark:bg-cyan-400 shadow-[0_0_8px_#22d3ee]" />
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
             </nav>
 
-            {/* Right Action Buttons */}
-            <div className="hidden sm:flex items-center gap-2.5">
-              {/* Smooth Animated Dark/Light Theme Toggle */}
+            {/* Right Action Group: Theme Toggle, Get Started Button & Mobile Menu Toggle */}
+            <div className="flex items-center gap-2.5 sm:gap-3">
+              {/* Single Theme Toggle for all screens */}
               <ThemeToggle />
-              
+
+              {/* Get Started Pill Button matching reference */}
               <button
-                id="btn-nav-contact"
-                onClick={onOpenContact}
-                className="relative group/btn overflow-hidden px-3.5 py-1.5 rounded-xl btn-primary text-white text-xs font-bold uppercase tracking-wider transition-all active:scale-95 flex items-center gap-1.5"
+                id="btn-nav-get-started"
+                onClick={() => onOpenContact()}
+                className="hidden sm:inline-flex px-6 py-2 rounded-full bg-blue-600 hover:bg-blue-700 text-white dark:bg-[#9EB8FF] dark:hover:bg-[#8AAEFF] dark:text-[#0A1026] font-semibold text-sm transition-all duration-200 shadow-md active:scale-95 cursor-pointer"
               >
-                <span>Get In Touch</span>
-                <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover/btn:translate-x-0.5" />
+                Get Started
               </button>
-            </div>
 
-            {/* Mobile Actions: Theme Toggle & Menu Hamburger */}
-            <div className="flex items-center gap-2 lg:hidden">
-              <ThemeToggle />
-
+              {/* Mobile Menu Hamburger */}
               <button
                 id="btn-toggle-mobile-menu"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="p-2 rounded-xl glass-card text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white"
+                className="p-2 rounded-xl glass-card text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white lg:hidden cursor-pointer"
                 aria-label="Toggle menu"
               >
-                {mobileMenuOpen ? <X className="w-5 h-5 text-cyan-600 dark:text-cyan-400" /> : <Menu className="w-5 h-5 text-cyan-600 dark:text-cyan-400" />}
+                {mobileMenuOpen ? (
+                  <X className="w-5 h-5 text-cyan-600 dark:text-cyan-400" />
+                ) : (
+                  <Menu className="w-5 h-5 text-cyan-600 dark:text-cyan-400" />
+                )}
               </button>
             </div>
           </div>
@@ -188,15 +150,15 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* Mobile Slide Down Menu */}
         {mobileMenuOpen && (
-          <div className="lg:hidden mt-3 px-4 pt-2 pb-6 glass-panel border-b border-slate-200/80 dark:border-white/10 space-y-3 animate-fadeIn">
+          <div className="lg:hidden mt-3 px-4 pt-3 pb-6 glass-panel border-b border-slate-200/80 dark:border-white/10 space-y-3 animate-fadeIn">
             <div className="grid grid-cols-2 gap-2">
               {allNavLinks.map((link) => (
                 <button
                   key={link.page}
                   onClick={() => handleNavClick(link.page)}
-                  className={`px-3 py-2 rounded-xl text-left text-xs font-medium transition-all ${
+                  className={`px-3.5 py-2 rounded-xl text-left text-xs font-medium transition-all ${
                     currentPage === link.page
-                      ? 'bg-gradient-to-r from-sky-500/20 to-cyan-500/20 text-cyan-700 dark:text-white border border-cyan-500/40 font-semibold'
+                      ? 'bg-gradient-to-r from-sky-500/20 to-cyan-500/20 text-cyan-700 dark:text-cyan-300 border border-cyan-500/40 font-bold'
                       : 'glass-card text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
                   }`}
                 >
@@ -224,7 +186,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   rel="noopener noreferrer"
                   className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-mono transition-colors font-medium"
                 >
-                  <Phone className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                  <MessageSquare className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                   <span>WhatsApp: {COMPANY_INFO.salesPhone}</span>
                 </a>
               </div>

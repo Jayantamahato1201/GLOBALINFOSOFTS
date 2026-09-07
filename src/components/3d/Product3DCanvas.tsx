@@ -434,133 +434,164 @@ export const Product3DCanvas: React.FC<Product3DCanvasProps> = ({
     const container = containerRef.current;
     if (!container) return;
 
-    // 1. Scene
-    const scene = new THREE.Scene();
-    stateRef.current.scene = scene;
+    let renderer: THREE.WebGLRenderer | null = null;
+    let animId: number | null = null;
+    let resizeObserver: ResizeObserver | null = null;
 
-    // 2. Camera
-    const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
-    camera.position.set(0, 0, stateRef.current.currentDistance);
-    stateRef.current.camera = camera;
+    try {
+      const width = Math.max(container.clientWidth || 600, 1);
+      const height = Math.max(container.clientHeight || 500, 1);
 
-    // 3. Renderer
-    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: 'high-performance' });
-    renderer.setSize(container.clientWidth, container.clientHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.shadowMap.enabled = false;
-    container.appendChild(renderer.domElement);
-    stateRef.current.renderer = renderer;
+      // 1. Scene
+      const scene = new THREE.Scene();
+      stateRef.current.scene = scene;
 
-    // 4. Lights
-    const ambientLight = new THREE.AmbientLight(0xffffff, 1.1);
-    scene.add(ambientLight);
+      // 2. Camera
+      const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
+      camera.position.set(0, 0, stateRef.current.currentDistance);
+      stateRef.current.camera = camera;
 
-    const mainLight = new THREE.DirectionalLight(modelConfig.themeColor, 3.5);
-    mainLight.position.set(10, 15, 12);
-    scene.add(mainLight);
-
-    const rimLight = new THREE.PointLight(modelConfig.accentColor, 3.0, 30);
-    rimLight.position.set(-10, -10, 10);
-    scene.add(rimLight);
-
-    stateRef.current.lights = [ambientLight, mainLight, rimLight];
-
-    // 5. Build Model
-    const built = buildModelGeometry(scene, modelConfig, renderMode);
-    stateRef.current.rootGroup = built.root;
-    stateRef.current.layerGroups = built.layerGroups;
-    stateRef.current.materials = built.materials;
-    stateRef.current.pulseMeshes = built.pulseMeshes;
-
-    // 6. Resize Handler
-    const handleResize = () => {
-      if (!container || !camera || !renderer) return;
-      const width = container.clientWidth;
-      const height = container.clientHeight;
-      camera.aspect = width / height;
-      camera.updateProjectionMatrix();
+      // 3. Renderer
+      renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: 'default' });
       renderer.setSize(width, height);
-    };
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      renderer.shadowMap.enabled = false;
+      container.appendChild(renderer.domElement);
+      stateRef.current.renderer = renderer;
 
-    const resizeObserver = new ResizeObserver(handleResize);
-    resizeObserver.observe(container);
+      // 4. Lights
+      const ambientLight = new THREE.AmbientLight(0xffffff, 1.1);
+      scene.add(ambientLight);
 
-    // 7. Render Animation Loop
-    let animId: number;
-    const clock = new THREE.Clock();
+      const mainLight = new THREE.DirectionalLight(modelConfig.themeColor, 3.5);
+      mainLight.position.set(10, 15, 12);
+      scene.add(mainLight);
 
-    const animate = () => {
-      animId = requestAnimationFrame(animate);
-      const dt = clock.getDelta();
-      const elapsed = clock.getElapsedTime();
+      const rimLight = new THREE.PointLight(modelConfig.accentColor, 3.0, 30);
+      rimLight.position.set(-10, -10, 10);
+      scene.add(rimLight);
 
-      // Camera distance lerp
-      stateRef.current.currentDistance += (stateRef.current.targetDistance - stateRef.current.currentDistance) * 0.08;
-      camera.position.z = stateRef.current.currentDistance;
+      stateRef.current.lights = [ambientLight, mainLight, rimLight];
 
-      // Auto-rotation when not dragging
-      if (autoRotate && !stateRef.current.isDragging) {
-        stateRef.current.targetRotY += dt * 0.45;
+      // 5. Build Model
+      const built = buildModelGeometry(scene, modelConfig, renderMode);
+      stateRef.current.rootGroup = built.root;
+      stateRef.current.layerGroups = built.layerGroups;
+      stateRef.current.materials = built.materials;
+      stateRef.current.pulseMeshes = built.pulseMeshes;
+
+      // 6. Resize Handler
+      const handleResize = () => {
+        try {
+          if (!container || !camera || !renderer) return;
+          const w = Math.max(container.clientWidth || 600, 1);
+          const h = Math.max(container.clientHeight || 500, 1);
+          camera.aspect = w / h;
+          camera.updateProjectionMatrix();
+          renderer.setSize(w, h);
+        } catch {
+          // ignore
+        }
+      };
+
+      if (typeof ResizeObserver !== 'undefined') {
+        resizeObserver = new ResizeObserver(handleResize);
+        resizeObserver.observe(container);
       }
 
-      // Smooth rotation dampening
-      if (stateRef.current.rootGroup) {
-        stateRef.current.rootGroup.rotation.x += (stateRef.current.targetRotX - stateRef.current.rootGroup.rotation.x) * 0.1;
-        stateRef.current.rootGroup.rotation.y += (stateRef.current.targetRotY - stateRef.current.rootGroup.rotation.y) * 0.1;
+      // 7. Render Animation Loop
+      const clock = new THREE.Clock();
 
-        // Pulse animations
-        stateRef.current.pulseMeshes.forEach((mesh, idx) => {
-          mesh.rotation.y = elapsed * (0.8 + idx * 0.3);
-          const scale = 1 + Math.sin(elapsed * 2 + idx) * 0.04;
-          mesh.scale.set(scale, scale, scale);
-        });
+      const animate = () => {
+        try {
+          if (!renderer) return;
+          animId = requestAnimationFrame(animate);
+          const dt = clock.getDelta();
+          const elapsed = clock.getElapsedTime();
 
-        // Exploded View layer positioning
-        stateRef.current.layerGroups.forEach(({ group, baseOffset }) => {
-          const targetY = exploded ? baseOffset * (1 + explodeAmount * 1.2) : baseOffset;
-          group.position.y += (targetY - group.position.y) * 0.1;
-        });
-      }
+          // Camera distance lerp
+          stateRef.current.currentDistance += (stateRef.current.targetDistance - stateRef.current.currentDistance) * 0.08;
+          camera.position.z = stateRef.current.currentDistance;
 
-      renderer.render(scene, camera);
+          // Auto-rotation when not dragging
+          if (autoRotate && !stateRef.current.isDragging) {
+            stateRef.current.targetRotY += dt * 0.45;
+          }
 
-      // Project Hotspots to 2D screen coords
-      if (container && camera && stateRef.current.rootGroup) {
-        const widthHalf = container.clientWidth / 2;
-        const heightHalf = container.clientHeight / 2;
+          // Smooth rotation dampening
+          if (stateRef.current.rootGroup) {
+            stateRef.current.rootGroup.rotation.x += (stateRef.current.targetRotX - stateRef.current.rootGroup.rotation.x) * 0.1;
+            stateRef.current.rootGroup.rotation.y += (stateRef.current.targetRotY - stateRef.current.rootGroup.rotation.y) * 0.1;
 
-        const projected: ProjectedHotspot[] = modelConfig.hotspots.map((hs) => {
-          const vec = new THREE.Vector3(...hs.position);
-          // Apply root group rotation and offset
-          vec.applyEuler(stateRef.current.rootGroup!.rotation);
-          vec.project(camera);
+            // Pulse animations
+            stateRef.current.pulseMeshes.forEach((mesh, idx) => {
+              mesh.rotation.y = elapsed * (0.8 + idx * 0.3);
+              const scale = 1 + Math.sin(elapsed * 2 + idx) * 0.04;
+              mesh.scale.set(scale, scale, scale);
+            });
 
-          const isBehind = vec.z > 1;
-          const sx = vec.x * widthHalf + widthHalf;
-          const sy = -(vec.y * heightHalf) + heightHalf;
+            // Exploded View layer positioning
+            stateRef.current.layerGroups.forEach(({ group, baseOffset }) => {
+              const targetY = exploded ? baseOffset * (1 + explodeAmount * 1.2) : baseOffset;
+              group.position.y += (targetY - group.position.y) * 0.1;
+            });
+          }
 
-          return {
-            hotspot: hs,
-            x: sx,
-            y: sy,
-            visible: !isBehind && sx >= 0 && sx <= container.clientWidth && sy >= 0 && sy <= container.clientHeight
-          };
-        });
+          renderer.render(scene, camera);
 
-        setProjectedHotspots(projected);
-      }
-    };
+          // Project Hotspots to 2D screen coords
+          if (container && camera && stateRef.current.rootGroup) {
+            const widthHalf = (container.clientWidth || 600) / 2;
+            const heightHalf = (container.clientHeight || 500) / 2;
 
-    animate();
+            const projected: ProjectedHotspot[] = modelConfig.hotspots.map((hs) => {
+              const vec = new THREE.Vector3(...hs.position);
+              // Apply root group rotation and offset
+              vec.applyEuler(stateRef.current.rootGroup!.rotation);
+              vec.project(camera);
+
+              const isBehind = vec.z > 1;
+              const sx = vec.x * widthHalf + widthHalf;
+              const sy = -(vec.y * heightHalf) + heightHalf;
+
+              return {
+                hotspot: hs,
+                x: sx,
+                y: sy,
+                visible: !isBehind && sx >= 0 && sx <= container.clientWidth && sy >= 0 && sy <= container.clientHeight
+              };
+            });
+
+            setProjectedHotspots(projected);
+          }
+        } catch {
+          // gracefully stop loop on error
+        }
+      };
+
+      animate();
+    } catch (e) {
+      console.warn('Product3DCanvas WebGL fallback activated:', e);
+    }
 
     return () => {
-      resizeObserver.disconnect();
-      cancelAnimationFrame(animId);
-      if (container && renderer.domElement) {
-        container.removeChild(renderer.domElement);
+      try {
+        if (resizeObserver) {
+          resizeObserver.disconnect();
+        }
+        if (animId !== null) {
+          cancelAnimationFrame(animId);
+        }
+        if (renderer && renderer.domElement) {
+          if (renderer.domElement.parentNode) {
+            renderer.domElement.parentNode.removeChild(renderer.domElement);
+          }
+          renderer.dispose();
+        }
+        stateRef.current.materials.forEach((m) => m.dispose());
+      } catch {
+        // ignore cleanup errors
       }
-      renderer.dispose();
-      stateRef.current.materials.forEach((m) => m.dispose());
     };
   }, [modelConfig.id, renderMode, buildModelGeometry]);
 

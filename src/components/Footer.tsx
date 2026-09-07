@@ -41,8 +41,8 @@ export const Footer: React.FC<FooterProps> = ({
   return (
     <footer className="relative bg-slate-100/90 dark:bg-slate-950/90 border-t border-slate-200/80 dark:border-white/10 text-slate-600 dark:text-slate-400 text-xs backdrop-blur-xl transition-colors duration-300">
       {/* Main Footer Links */}
-      <div className="w-full max-w-[1536px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 py-6 sm:py-8 text-left">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-5 sm:gap-6">
+      <div className="w-full px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20 py-5 sm:py-6 text-left">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-5">
           {/* Brand Info */}
           <div className="lg:col-span-2 space-y-2.5">
             <div className="flex items-center gap-2 cursor-pointer" onClick={() => handleLinkClick('home')}>
@@ -159,7 +159,7 @@ export const Footer: React.FC<FooterProps> = ({
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-4 mt-5 border-t border-slate-200/80 dark:border-white/10 flex flex-col sm:flex-row items-center justify-between gap-2.5 text-[11px] text-slate-500 dark:text-slate-400">
+        <div className="pt-3 mt-4 border-t border-slate-200/80 dark:border-white/10 flex flex-col sm:flex-row items-center justify-between gap-2.5 text-[11px] text-slate-500 dark:text-slate-400">
           <div>
             © {new Date().getFullYear()} {COMPANY_INFO.name}. Jamshedpur, Jharkhand. All Rights Reserved.
           </div>

@@ -37,6 +37,11 @@ export interface DetailModalData {
   category: string;
   title: string;
   description: string;
+  longDesc?: string;
+  iconName?: string;
+  deliverables?: string[];
+  features?: string[];
+  benefits?: string[];
   duration?: string;
   metadata?: string;
   image: string;
@@ -85,6 +90,21 @@ export interface BlogPost {
   category: string;
   tags: string[];
   image: string;
+  titleHighlight?: boolean;
+  featuredQuote?: string;
+  summaryHighlights?: string[];
+  sections?: {
+    heading: string;
+    subheading?: string;
+    paragraphs: string[];
+    bulletPoints?: string[];
+    callout?: string;
+  }[];
+  comparisonTable?: {
+    feature: string;
+    aiDoctor: string;
+    humanDoctor: string;
+  }[];
 }
 
 export interface CareerJob {

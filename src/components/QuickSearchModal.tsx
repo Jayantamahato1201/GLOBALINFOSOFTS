@@ -269,7 +269,7 @@ export const QuickSearchModal: React.FC<QuickSearchModalProps> = ({
             </div>
           )}
 
-          {/* Projects */}
+          {/* Client Projects */}
           {matchedProjects.length > 0 && (
             <div className="space-y-1">
               <div className="text-[10px] font-mono font-semibold uppercase tracking-wider text-sky-700 dark:text-sky-300 px-2 py-0.5">
@@ -297,6 +297,35 @@ export const QuickSearchModal: React.FC<QuickSearchModalProps> = ({
                     </div>
                   </div>
                   <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-sky-600 dark:group-hover:text-sky-400 shrink-0" />
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* Blog Articles */}
+          {matchedBlogs.length > 0 && (
+            <div className="space-y-1">
+              <div className="text-[10px] font-mono font-semibold uppercase tracking-wider text-rose-700 dark:text-rose-400 px-2 py-0.5">
+                Blog Articles & Guides
+              </div>
+              {matchedBlogs.slice(0, q ? 3 : 2).map((blog) => (
+                <button
+                  key={blog.id}
+                  onClick={() => {
+                    onNavigatePage('blog', blog.slug);
+                    onClose();
+                  }}
+                  className="w-full p-2.5 rounded-xl bg-slate-100/60 dark:bg-white/[0.03] hover:bg-rose-500/10 dark:hover:bg-rose-500/15 border border-slate-200/80 dark:border-white/5 hover:border-rose-500/30 text-left flex items-center justify-between transition-all group"
+                >
+                  <div className="min-w-0 pr-2">
+                    <div className="font-bold text-slate-900 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-400">
+                      {blog.title}
+                    </div>
+                    <div className="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-1">
+                      {blog.category} • {blog.readTime}
+                    </div>
+                  </div>
+                  <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-rose-600 dark:group-hover:text-rose-400 shrink-0" />
                 </button>
               ))}
             </div>

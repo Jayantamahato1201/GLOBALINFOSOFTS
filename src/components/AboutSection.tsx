@@ -1,332 +1,549 @@
 import React from 'react';
-import { COMPANY_INFO, LEADERSHIP_CONTACTS, HEAD_OFFICE } from '../data/companyData';
-import { getWhatsAppUrl, WHATSAPP_MESSAGES } from '../utils/whatsapp';
-import { BrandLogo } from './BrandLogo';
-import { InteractiveTechGlobe } from './3d/InteractiveTechGlobe';
-import { Card3DTilt } from './3d/Card3DTilt';
+import { motion } from 'motion/react';
 import {
-  ShieldCheck,
-  Zap,
-  Target,
+  ArrowRight,
   Users,
+  TrendingUp,
+  ShieldCheck,
+  LayoutGrid,
   Compass,
-  Award,
-  Building2,
-  MapPin,
-  Mail,
-  Phone,
-  UserCheck,
-  CheckCircle2,
-  Clock
+  Target,
+  MessageCircle,
+  PhoneCall
 } from 'lucide-react';
+import { COMPANY_INFO } from '../data/companyData';
+import { getWhatsAppUrl, WHATSAPP_MESSAGES } from '../utils/whatsapp';
+import { PageId } from '../types';
+import { RevealOnScroll } from './common/RevealOnScroll';
 
-export const AboutSection: React.FC = () => {
-  const values = [
-    {
-      icon: Target,
-      title: 'Reliable Engineering',
-      desc: 'Proven databases and maintainable architectures engineered for business uptime.'
-    },
-    {
-      icon: ShieldCheck,
-      title: 'Data Security & Ownership',
-      desc: '100% database & IP control with zero lock-in and automated backups.'
-    },
-    {
-      icon: Zap,
-      title: 'Rapid Deployment',
-      desc: 'Turnkey on-site installation, seamless data migration, and full staff training.'
-    },
-    {
-      icon: Award,
-      title: 'Dedicated Support',
-      desc: 'Prompt local support in Jamshedpur with direct WhatsApp and AnyDesk remote help.'
-    }
-  ];
+interface AboutSectionProps {
+  onOpenContact?: (scope?: string) => void;
+  onSelectProject?: (projectId: string) => void;
+  onNavigatePage?: (page: PageId) => void;
+}
+
+export const AboutSection: React.FC<AboutSectionProps> = ({
+  onOpenContact,
+  onNavigatePage
+}) => {
+  const whatsappUrl = getWhatsAppUrl(
+    COMPANY_INFO.primaryPhone,
+    WHATSAPP_MESSAGES.general
+  );
 
   return (
-    <div id="about" className="w-full relative transition-colors duration-300">
-      {/* Background ambient accents */}
-      <div className="absolute abstract-shape-blue w-[350px] h-[350px] top-6 -left-20 animate-pulse-glow opacity-50 pointer-events-none" />
-      <div className="absolute abstract-shape-pink w-[300px] h-[300px] top-36 -right-20 animate-pulse-glow opacity-50 pointer-events-none" style={{ animationDelay: '-3s' }} />
+    <div
+      id="about-us-page"
+      className="w-full relative bg-slate-50 dark:bg-[#07090F] text-slate-800 dark:text-slate-200 overflow-hidden font-['Plus_Jakarta_Sans',sans-serif] transition-colors duration-300"
+    >
+      {/* Ambient background glow matching Tech Support & Pricing pages */}
+      <div className="absolute top-16 -left-32 w-[550px] h-[550px] bg-rose-500/5 dark:bg-rose-600/10 rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute top-1/3 -right-32 w-[550px] h-[550px] bg-cyan-500/5 dark:bg-cyan-500/10 rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute bottom-10 left-1/3 w-[500px] h-[500px] bg-purple-500/5 dark:bg-purple-600/5 rounded-full blur-[140px] pointer-events-none" />
 
-      <div className="relative z-10 w-full max-w-[1536px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 space-y-3">
-        {/* Top Header - Compact and Top-Aligned */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-2 text-left pb-1 border-b border-slate-200/80 dark:border-white/10">
-          <div className="max-w-3xl space-y-1">
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full glass-card text-cyan-700 dark:text-cyan-300 text-[11px] font-semibold uppercase tracking-wider border-cyan-500/30">
-              <BrandLogo size={13} />
-              <span>About Global InfoSoft</span>
-              <span className="text-slate-400 dark:text-slate-500">•</span>
-              <span className="text-emerald-600 dark:text-emerald-400 font-mono">Est. 2014</span>
-            </div>
-            <h1 className="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white font-['Outfit'] leading-tight">
-              Software Engineering & Regional IT Leadership
-            </h1>
-            <p className="text-slate-600 dark:text-slate-300 text-xs sm:text-sm leading-relaxed max-w-3xl">
-              Based in Jamshedpur, Jharkhand, Global InfoSoft architects custom ERPs, GST billing solutions, institutional portals, and modern web applications for over 150+ growing businesses.
-            </p>
-          </div>
+      {/* Main Full-Width Content Container */}
+      <div className="relative z-10 w-full px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20 py-6 sm:py-10 space-y-12 sm:space-y-16 lg:space-y-20">
 
-          <div className="flex items-center gap-2 shrink-0 self-start md:self-auto">
-            <span className="text-[10px] font-mono text-cyan-700 dark:text-cyan-300 px-2.5 py-1 rounded-full glass-card border-cyan-500/20 flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span>Jamshedpur HQ • Active Operations</span>
-            </span>
-          </div>
-        </div>
-
-        {/* Top Bento Grid: Mission & Stats & Values (Left) + 3D Tech Globe (Right) */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 text-left">
-          {/* Left Column (7 cols): Story, Stats & 4 Core Values */}
-          <div className="lg:col-span-7 space-y-2.5">
-            {/* Story Card with Stats Bar */}
-            <div className="p-3 sm:p-3.5 rounded-xl glass-panel border border-slate-200/80 dark:border-white/10 space-y-2 shadow-sm">
-              <div className="flex items-center justify-between">
-                <h2 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white font-['Outfit'] flex items-center gap-1.5">
-                  <Compass className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" />
-                  <span>Our Story & Mission</span>
-                </h2>
-                <span className="text-[9.5px] font-mono text-slate-500 dark:text-slate-400">
-                  {COMPANY_INFO.yearsOfExperience} in Enterprise Tech
-                </span>
-              </div>
-
-              <p className="text-slate-600 dark:text-slate-300 text-xs leading-relaxed">
-                We engineer reliable, scalable desktop and cloud software that automates complex billing, multi-branch inventory, and accounting workflows. We believe in complete transparency, direct human support, and zero vendor lock-in for your data.
-              </p>
-
-              {/* 4 Stats Inline Ribbon */}
-              <div className="grid grid-cols-4 gap-1.5 pt-1.5 border-t border-slate-200/80 dark:border-white/10 text-center">
-                <div className="p-1.5 rounded-lg bg-slate-50 dark:bg-white/[0.02] border border-slate-200/60 dark:border-white/5">
-                  <div className="text-sm sm:text-base font-extrabold text-cyan-600 dark:text-cyan-400 font-['Outfit']">10+</div>
-                  <div className="text-[9px] text-slate-600 dark:text-slate-400 font-medium">Years Active</div>
-                </div>
-                <div className="p-1.5 rounded-lg bg-slate-50 dark:bg-white/[0.02] border border-slate-200/60 dark:border-white/5">
-                  <div className="text-sm sm:text-base font-extrabold text-slate-900 dark:text-white font-['Outfit']">200+</div>
-                  <div className="text-[9px] text-slate-600 dark:text-slate-400 font-medium">Deployments</div>
-                </div>
-                <div className="p-1.5 rounded-lg bg-slate-50 dark:bg-white/[0.02] border border-slate-200/60 dark:border-white/5">
-                  <div className="text-sm sm:text-base font-extrabold text-cyan-600 dark:text-cyan-400 font-['Outfit']">150+</div>
-                  <div className="text-[9px] text-slate-600 dark:text-slate-400 font-medium">Active Clients</div>
-                </div>
-                <div className="p-1.5 rounded-lg bg-slate-50 dark:bg-white/[0.02] border border-slate-200/60 dark:border-white/5">
-                  <div className="text-sm sm:text-base font-extrabold text-emerald-600 dark:text-emerald-400 font-['Outfit']">100%</div>
-                  <div className="text-[9px] text-slate-600 dark:text-slate-400 font-medium">Data Control</div>
-                </div>
-              </div>
-            </div>
-
-            {/* Core Values 2x2 Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              {values.map((val, idx) => {
-                const Icon = val.icon;
-                const valueThemes = [
-                  'bg-cyan-500/15 border-cyan-500/30 text-cyan-600 dark:text-cyan-300',
-                  'bg-sky-500/15 border-sky-500/30 text-sky-600 dark:text-sky-300',
-                  'bg-pink-500/15 border-pink-500/30 text-pink-600 dark:text-pink-300',
-                  'bg-emerald-500/15 border-emerald-500/30 text-emerald-600 dark:text-lime-300'
-                ];
-                return (
-                  <div key={idx} className="p-2 sm:p-2.5 rounded-xl glass-card space-y-1 text-left border border-slate-200/70 dark:border-white/5">
-                    <div className="flex items-center gap-1.5">
-                      <div className={`w-5 h-5 rounded-md border flex items-center justify-center ${valueThemes[idx % 4]}`}>
-                        <Icon className="w-2.5 h-2.5" />
-                      </div>
-                      <div className="text-xs font-bold text-slate-900 dark:text-white">{val.title}</div>
-                    </div>
-                    <p className="text-[10px] text-slate-600 dark:text-slate-300 leading-snug">{val.desc}</p>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Right Column (5 cols): 3D Globe + Key Delivery Guarantees */}
-          <div className="lg:col-span-5 flex flex-col justify-between rounded-xl glass-panel border border-slate-200/80 dark:border-white/10 p-3 shadow-sm relative overflow-hidden space-y-2">
-            <div className="flex items-center justify-between">
-              <div className="text-[10.5px] font-semibold text-cyan-700 dark:text-cyan-300 uppercase tracking-wider font-mono">
-                Technology Delivery Hub
-              </div>
-              <span className="text-[9px] font-mono text-emerald-600 dark:text-emerald-400 px-2 py-0.5 rounded-full glass-card border border-emerald-500/20">
-                Live Interactive Globe
+        {/* ========================================================================= */}
+        {/* SECTION 1: HERO (MATCHING USER SCREENSHOT EXACTLY) */}
+        {/* ========================================================================= */}
+        <section className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+          {/* Left Text Column (7 cols) */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="lg:col-span-7 text-left space-y-4 sm:space-y-5"
+          >
+            {/* Top Eyebrow with horizontal line */}
+            <div className="flex items-center gap-2.5">
+              <span className="w-5 h-[1.5px] bg-slate-400 dark:bg-slate-500 inline-block" />
+              <span className="text-xs font-mono font-bold tracking-[0.2em] text-slate-500 dark:text-slate-400 uppercase">
+                ABOUT GLOBAL INFOSOFT
               </span>
             </div>
 
-            <InteractiveTechGlobe className="w-full h-[155px] sm:h-[175px]" />
+            {/* Giant Headline */}
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black font-['Sora'] tracking-tight text-slate-900 dark:text-white leading-[1.08] transition-colors duration-300">
+              Turning Ideas<br />
+              Into{' '}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-sky-500 to-cyan-500 dark:from-[#70A6FF] dark:via-cyan-400 dark:to-sky-300">
+                Digital Success
+              </span>
+            </h1>
 
-            <div className="pt-1.5 border-t border-slate-200/80 dark:border-white/10 grid grid-cols-2 gap-1.5 text-[10px] text-slate-600 dark:text-slate-300">
-              <div className="flex items-center gap-1">
-                <CheckCircle2 className="w-3 h-3 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                <span>On-Site Deployment</span>
+            {/* Paragraph matching exact copy */}
+            <p className="text-slate-600 dark:text-slate-300 text-sm sm:text-base leading-relaxed max-w-2xl font-normal transition-colors duration-300">
+              At Global Infosoft, we believe in empowering businesses with smart, practical, and
+              innovative digital solutions. Since our inception, our mission has been simple: to help
+              businesses grow online by providing high-quality services that deliver results. Whether
+              you're a startup, SME, or an established company, we work closely with you to understand
+              your vision and transform it into digital experiences that engage, impress, and convert.
+            </p>
+
+            {/* Action Buttons */}
+            <div className="flex flex-wrap items-center gap-3.5 pt-2">
+              <button
+                id="about-hero-get-in-touch-btn"
+                onClick={() => onOpenContact && onOpenContact('General Enquiry - About Us')}
+                className="inline-flex items-center gap-2 px-7 py-3 rounded-full bg-blue-600 hover:bg-blue-700 text-white dark:bg-[#9EB8FF] dark:hover:bg-[#8AAEFF] dark:text-[#0A1026] font-bold text-sm shadow-lg shadow-blue-500/20 dark:shadow-blue-950/40 active:scale-95 transition-all duration-200 cursor-pointer"
+              >
+                <span>Get in Touch</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+
+              <button
+                id="about-hero-our-services-btn"
+                onClick={() => {
+                  if (onNavigatePage) {
+                    onNavigatePage('services');
+                  } else if (onOpenContact) {
+                    onOpenContact('Services Consultation');
+                  }
+                }}
+                className="inline-flex items-center justify-center px-7 py-3 rounded-full bg-white hover:bg-slate-100 border border-slate-300 hover:border-slate-400 text-slate-800 dark:bg-[#0B101D]/90 dark:hover:bg-slate-800 dark:border-slate-700/80 dark:hover:border-slate-500 dark:text-white font-semibold text-sm active:scale-95 transition-all duration-200 cursor-pointer shadow-sm dark:shadow-md"
+              >
+                Our Services
+              </button>
+            </div>
+          </motion.div>
+
+          {/* Right Column: Office Boardroom Image with Illuminated 3D Logo & Floating Badge */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="lg:col-span-5 relative"
+          >
+            <div className="relative w-full h-[340px] sm:h-[400px] lg:h-[430px] rounded-2xl sm:rounded-3xl border border-slate-200/90 dark:border-slate-800/80 overflow-hidden shadow-xl dark:shadow-2xl group bg-white dark:bg-slate-950 transition-colors duration-300">
+              {/* High-res Modern Corporate Boardroom Image */}
+              <img
+                src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1200&q=80"
+                alt="Global Infosoft Headquarters Boardroom"
+                className="w-full h-full object-cover opacity-85 group-hover:scale-105 transition-transform duration-700"
+                referrerPolicy="no-referrer"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-[#07090F]/40 to-transparent pointer-events-none" />
+
+              {/* 3D Global Infosoft Signage on the Wall */}
+              <div className="absolute top-10 sm:top-14 right-6 sm:right-10 z-20 flex flex-col items-center select-none pointer-events-none drop-shadow-[0_8px_20px_rgba(0,0,0,0.85)]">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-full p-[2px] bg-gradient-to-tr from-cyan-400 via-sky-500 to-indigo-500 flex items-center justify-center shadow-[0_0_18px_rgba(56,189,248,0.5)]">
+                    <div className="w-full h-full rounded-full bg-[#090D18] flex items-center justify-center">
+                      <span className="text-transparent bg-clip-text bg-gradient-to-tr from-cyan-300 to-sky-400 font-black text-base sm:text-lg">
+                        G
+                      </span>
+                    </div>
+                  </div>
+                  <span className="text-lg sm:text-xl font-black font-['Sora'] text-white tracking-tight">
+                    Global Infosoft
+                  </span>
+                </div>
+                <div className="text-[9px] sm:text-[10px] font-semibold tracking-[0.25em] text-slate-300 mt-1 uppercase">
+                  Technology &nbsp;|&nbsp; Solutions &nbsp;|&nbsp; Growth
+                </div>
               </div>
-              <div className="flex items-center gap-1">
-                <CheckCircle2 className="w-3 h-3 text-cyan-600 dark:text-cyan-400 shrink-0" />
-                <span>Multi-Device Sync</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <CheckCircle2 className="w-3 h-3 text-cyan-600 dark:text-cyan-400 shrink-0" />
-                <span>GST E-Way & Invoicing</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <CheckCircle2 className="w-3 h-3 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                <span>6-Month Free Warranty</span>
+
+              {/* Floating Card at bottom right */}
+              <div className="absolute bottom-4 right-4 sm:bottom-6 sm:right-6 z-20 rounded-xl bg-white/95 dark:bg-[#090D18]/95 backdrop-blur-md border border-slate-200/90 dark:border-slate-700/80 p-3.5 sm:p-4 shadow-xl max-w-[240px] sm:max-w-[270px] text-left transition-colors duration-300">
+                <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white font-['Sora'] leading-snug">
+                  Reliable Solutions<br />for Real Businesses
+                </h4>
+                <div className="h-[1.5px] bg-slate-200 dark:bg-slate-700 my-2 w-10" />
+                <p className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 font-medium tracking-wide">
+                  Technology &nbsp;|&nbsp; People &nbsp;|&nbsp; Progress
+                </p>
               </div>
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </section>
 
-        {/* Leadership & Verified Contacts (3 Compact Cards Side-by-Side) */}
-        <div className="space-y-1.5 pt-1 text-left">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b border-slate-200/80 dark:border-white/10 pb-1">
-            <div className="flex items-center gap-1.5">
-              <Users className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" />
-              <h3 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white font-['Outfit']">
-                Leadership & Verified Direct Contacts
+        {/* ========================================================================= */}
+        {/* SECTION 2: OUR STORY (MATCHING USER SCREENSHOT EXACTLY) */}
+        {/* ========================================================================= */}
+        <section className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+          {/* Left Text Column (7 cols) */}
+          <RevealOnScroll direction="up" delay={0.05} className="lg:col-span-7 text-left space-y-4 sm:space-y-5">
+            {/* Eyebrow */}
+            <div className="text-xs font-mono font-bold tracking-[0.2em] text-blue-600 dark:text-cyan-400 uppercase">
+              OUR STORY
+            </div>
+
+            {/* Headline */}
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black font-['Sora'] tracking-tight text-slate-900 dark:text-white leading-tight transition-colors duration-300">
+              Building Digital<br />
+              Experiences{' '}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-sky-500 to-cyan-500 dark:from-cyan-400 dark:to-sky-300">
+                That Matter
+              </span>
+            </h2>
+
+            {/* Paragraph */}
+            <p className="text-slate-600 dark:text-slate-300 text-sm sm:text-base leading-relaxed max-w-2xl font-normal transition-colors duration-300">
+              At Global Infosoft, we combine creativity, technology, and strategy to deliver
+              solutions that are not only visually appealing but also highly functional. Every
+              project we take on is tailored to your business goals, ensuring maximum impact and
+              measurable results.
+            </p>
+
+            {/* 3 Horizontal Feature Badges */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-2">
+              {/* Badge 1: Client Focused */}
+              <motion.div
+                whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                className="flex items-center gap-3 p-3 rounded-xl bg-white dark:bg-[#0B101D]/90 border border-slate-200/90 dark:border-slate-800/80 shadow-sm dark:shadow-md hover:border-blue-400 dark:hover:border-cyan-500/40 transition-colors"
+              >
+                <div className="w-10 h-10 rounded-lg bg-blue-50 dark:bg-slate-900 border border-blue-100 dark:border-slate-700/80 text-blue-600 dark:text-cyan-400 flex items-center justify-center shrink-0">
+                  <Users className="w-5 h-5" />
+                </div>
+                <div className="text-left">
+                  <div className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white font-['Sora']">
+                    Client Focused
+                  </div>
+                  <div className="text-[11px] text-slate-500 dark:text-slate-400">
+                    Your goals are our priority
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Badge 2: Innovative Solutions */}
+              <motion.div
+                whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                className="flex items-center gap-3 p-3 rounded-xl bg-white dark:bg-[#0B101D]/90 border border-slate-200/90 dark:border-slate-800/80 shadow-sm dark:shadow-md hover:border-blue-400 dark:hover:border-cyan-500/40 transition-colors"
+              >
+                <div className="w-10 h-10 rounded-lg bg-blue-50 dark:bg-slate-900 border border-blue-100 dark:border-slate-700/80 text-blue-600 dark:text-cyan-400 flex items-center justify-center shrink-0">
+                  <TrendingUp className="w-5 h-5" />
+                </div>
+                <div className="text-left">
+                  <div className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white font-['Sora']">
+                    Innovative Solutions
+                  </div>
+                  <div className="text-[11px] text-slate-500 dark:text-slate-400">
+                    Always a step ahead
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Badge 3: Long-Term Growth */}
+              <motion.div
+                whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                className="flex items-center gap-3 p-3 rounded-xl bg-white dark:bg-[#0B101D]/90 border border-slate-200/90 dark:border-slate-800/80 shadow-sm dark:shadow-md hover:border-blue-400 dark:hover:border-cyan-500/40 transition-colors"
+              >
+                <div className="w-10 h-10 rounded-lg bg-blue-50 dark:bg-slate-900 border border-blue-100 dark:border-slate-700/80 text-blue-600 dark:text-cyan-400 flex items-center justify-center shrink-0">
+                  <ShieldCheck className="w-5 h-5" />
+                </div>
+                <div className="text-left">
+                  <div className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white font-['Sora']">
+                    Long-Term Growth
+                  </div>
+                  <div className="text-[11px] text-slate-500 dark:text-slate-400">
+                    Building success together
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          </RevealOnScroll>
+
+          {/* Right Column: Work Desk with Laptop and "Good Software Better Businesses" Mug */}
+          <RevealOnScroll direction="up" delay={0.15} className="lg:col-span-5 relative">
+            <div className="relative w-full h-[320px] sm:h-[380px] rounded-2xl sm:rounded-3xl border border-slate-200/90 dark:border-slate-800/80 overflow-hidden shadow-xl dark:shadow-2xl group bg-white dark:bg-slate-950 transition-colors duration-300">
+              {/* Laptop on desk photo */}
+              <img
+                src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1200&q=80"
+                alt="Building Digital Experiences - Work Desk"
+                className="w-full h-full object-cover opacity-85 group-hover:scale-105 transition-transform duration-700"
+                referrerPolicy="no-referrer"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-[#07090F]/40 to-transparent pointer-events-none" />
+
+              {/* Ceramic Mug Feature Card in foreground right */}
+              <div className="absolute bottom-6 right-6 sm:bottom-8 sm:right-8 z-20 flex items-center gap-3">
+                <div className="relative w-32 h-36 sm:w-36 sm:h-40 bg-white/95 dark:bg-gradient-to-b dark:from-[#1E2536] dark:via-[#121624] dark:to-[#0A0D15] border border-slate-200 dark:border-slate-700/80 rounded-2xl p-3 shadow-2xl flex flex-col justify-center items-center text-center backdrop-blur-md transition-colors duration-300">
+                  {/* Subtle Mug Handle */}
+                  <div className="absolute -right-3 top-1/2 -translate-y-1/2 w-4 h-14 rounded-r-xl border-2 border-slate-300 dark:border-slate-700/80 bg-white/80 dark:bg-[#121624]/60" />
+                  <div className="text-xs sm:text-sm font-black text-slate-900 dark:text-white font-['Sora'] leading-tight tracking-tight">
+                    Good<br />
+                    Software<br />
+                    <span className="text-blue-600 dark:text-cyan-400">Better</span><br />
+                    Businesses
+                  </div>
+                  <div className="w-6 h-[1.5px] bg-blue-600 dark:bg-cyan-400/80 mt-2 rounded-full" />
+                </div>
+              </div>
+            </div>
+          </RevealOnScroll>
+        </section>
+
+        {/* ========================================================================= */}
+        {/* SECTION 3: OUR PHILOSOPHY (MATCHING USER SCREENSHOT EXACTLY) */}
+        {/* ========================================================================= */}
+        <RevealOnScroll direction="up" delay={0.05} className="relative rounded-2xl sm:rounded-3xl border border-slate-200/90 dark:border-slate-800/80 bg-white dark:bg-[#090D18]/95 backdrop-blur-xl p-6 sm:p-10 lg:p-12 text-left overflow-hidden shadow-xl dark:shadow-2xl transition-colors duration-300">
+          {/* Subtle background glow */}
+          <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute bottom-0 left-0 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl pointer-events-none" />
+
+          {/* Top Header Flex Row */}
+          <div className="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-4 sm:gap-6">
+            <div>
+              <div className="text-xs font-mono font-bold tracking-[0.2em] text-blue-600 dark:text-cyan-400 uppercase">
+                OUR PHILOSOPHY
+              </div>
+              <h3 className="text-3xl sm:text-4xl md:text-5xl font-black font-['Sora'] text-slate-900 dark:text-white mt-1.5 tracking-tight transition-colors duration-300">
+                Create. Build. Grow.
               </h3>
             </div>
-            <span className="text-[9px] font-mono text-cyan-700 dark:text-cyan-300 px-2 py-0.5 rounded-full glass-card shrink-0 w-fit border-cyan-500/20">
-              Direct Verified Phone & WhatsApp
-            </span>
+
+            <p className="text-slate-600 dark:text-slate-300 text-xs sm:text-sm md:text-base leading-relaxed max-w-lg font-normal transition-colors duration-300">
+              We combine creativity, technology, and strategy to create digital solutions that
+              solve real business problems and create measurable value.
+            </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-2.5">
-            {/* CEO Card */}
-            <Card3DTilt intensity={6} className="p-3 rounded-xl glass-card space-y-1.5 transition-all border border-slate-200/70 dark:border-white/5">
-              <div className="flex items-start justify-between">
-                <div>
-                  <div className="text-[8px] font-mono font-bold uppercase tracking-widest text-cyan-600 dark:text-cyan-400 mb-0.5">
-                    Chief Executive Officer
-                  </div>
-                  <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white font-['Outfit']">Rajnish Kumar</h4>
-                  <span className="text-[10.5px] font-semibold text-cyan-700 dark:text-cyan-300">CEO & Founder</span>
-                </div>
-                <div className="w-6 h-6 rounded-lg bg-cyan-500/20 border border-cyan-500/30 flex items-center justify-center text-cyan-600 dark:text-cyan-300">
-                  <UserCheck className="w-3 h-3" />
-                </div>
-              </div>
+          {/* Horizontal Divider */}
+          <div className="relative z-10 border-t border-slate-200 dark:border-slate-800/80 my-8 sm:my-10" />
 
-              <div className="space-y-1 text-xs text-slate-700 dark:text-slate-300 pt-0.5">
-                <a
-                  href={getWhatsAppUrl(LEADERSHIP_CONTACTS[0].phone, WHATSAPP_MESSAGES.ceo)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  title="Click to chat with CEO on WhatsApp"
-                  className="flex items-center justify-between p-1.5 rounded-lg bg-slate-100 dark:bg-white/[0.04] hover:bg-emerald-500/15 border border-slate-200 dark:border-white/5 hover:border-emerald-500/30 transition-all group"
-                >
-                  <div className="flex items-center gap-1.5">
-                    <Phone className="w-3 h-3 text-emerald-600 dark:text-emerald-400 shrink-0 group-hover:scale-110 transition-transform" />
-                    <span className="font-mono text-[10.5px] text-slate-900 dark:text-slate-200 group-hover:text-emerald-700 dark:group-hover:text-white">{LEADERSHIP_CONTACTS[0].phone}</span>
-                  </div>
-                  <span className="text-[8px] text-emerald-700 dark:text-emerald-400 font-bold px-1.5 py-0.2 rounded bg-emerald-500/10 opacity-90 group-hover:opacity-100 transition-opacity">
-                    WhatsApp
-                  </span>
-                </a>
-                <a
-                  href={`mailto:${LEADERSHIP_CONTACTS[0].email}`}
-                  className="flex items-center gap-1.5 p-1.5 rounded-lg bg-slate-100 dark:bg-white/[0.04] hover:bg-cyan-500/15 border border-slate-200 dark:border-white/5 transition-colors group"
-                >
-                  <Mail className="w-3 h-3 text-cyan-600 dark:text-cyan-400 shrink-0 group-hover:scale-110 transition-transform" />
-                  <span className="font-mono text-[10px] text-slate-900 dark:text-slate-200 group-hover:text-cyan-700 dark:group-hover:text-white break-all">{LEADERSHIP_CONTACTS[0].email}</span>
-                </a>
+          {/* 3 Step Columns */}
+          <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 lg:gap-10">
+            {/* Step 01 */}
+            <motion.div
+              whileHover={{ y: -5, transition: { duration: 0.2 } }}
+              className="space-y-2 p-4 rounded-xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200/70 dark:border-transparent hover:border-slate-300 dark:hover:border-slate-800 transition-colors"
+            >
+              <div className="text-3xl sm:text-4xl font-black font-['JetBrains_Mono'] text-blue-600 dark:text-cyan-400">
+                01
               </div>
+              <h4 className="text-base sm:text-lg font-bold font-['Sora'] text-slate-900 dark:text-white">
+                Understand
+              </h4>
+              <p className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm leading-relaxed">
+                We listen carefully to understand your business, audience, and goals.
+              </p>
+            </motion.div>
 
-              <div className="pt-1 border-t border-slate-200/80 dark:border-white/10 text-[8.5px] text-slate-500 dark:text-slate-400">
-                Software Solutions, Client Partnerships & Management
+            {/* Step 02 */}
+            <motion.div
+              whileHover={{ y: -5, transition: { duration: 0.2 } }}
+              className="space-y-2 p-4 rounded-xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200/70 dark:border-transparent hover:border-slate-300 dark:hover:border-slate-800 transition-colors"
+            >
+              <div className="text-3xl sm:text-4xl font-black font-['JetBrains_Mono'] text-blue-600 dark:text-cyan-400">
+                02
               </div>
-            </Card3DTilt>
+              <h4 className="text-base sm:text-lg font-bold font-['Sora'] text-slate-900 dark:text-white">
+                Build
+              </h4>
+              <p className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm leading-relaxed">
+                We turn ideas into reliable, scalable, and user-friendly digital experiences.
+              </p>
+            </motion.div>
 
-            {/* CTO Card */}
-            <Card3DTilt intensity={6} className="p-3 rounded-xl glass-card space-y-1.5 transition-all border border-slate-200/70 dark:border-white/5">
-              <div className="flex items-start justify-between">
-                <div>
-                  <div className="text-[8px] font-mono font-bold uppercase tracking-widest text-sky-600 dark:text-sky-400 mb-0.5">
-                    Chief Technology Officer
-                  </div>
-                  <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white font-['Outfit']">Manoj Mahato</h4>
-                  <span className="text-[10.5px] font-semibold text-sky-700 dark:text-sky-300">CTO</span>
-                </div>
-                <div className="w-6 h-6 rounded-lg bg-sky-500/20 border border-sky-500/30 flex items-center justify-center text-sky-600 dark:text-sky-300">
-                  <Zap className="w-3 h-3" />
-                </div>
+            {/* Step 03 */}
+            <motion.div
+              whileHover={{ y: -5, transition: { duration: 0.2 } }}
+              className="space-y-2 p-4 rounded-xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200/70 dark:border-transparent hover:border-slate-300 dark:hover:border-slate-800 transition-colors"
+            >
+              <div className="text-3xl sm:text-4xl font-black font-['JetBrains_Mono'] text-blue-600 dark:text-cyan-400">
+                03
               </div>
-
-              <div className="space-y-1 text-xs text-slate-700 dark:text-slate-300 pt-0.5">
-                <a
-                  href={getWhatsAppUrl(LEADERSHIP_CONTACTS[1].phone, WHATSAPP_MESSAGES.cto)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  title="Click to chat with CTO on WhatsApp"
-                  className="flex items-center justify-between p-1.5 rounded-lg bg-slate-100 dark:bg-white/[0.04] hover:bg-emerald-500/15 border border-slate-200 dark:border-white/5 hover:border-emerald-500/30 transition-all group"
-                >
-                  <div className="flex items-center gap-1.5">
-                    <Phone className="w-3 h-3 text-emerald-600 dark:text-emerald-400 shrink-0 group-hover:scale-110 transition-transform" />
-                    <span className="font-mono text-[10.5px] text-slate-900 dark:text-slate-200 group-hover:text-emerald-700 dark:group-hover:text-white">{LEADERSHIP_CONTACTS[1].phone}</span>
-                  </div>
-                  <span className="text-[8px] text-emerald-700 dark:text-emerald-400 font-bold px-1.5 py-0.2 rounded bg-emerald-500/10 opacity-90 group-hover:opacity-100 transition-opacity">
-                    WhatsApp
-                  </span>
-                </a>
-                <a
-                  href={`mailto:${LEADERSHIP_CONTACTS[1].email}`}
-                  className="flex items-center gap-1.5 p-1.5 rounded-lg bg-slate-100 dark:bg-white/[0.04] hover:bg-sky-500/15 border border-slate-200 dark:border-white/5 transition-colors group"
-                >
-                  <Mail className="w-3 h-3 text-sky-600 dark:text-sky-400 shrink-0 group-hover:scale-110 transition-transform" />
-                  <span className="font-mono text-[10px] text-slate-900 dark:text-slate-200 group-hover:text-sky-700 dark:group-hover:text-white break-all">{LEADERSHIP_CONTACTS[1].email}</span>
-                </a>
-              </div>
-
-              <div className="pt-1 border-t border-slate-200/80 dark:border-white/10 text-[8.5px] text-slate-500 dark:text-slate-400">
-                Software Architecture, Database Systems & Support
-              </div>
-            </Card3DTilt>
-
-            {/* Head Office Card */}
-            <Card3DTilt intensity={6} className="p-3 rounded-xl glass-card space-y-1.5 transition-all border border-slate-200/70 dark:border-white/5">
-              <div className="flex items-start justify-between">
-                <div>
-                  <div className="text-[8px] font-mono font-bold uppercase tracking-widest text-emerald-600 dark:text-lime-400 mb-0.5">
-                    Corporate Headquarters
-                  </div>
-                  <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white font-['Outfit']">{HEAD_OFFICE.name}</h4>
-                  <span className="text-[10.5px] font-semibold text-emerald-700 dark:text-lime-300">{HEAD_OFFICE.title}</span>
-                </div>
-                <div className="w-6 h-6 rounded-lg bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-600 dark:text-lime-300">
-                  <Building2 className="w-3 h-3" />
-                </div>
-              </div>
-
-              <div className="space-y-1 text-xs text-slate-700 dark:text-slate-300 pt-0.5">
-                <div className="flex items-start gap-1.5 p-1.5 rounded-lg bg-slate-100 dark:bg-white/[0.04] border border-slate-200 dark:border-white/5">
-                  <MapPin className="w-3 h-3 text-emerald-600 dark:text-lime-400 shrink-0 mt-0.5" />
-                  <span className="text-[10px] text-slate-900 dark:text-slate-200 leading-tight">{HEAD_OFFICE.address}</span>
-                </div>
-                <a
-                  href={getWhatsAppUrl(HEAD_OFFICE.phone, WHATSAPP_MESSAGES.headOffice)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  title="Click to chat with Head Office on WhatsApp"
-                  className="flex items-center justify-between p-1.5 rounded-lg bg-slate-100 dark:bg-white/[0.04] hover:bg-emerald-500/15 border border-slate-200 dark:border-white/5 hover:border-emerald-500/30 transition-all group"
-                >
-                  <div className="flex items-center gap-1.5">
-                    <Phone className="w-3 h-3 text-emerald-600 dark:text-emerald-400 shrink-0 group-hover:scale-110 transition-transform" />
-                    <span className="font-mono text-[10.5px] text-slate-900 dark:text-slate-200 group-hover:text-emerald-700 dark:group-hover:text-white">{HEAD_OFFICE.phone}</span>
-                  </div>
-                  <span className="text-[8px] text-emerald-700 dark:text-emerald-400 font-bold px-1.5 py-0.2 rounded bg-emerald-500/10 opacity-90 group-hover:opacity-100 transition-opacity">
-                    WhatsApp
-                  </span>
-                </a>
-              </div>
-
-              <div className="pt-1 border-t border-slate-200/80 dark:border-white/10 text-[8.5px] text-slate-500 dark:text-slate-400 flex items-center gap-1 font-mono">
-                <Clock className="w-2.5 h-2.5 text-slate-400" />
-                <span>{HEAD_OFFICE.hours}</span>
-              </div>
-            </Card3DTilt>
+              <h4 className="text-base sm:text-lg font-bold font-['Sora'] text-slate-900 dark:text-white">
+                Grow
+              </h4>
+              <p className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm leading-relaxed">
+                We focus on long-term value, performance, and continuous improvement.
+              </p>
+            </motion.div>
           </div>
-        </div>
+        </RevealOnScroll>
+
+        {/* ========================================================================= */}
+        {/* SECTION 4: WHY GLOBAL INFOSOFT? (MATCHING USER SCREENSHOT EXACTLY) */}
+        {/* ========================================================================= */}
+        <section className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+          {/* Left Column (5 cols) */}
+          <RevealOnScroll direction="up" delay={0.05} className="lg:col-span-5 text-left space-y-4">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black font-['Sora'] text-slate-900 dark:text-white tracking-tight leading-tight transition-colors duration-300">
+              Why Global Infosoft?
+            </h2>
+
+            <p className="text-base sm:text-lg font-semibold text-slate-700 dark:text-slate-200 transition-colors duration-300">
+              Technology should solve problems — not create them.
+            </p>
+
+            <p className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm leading-relaxed transition-colors duration-300">
+              We're here to make technology simple, effective, and impactful for your business.
+            </p>
+
+            <div className="pt-3">
+              <button
+                id="why-gis-lets-work-together-btn"
+                onClick={() => onOpenContact && onOpenContact("Let's Work Together - Why GIS")}
+                className="inline-flex items-center gap-2 px-7 py-3 rounded-full bg-blue-600 hover:bg-blue-700 text-white dark:bg-[#9EB8FF] dark:hover:bg-[#8AAEFF] dark:text-[#0A1026] font-bold text-sm shadow-md shadow-blue-500/20 dark:shadow-blue-950/40 active:scale-95 transition-all duration-200 cursor-pointer"
+              >
+                <span>Let's Work Together</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
+          </RevealOnScroll>
+
+          {/* Right Column: 2x2 Feature Cards Grid (7 cols) */}
+          <RevealOnScroll direction="up" delay={0.15} className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5 text-left">
+            {/* Card 1: Expert Team */}
+            <motion.div
+              whileHover={{ y: -4, transition: { duration: 0.2 } }}
+              className="rounded-2xl border border-slate-200/90 dark:border-slate-800/80 bg-white dark:bg-[#090D18]/90 p-5 sm:p-6 flex items-start gap-4 hover:border-blue-400 dark:hover:border-cyan-500/40 transition-all shadow-md dark:shadow-lg"
+            >
+              <div className="w-11 h-11 rounded-xl bg-blue-50 dark:bg-slate-900 border border-blue-100 dark:border-slate-700/80 text-blue-600 dark:text-cyan-400 flex items-center justify-center shrink-0">
+                <Users className="w-5 h-5" />
+              </div>
+              <div className="space-y-1">
+                <h4 className="text-base font-bold font-['Sora'] text-slate-900 dark:text-white">
+                  Expert Team
+                </h4>
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                  Skilled professionals with experience across web, design, and digital marketing.
+                </p>
+              </div>
+            </motion.div>
+
+            {/* Card 2: Customized Solutions */}
+            <motion.div
+              whileHover={{ y: -4, transition: { duration: 0.2 } }}
+              className="rounded-2xl border border-slate-200/90 dark:border-slate-800/80 bg-white dark:bg-[#090D18]/90 p-5 sm:p-6 flex items-start gap-4 hover:border-blue-400 dark:hover:border-cyan-500/40 transition-all shadow-md dark:shadow-lg"
+            >
+              <div className="w-11 h-11 rounded-xl bg-blue-50 dark:bg-slate-900 border border-blue-100 dark:border-slate-700/80 text-blue-600 dark:text-cyan-400 flex items-center justify-center shrink-0">
+                <LayoutGrid className="w-5 h-5" />
+              </div>
+              <div className="space-y-1">
+                <h4 className="text-base font-bold font-['Sora'] text-slate-900 dark:text-white">
+                  Customized Solutions
+                </h4>
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                  Every project is tailored to meet your specific business goals.
+                </p>
+              </div>
+            </motion.div>
+
+            {/* Card 3: End-to-End Services */}
+            <motion.div
+              whileHover={{ y: -4, transition: { duration: 0.2 } }}
+              className="rounded-2xl border border-slate-200/90 dark:border-slate-800/80 bg-white dark:bg-[#090D18]/90 p-5 sm:p-6 flex items-start gap-4 hover:border-blue-400 dark:hover:border-cyan-500/40 transition-all shadow-md dark:shadow-lg"
+            >
+              <div className="w-11 h-11 rounded-xl bg-blue-50 dark:bg-slate-900 border border-blue-100 dark:border-slate-700/80 text-blue-600 dark:text-cyan-400 flex items-center justify-center shrink-0">
+                <Compass className="w-5 h-5" />
+              </div>
+              <div className="space-y-1">
+                <h4 className="text-base font-bold font-['Sora'] text-slate-900 dark:text-white">
+                  End-to-End Services
+                </h4>
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                  From concept to delivery and ongoing support, we handle the complete journey.
+                </p>
+              </div>
+            </motion.div>
+
+            {/* Card 4: Result-Oriented Approach */}
+            <motion.div
+              whileHover={{ y: -4, transition: { duration: 0.2 } }}
+              className="rounded-2xl border border-slate-200/90 dark:border-slate-800/80 bg-white dark:bg-[#090D18]/90 p-5 sm:p-6 flex items-start gap-4 hover:border-blue-400 dark:hover:border-cyan-500/40 transition-all shadow-md dark:shadow-lg"
+            >
+              <div className="w-11 h-11 rounded-xl bg-blue-50 dark:bg-slate-900 border border-blue-100 dark:border-slate-700/80 text-blue-600 dark:text-cyan-400 flex items-center justify-center shrink-0">
+                <Target className="w-5 h-5" />
+              </div>
+              <div className="space-y-1">
+                <h4 className="text-base font-bold font-['Sora'] text-slate-900 dark:text-white">
+                  Result-Oriented Approach
+                </h4>
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                  Focused on helping your business grow and succeed online.
+                </p>
+              </div>
+            </motion.div>
+          </RevealOnScroll>
+        </section>
+
+        {/* ========================================================================= */}
+        {/* SECTION 5: BOTTOM CTA BANNER: "LET'S BUILD TOGETHER" */}
+        {/* ========================================================================= */}
+        <RevealOnScroll direction="up" delay={0.08} className="relative rounded-2xl sm:rounded-3xl border border-slate-200/90 dark:border-slate-800/80 bg-gradient-to-r from-blue-50 via-indigo-50/50 to-white dark:from-[#090D18] dark:via-[#090D18]/90 dark:to-[#090D18] text-left overflow-hidden shadow-xl dark:shadow-2xl p-6 sm:p-10 lg:p-12 transition-colors duration-300">
+          {/* Architectural modern glass skyscraper background image */}
+          <img
+            src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1600&q=80"
+            alt="Global Infosoft Architectural Tower"
+            className="absolute inset-0 w-full h-full object-cover opacity-15 mix-blend-luminosity pointer-events-none"
+            referrerPolicy="no-referrer"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-white/90 via-white/70 to-transparent dark:from-[#090D18] dark:via-[#090D18]/90 dark:to-transparent pointer-events-none" />
+          <div className="absolute -top-24 -right-24 w-96 h-96 bg-blue-500/10 dark:bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
+
+          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
+            {/* Left Content Column (7 cols) */}
+            <div className="lg:col-span-7 space-y-2.5">
+              <div className="text-xs font-mono font-bold tracking-[0.2em] text-blue-600 dark:text-cyan-400 uppercase">
+                LET'S BUILD TOGETHER
+              </div>
+
+              <h3 className="text-3xl sm:text-4xl lg:text-5xl font-black font-['Sora'] text-slate-900 dark:text-white tracking-tight leading-tight transition-colors duration-300">
+                Have an Idea?<br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-sky-500 to-cyan-500 dark:from-sky-400 dark:via-cyan-300 dark:to-blue-400">
+                  Let's Build It Together.
+                </span>
+              </h3>
+
+              <p className="text-slate-600 dark:text-slate-300 text-xs sm:text-sm md:text-base leading-relaxed max-w-lg font-normal transition-colors duration-300">
+                Tell us what you're building and let's turn your vision into a digital
+                experience that delivers results.
+              </p>
+            </div>
+
+            {/* Middle Action Column (3 cols) */}
+            <div className="lg:col-span-3 flex flex-col items-start sm:items-start justify-center gap-3">
+              <button
+                id="cta-start-a-project-btn"
+                onClick={() => onOpenContact && onOpenContact('Start a Project with Global Infosoft')}
+                className="inline-flex items-center gap-2 px-7 py-3 rounded-full bg-blue-600 hover:bg-blue-700 text-white dark:bg-white dark:hover:bg-slate-100 dark:text-slate-950 font-bold text-sm shadow-xl active:scale-95 transition-all duration-200 cursor-pointer"
+              >
+                <span>Start a Project</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+
+              <button
+                id="cta-talk-to-us-btn"
+                onClick={() => onOpenContact && onOpenContact('Talk to Us - Global Infosoft Leadership')}
+                className="text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white text-xs sm:text-sm font-semibold underline underline-offset-4 cursor-pointer transition-colors duration-200 pl-1"
+              >
+                Talk to Us
+              </button>
+            </div>
+
+            {/* Right Typography Accent Column (2 cols) */}
+            <div className="hidden lg:flex lg:col-span-2 flex-col items-start justify-center space-y-1 border-l border-slate-300 dark:border-slate-700/60 pl-6 text-left">
+              <div className="text-xs font-mono font-semibold tracking-[0.2em] text-slate-500 dark:text-slate-400">
+                IDEAS
+              </div>
+              <div className="text-xs font-mono font-semibold tracking-[0.2em] text-slate-500 dark:text-slate-400">
+                SOLUTIONS
+              </div>
+              <div className="text-xs font-mono font-semibold tracking-[0.2em] text-slate-500 dark:text-slate-400">
+                GROWTH
+              </div>
+              <div className="w-8 h-[2px] bg-blue-600 dark:bg-cyan-400 rounded-full mt-2" />
+            </div>
+          </div>
+        </RevealOnScroll>
+
       </div>
+
+      {/* Floating WhatsApp Enquiry Button matching screenshot at bottom right */}
+      <a
+        id="floating-whatsapp-enquiry-btn"
+        href={whatsappUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed bottom-6 right-6 z-50 inline-flex items-center gap-2 px-4 sm:px-5 py-2.5 sm:py-3 rounded-full bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-xs sm:text-sm shadow-[0_4px_25px_rgba(37,211,102,0.45)] transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer"
+        aria-label="WhatsApp Enquiry"
+      >
+        <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5 fill-white" />
+        <span>WhatsApp Enquiry</span>
+      </a>
     </div>
   );
 };
-
