@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
+import { localCmsStore } from '../admin/localCmsStore';
 import {
   CmsPage,
   CmsSection,
@@ -142,20 +143,31 @@ export const CmsProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const fetchCmsData = useCallback(async () => {
     try {
       const res = await fetch('/api/public/cms-data');
-      if (!res.ok) throw new Error(`CMS API error: ${res.status}`);
-      const text = await res.text();
-      let json: PublicCmsData;
-      try {
-        json = JSON.parse(text);
-      } catch (parseErr) {
-        console.warn('[CmsContext] Non-JSON payload received from CMS endpoint, maintaining fallback defaults.');
-        return;
+      if (res.ok) {
+        const text = await res.text();
+        let json: PublicCmsData;
+        try {
+          json = JSON.parse(text);
+          setData(json);
+          setError(null);
+          return;
+        } catch {
+          console.warn('[CmsContext] Non-JSON payload received from CMS endpoint, using local store.');
+        }
       }
-      setData(json);
+
+      // If server returns 404 (e.g. Vercel deployment), load from local store
+      const localData = localCmsStore.handleRequest('/api/public/cms-data');
+      if (localData) {
+        setData(localData);
+      }
       setError(null);
     } catch (err: any) {
-      console.warn('[CmsContext] Could not fetch public CMS data, relying on local defaults:', err);
-      // Suppress raw error string to avoid throwing UI into broken state
+      console.warn('[CmsContext] Network fetch failed, reading from local CMS store:', err);
+      const localData = localCmsStore.handleRequest('/api/public/cms-data');
+      if (localData) {
+        setData(localData);
+      }
       setError(null);
     } finally {
       setIsLoading(false);

@@ -40,13 +40,27 @@ export class CmsDatabase {
   }
 
   private ensureDirectory() {
-    if (!fs.existsSync(DB_DIR)) {
-      fs.mkdirSync(DB_DIR, { recursive: true });
+    try {
+      if (!fs.existsSync(DB_DIR)) {
+        fs.mkdirSync(DB_DIR, { recursive: true });
+      }
+    } catch {
+      // Ignored for read-only serverless runtimes
     }
   }
 
   private loadDatabase(): CmsDatabaseSchema {
     try {
+      // In serverless environments, check if /tmp has a previous write in this container
+      const tmpFile = path.join('/tmp', 'cms_data.json');
+      if (fs.existsSync(tmpFile)) {
+        const raw = fs.readFileSync(tmpFile, 'utf-8');
+        const parsed = JSON.parse(raw);
+        if (parsed && parsed.users && parsed.pages) {
+          return parsed;
+        }
+      }
+
       if (fs.existsSync(DB_FILE)) {
         const raw = fs.readFileSync(DB_FILE, 'utf-8');
         const parsed = JSON.parse(raw);
@@ -76,11 +90,16 @@ export class CmsDatabase {
       fs.writeFileSync(tempFile, JSON.stringify(d, null, 2), 'utf-8');
       fs.renameSync(tempFile, DB_FILE);
     } catch (err) {
-      console.error('[CMS DB] Error writing cms_data.json with atomic rename, fallback direct write:', err);
       try {
         fs.writeFileSync(DB_FILE, JSON.stringify(d, null, 2), 'utf-8');
       } catch (e) {
-        console.error('[CMS DB] Fatal error writing cms_data.json:', e);
+        // Fallback for read-only environments (such as Vercel AWS Lambda)
+        try {
+          const tmpFile = path.join('/tmp', 'cms_data.json');
+          fs.writeFileSync(tmpFile, JSON.stringify(d, null, 2), 'utf-8');
+        } catch {
+          // Data is maintained in-memory in this.data
+        }
       }
     }
   }

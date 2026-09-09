@@ -854,21 +854,26 @@ cmsRouter.post('/media/upload', authenticateAdmin, (req: AuthenticatedRequest, r
       return res.status(400).json({ error: 'Filename and image data are required.' });
     }
 
-    // Ensure uploads directory exists
+    // Ensure uploads directory exists if writable
     const uploadsDir = path.join(process.cwd(), 'public', 'uploads');
-    if (!fs.existsSync(uploadsDir)) {
-      fs.mkdirSync(uploadsDir, { recursive: true });
-    }
+    let publicUrl = dataUrl;
 
-    // Sanitize filename
-    const safeName = `${Date.now()}_${filename.replace(/[^a-zA-Z0-9._-]/g, '')}`;
-    const filePath = path.join(uploadsDir, safeName);
-
-    // If dataUrl has base64 prefix
     const base64Data = dataUrl.replace(/^data:[^;]+;base64,/, '');
-    fs.writeFileSync(filePath, Buffer.from(base64Data, 'base64'));
 
-    const publicUrl = `/uploads/${safeName}`;
+    try {
+      if (!fs.existsSync(uploadsDir)) {
+        fs.mkdirSync(uploadsDir, { recursive: true });
+      }
+
+      // Sanitize filename
+      const safeName = `${Date.now()}_${filename.replace(/[^a-zA-Z0-9._-]/g, '')}`;
+      const filePath = path.join(uploadsDir, safeName);
+      fs.writeFileSync(filePath, Buffer.from(base64Data, 'base64'));
+      publicUrl = `/uploads/${safeName}`;
+    } catch {
+      // In read-only serverless environment (Vercel Lambda), retain the base64 dataUrl directly as the public media URL
+      publicUrl = dataUrl;
+    }
     const media = cmsDb.addMedia({
       filename: filename,
       url: publicUrl,

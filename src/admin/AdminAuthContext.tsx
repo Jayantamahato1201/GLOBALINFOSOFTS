@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { AdminUser } from '../../server/cmsTypes';
+import { localCmsStore } from './localCmsStore';
 
 interface AdminAuthContextType {
   token: string | null;
@@ -66,6 +67,13 @@ export const AdminAuthProvider: React.FC<{ children: ReactNode }> = ({ children 
         setIsLoading(false);
         return;
       }
+
+      // Local session token (e.g. on Vercel standalone), keep session active
+      if (token.startsWith('gis-local-')) {
+        setIsLoading(false);
+        return;
+      }
+
       try {
         const res = await fetch('/api/auth/me', {
           headers: {
@@ -81,8 +89,11 @@ export const AdminAuthProvider: React.FC<{ children: ReactNode }> = ({ children 
           } catch {
             console.warn('[AdminAuth] Non-JSON payload received for /api/auth/me');
           }
+        } else if (res.status === 404) {
+          // If 404 (e.g. running on Vercel without serverless backend), retain user session
+          console.warn('[AdminAuth] /api/auth/me returned 404, retaining local admin session.');
         } else {
-          // Token expired or invalid
+          // Token expired or rejected by live server
           setToken(null);
           setUser(null);
           localStorage.removeItem(TOKEN_KEY);
@@ -105,25 +116,78 @@ export const AdminAuthProvider: React.FC<{ children: ReactNode }> = ({ children 
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password, rememberMe })
       });
+
+      // Live backend responded successfully
+      if (res.ok) {
+        const text = await res.text();
+        let data: any = {};
+        try {
+          data = JSON.parse(text);
+        } catch {
+          data = {};
+        }
+        if (data.token && data.user) {
+          setToken(data.token);
+          setUser(data.user);
+          localStorage.setItem(TOKEN_KEY, data.token);
+          localStorage.setItem(USER_KEY, JSON.stringify(data.user));
+          showToast(`Welcome back, ${data.user.fullName}!`, 'success');
+          return { success: true };
+        }
+      }
+
+      // If backend returns 404 (e.g. deployed to Vercel without Node.js backend), seamlessly authenticate locally!
+      if (res.status === 404 || res.status === 502 || res.status === 503) {
+        const localAuth = localCmsStore.verifyLogin(email, password);
+        if (localAuth) {
+          setToken(localAuth.token);
+          setUser(localAuth.user);
+          localStorage.setItem(TOKEN_KEY, localAuth.token);
+          localStorage.setItem(USER_KEY, JSON.stringify(localAuth.user));
+          showToast(`Welcome back, ${localAuth.user.fullName}! (Vercel Standalone Mode)`, 'success');
+          return { success: true };
+        } else {
+          return {
+            success: false,
+            error: 'Invalid credentials. Default: admin@globalinfosoft.com / AdminPassword@2026 (or admin123)'
+          };
+        }
+      }
+
+      // Live server rejected credentials or returned specific error
       const text = await res.text();
       let data: any = {};
       try {
         data = JSON.parse(text);
       } catch {
-        return { success: false, error: res.ok ? 'Unexpected response format' : `Server error: ${res.status}` };
+        // Non-JSON response, attempt local authentication fallback
+        const localAuth = localCmsStore.verifyLogin(email, password);
+        if (localAuth) {
+          setToken(localAuth.token);
+          setUser(localAuth.user);
+          localStorage.setItem(TOKEN_KEY, localAuth.token);
+          localStorage.setItem(USER_KEY, JSON.stringify(localAuth.user));
+          showToast(`Welcome back, ${localAuth.user.fullName}!`, 'success');
+          return { success: true };
+        }
+        return { success: false, error: `Authentication failed (Status ${res.status})` };
       }
-      if (!res.ok) {
-        return { success: false, error: data.error || 'Login failed' };
-      }
-
-      setToken(data.token);
-      setUser(data.user);
-      localStorage.setItem(TOKEN_KEY, data.token);
-      localStorage.setItem(USER_KEY, JSON.stringify(data.user));
-      showToast(`Welcome back, ${data.user.fullName}!`, 'success');
-      return { success: true };
+      return { success: false, error: data.error || 'Login failed' };
     } catch (err: any) {
-      return { success: false, error: err.message || 'Network connection failed' };
+      // Network failure or host unavailable - authenticate using local store
+      const localAuth = localCmsStore.verifyLogin(email, password);
+      if (localAuth) {
+        setToken(localAuth.token);
+        setUser(localAuth.user);
+        localStorage.setItem(TOKEN_KEY, localAuth.token);
+        localStorage.setItem(USER_KEY, JSON.stringify(localAuth.user));
+        showToast(`Welcome back, ${localAuth.user.fullName}! (Standalone Offline Mode)`, 'success');
+        return { success: true };
+      }
+      return {
+        success: false,
+        error: 'Network connection error. Default login: admin@globalinfosoft.com / AdminPassword@2026'
+      };
     }
   };
 
@@ -134,25 +198,58 @@ export const AdminAuthProvider: React.FC<{ children: ReactNode }> = ({ children 
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ fullName, email, password, confirmPassword })
       });
+
+      if (res.ok) {
+        const text = await res.text();
+        let data: any = {};
+        try {
+          data = JSON.parse(text);
+        } catch {
+          data = {};
+        }
+        if (data.token && data.user) {
+          setToken(data.token);
+          setUser(data.user);
+          localStorage.setItem(TOKEN_KEY, data.token);
+          localStorage.setItem(USER_KEY, JSON.stringify(data.user));
+          showToast(`Account created successfully as ${data.user.role}!`, 'success');
+          return { success: true };
+        }
+      }
+
+      // If backend returns 404, register in local store
+      if (res.status === 404 || res.status === 502 || res.status === 503) {
+        try {
+          const registered = localCmsStore.registerUser(fullName, email, password);
+          setToken(registered.token);
+          setUser(registered.user);
+          localStorage.setItem(TOKEN_KEY, registered.token);
+          localStorage.setItem(USER_KEY, JSON.stringify(registered.user));
+          showToast(`Account created locally as ${registered.user.role}!`, 'success');
+          return { success: true };
+        } catch (e: any) {
+          return { success: false, error: e.message || 'Registration failed' };
+        }
+      }
+
       const text = await res.text();
       let data: any = {};
       try {
         data = JSON.parse(text);
-      } catch {
-        return { success: false, error: res.ok ? 'Unexpected response format' : `Server error: ${res.status}` };
-      }
-      if (!res.ok) {
-        return { success: false, error: data.error || 'Signup failed' };
-      }
-
-      setToken(data.token);
-      setUser(data.user);
-      localStorage.setItem(TOKEN_KEY, data.token);
-      localStorage.setItem(USER_KEY, JSON.stringify(data.user));
-      showToast(`Account created successfully as ${data.user.role}!`, 'success');
-      return { success: true };
+      } catch {}
+      return { success: false, error: data.error || 'Signup failed' };
     } catch (err: any) {
-      return { success: false, error: err.message || 'Network error during signup' };
+      try {
+        const registered = localCmsStore.registerUser(fullName, email, password);
+        setToken(registered.token);
+        setUser(registered.user);
+        localStorage.setItem(TOKEN_KEY, registered.token);
+        localStorage.setItem(USER_KEY, JSON.stringify(registered.user));
+        showToast(`Account created locally as ${registered.user.role}!`, 'success');
+        return { success: true };
+      } catch (e: any) {
+        return { success: false, error: e.message || 'Registration failed' };
+      }
     }
   };
 
@@ -164,8 +261,18 @@ export const AdminAuthProvider: React.FC<{ children: ReactNode }> = ({ children 
     showToast('Logged out securely.', 'info');
   };
 
-  // Helper to make authenticated API requests
+  // Helper to make authenticated API requests with automatic fallback
   const apiFetch = async (endpoint: string, options: RequestInit = {}) => {
+    // If session is local standalone, route directly to local store
+    if (token?.startsWith('gis-local-')) {
+      const result = localCmsStore.handleRequest(endpoint, options);
+      const isMutating = ['POST', 'PUT', 'PATCH', 'DELETE'].includes((options.method || 'GET').toUpperCase());
+      if (isMutating) {
+        window.dispatchEvent(new CustomEvent('cms-data-updated'));
+      }
+      return result;
+    }
+
     const headers = new Headers(options.headers || {});
     if (token) {
       headers.set('Authorization', `Bearer ${token}`);
@@ -174,31 +281,52 @@ export const AdminAuthProvider: React.FC<{ children: ReactNode }> = ({ children 
       headers.set('Content-Type', 'application/json');
     }
 
-    const res = await fetch(endpoint, {
-      ...options,
-      headers
-    });
-
-    const isMutating = ['POST', 'PUT', 'PATCH', 'DELETE'].includes((options.method || 'GET').toUpperCase());
-    if (res.ok && isMutating) {
-      // Notify website listeners to revalidate public cache!
-      window.dispatchEvent(new CustomEvent('cms-data-updated'));
-    }
-
-    const text = await res.text();
-    let json: any = {};
     try {
-      json = text ? JSON.parse(text) : {};
-    } catch {
-      if (!res.ok) {
-        throw new Error(`Server returned HTTP ${res.status}`);
+      const res = await fetch(endpoint, {
+        ...options,
+        headers
+      });
+
+      // If server returns 404 (e.g. on Vercel static), transparently fallback to local CMS store
+      if (res.status === 404) {
+        console.warn(`[AdminAuth] Endpoint ${endpoint} returned 404, routing to local CMS storage.`);
+        const result = localCmsStore.handleRequest(endpoint, options);
+        const isMutating = ['POST', 'PUT', 'PATCH', 'DELETE'].includes((options.method || 'GET').toUpperCase());
+        if (isMutating) {
+          window.dispatchEvent(new CustomEvent('cms-data-updated'));
+        }
+        return result;
       }
-      throw new Error('Server returned an unexpected non-JSON response');
+
+      const isMutating = ['POST', 'PUT', 'PATCH', 'DELETE'].includes((options.method || 'GET').toUpperCase());
+      if (res.ok && isMutating) {
+        // Notify website listeners to revalidate public cache!
+        window.dispatchEvent(new CustomEvent('cms-data-updated'));
+      }
+
+      const text = await res.text();
+      let json: any = {};
+      try {
+        json = text ? JSON.parse(text) : {};
+      } catch {
+        if (!res.ok) {
+          throw new Error(`Server returned HTTP ${res.status}`);
+        }
+        throw new Error('Server returned an unexpected non-JSON response');
+      }
+      if (!res.ok) {
+        throw new Error(json.error || `HTTP error ${res.status}`);
+      }
+      return json;
+    } catch (fetchErr: any) {
+      console.warn(`[AdminAuth] Fetch to ${endpoint} failed, falling back to local storage:`, fetchErr);
+      const result = localCmsStore.handleRequest(endpoint, options);
+      const isMutating = ['POST', 'PUT', 'PATCH', 'DELETE'].includes((options.method || 'GET').toUpperCase());
+      if (isMutating) {
+        window.dispatchEvent(new CustomEvent('cms-data-updated'));
+      }
+      return result;
     }
-    if (!res.ok) {
-      throw new Error(json.error || `HTTP error ${res.status}`);
-    }
-    return json;
   };
 
   const canManageUsers = user?.role === 'super_admin';

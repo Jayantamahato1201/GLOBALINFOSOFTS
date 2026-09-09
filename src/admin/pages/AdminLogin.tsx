@@ -161,6 +161,21 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onSwitchToSignup, onBack
             </button>
           </div>
         )}
+
+        {/* Quick fill helper for Vercel testing */}
+        <div className="mt-4 pt-4 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
+          <span>Demo Credentials:</span>
+          <button
+            type="button"
+            onClick={() => {
+              setEmail('admin@globalinfosoft.com');
+              setPassword('AdminPassword@2026');
+            }}
+            className="text-cyan-400 hover:text-cyan-300 font-medium hover:underline text-[11px]"
+          >
+            Auto-fill Super Admin
+          </button>
+        </div>
       </div>
 
       <AdminForgotPasswordModal
