@@ -18,19 +18,12 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
       className={`relative inline-flex items-center justify-center shrink-0 select-none ${className}`}
       style={{ width: dimension, height: dimension }}
     >
-      {/* Optional ambient glow */}
-      {showGlow && (
-        <div
-          className="absolute inset-0 rounded-full blur-md opacity-40 bg-gradient-to-tr from-cyan-400 via-sky-500 to-pink-500 animate-pulse pointer-events-none"
-        />
-      )}
-
-      {/* Exact Vector Emblem of Global InfoSoft Logo */}
+      {/* Pure Image Logo - No SVG, no extra effects */}
       <img
-        src="/logo.svg"
+        src="/logo.png"
         alt="Global InfoSoft Logo"
         referrerPolicy="no-referrer"
-        className="w-full h-full object-contain relative z-10 drop-shadow-md select-none"
+        className="w-full h-full object-contain select-none"
         draggable={false}
       />
     </div>
