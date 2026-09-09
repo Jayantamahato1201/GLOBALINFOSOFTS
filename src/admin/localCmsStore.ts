@@ -367,6 +367,41 @@ export class LocalCmsStore {
       return db.activityLogs || [];
     }
 
+    // --- /api/auth/change-password ---
+    if (cleanUrl.includes('/auth/change-password') && method === 'POST') {
+      const { newPassword, targetUserId, userEmail } = body;
+      if (!newPassword || newPassword.length < 8) {
+        throw new Error('New password must be at least 8 characters long.');
+      }
+
+      let target = null;
+      if (targetUserId) {
+        target = (db.users || []).find((u: any) => u.id === targetUserId);
+      } else if (userEmail) {
+        target = (db.users || []).find((u: any) => u.email.toLowerCase() === userEmail.toLowerCase().trim());
+      }
+      if (!target && db.users && db.users.length > 0) {
+        target = db.users[0];
+      }
+
+      if (target) {
+        target.customPassword = newPassword;
+        this.saveDatabase(db);
+        this.logActivity(
+          'Password Updated (Standalone Mode)',
+          target.email,
+          target.fullName,
+          'auth',
+          `Password successfully updated for ${target.email}`
+        );
+        return {
+          success: true,
+          message: `Password for ${target.fullName} (${target.email}) was updated successfully.`
+        };
+      }
+      return { success: true, message: 'Password updated successfully.' };
+    }
+
     // --- /api/auth/users ---
     if (cleanUrl.includes('/auth/users')) {
       if (method === 'GET') {

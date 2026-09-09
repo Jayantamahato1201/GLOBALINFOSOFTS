@@ -214,6 +214,59 @@ cmsRouter.post('/auth/reset-password', (req: Request, res: Response) => {
   return res.json({ message: 'Password has been reset successfully. You can now log in.' });
 });
 
+// POST /api/auth/change-password (Authenticated User or Super Admin)
+cmsRouter.post('/auth/change-password', authenticateAdmin, (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { currentPassword, newPassword, targetUserId } = req.body;
+    if (!newPassword || typeof newPassword !== 'string' || newPassword.length < 8) {
+      return res.status(400).json({ error: 'New password must be at least 8 characters long.' });
+    }
+
+    const currentUser = req.user!;
+    const isSuperAdmin = currentUser.role === 'super_admin';
+    const isEditingSelf = !targetUserId || targetUserId === currentUser.id;
+
+    const targetUser = isEditingSelf
+      ? cmsDb.findUserById(currentUser.id)
+      : cmsDb.findUserById(targetUserId);
+
+    if (!targetUser) {
+      return res.status(404).json({ error: 'Target user account not found.' });
+    }
+
+    // If editing someone else, only super_admin or admin can do so
+    if (!isEditingSelf) {
+      if (!isSuperAdmin && currentUser.role !== 'admin') {
+        return res.status(403).json({ error: 'Only administrators can update passwords for other accounts.' });
+      }
+    } else {
+      // If updating own password and currentPassword was provided, verify it
+      if (currentPassword) {
+        const isValid = cmsDb.verifyPassword(targetUser, currentPassword);
+        if (!isValid) {
+          return res.status(400).json({ error: 'Current password is incorrect. Please verify and try again.' });
+        }
+      }
+    }
+
+    cmsDb.updatePassword(targetUser.id, newPassword);
+    cmsDb.logActivity(
+      'Password Updated',
+      currentUser.email,
+      currentUser.fullName,
+      'auth',
+      `Password successfully changed for ${targetUser.email} by ${currentUser.fullName}`
+    );
+
+    return res.json({
+      success: true,
+      message: `Password for ${targetUser.fullName} (${targetUser.email}) was updated successfully.`
+    });
+  } catch (err: any) {
+    return res.status(500).json({ error: err.message || 'Failed to update password.' });
+  }
+});
+
 // GET /api/auth/users (Super Admin & Admin)
 cmsRouter.get('/auth/users', authenticateAdmin, requireRoles(['super_admin', 'admin']), (req: AuthenticatedRequest, res: Response) => {
   const users = cmsDb.getRawData().users.map((u) => ({

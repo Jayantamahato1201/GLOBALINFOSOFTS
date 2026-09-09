@@ -91,9 +91,7 @@ export const AdminLayout: React.FC = () => {
       items: [
         { id: 'settings', label: 'Site Settings', icon: <Settings className="w-4 h-4" /> },
         { id: 'payments', label: 'Payment Gateways', icon: <CreditCard className="w-4 h-4" /> },
-        ...(canManageUsers
-          ? [{ id: 'users', label: 'Admin Accounts', icon: <ShieldCheck className="w-4 h-4" /> }]
-          : []),
+        { id: 'users', label: 'Admin Accounts & Security', icon: <ShieldCheck className="w-4 h-4" /> },
         { id: 'activity', label: 'Audit Trail', icon: <Activity className="w-4 h-4" /> }
       ]
     }
