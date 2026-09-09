@@ -1,6 +1,8 @@
 import React, { useRef } from 'react';
 import { ServiceItem } from '../types';
 import { SERVICES_DATA } from '../data/companyData';
+import { useCms } from '../context/CmsContext';
+import { CardSectionBackground } from './CardSectionBackground';
 import {
   ArrowRight,
   Code2,
@@ -52,8 +54,78 @@ const SERVICE_ACCENTS: Record<
     image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80',
     demoUrl: 'erp.globalinfosofts.com'
   },
-  'web-development': {
+  'erp-development': {
     num: '02',
+    gradientBorder: 'border-indigo-500/25',
+    hoverBorder: 'hover:border-indigo-400/70',
+    glowShadow: 'hover:shadow-[0_12px_40px_-8px_rgba(99,102,241,0.22)]',
+    iconBg: 'bg-indigo-500/15 dark:bg-indigo-500/20',
+    iconText: 'text-indigo-600 dark:text-indigo-300',
+    badgeBg: 'bg-indigo-500/10 dark:bg-indigo-500/15',
+    badgeText: 'text-indigo-700 dark:text-indigo-300',
+    badgeBorder: 'border-indigo-500/30',
+    accentGradient: 'from-indigo-500/10 via-blue-500/5 to-transparent',
+    image: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=1200&q=80',
+    demoUrl: 'erp.globalinfosofts.com'
+  },
+  'customer-support': {
+    num: '03',
+    gradientBorder: 'border-teal-500/25',
+    hoverBorder: 'hover:border-teal-400/70',
+    glowShadow: 'hover:shadow-[0_12px_40px_-8px_rgba(20,184,166,0.22)]',
+    iconBg: 'bg-teal-500/15 dark:bg-teal-500/20',
+    iconText: 'text-teal-600 dark:text-teal-300',
+    badgeBg: 'bg-teal-500/10 dark:bg-teal-500/15',
+    badgeText: 'text-teal-700 dark:text-teal-300',
+    badgeBorder: 'border-teal-500/30',
+    accentGradient: 'from-teal-500/10 via-cyan-500/5 to-transparent',
+    image: 'https://images.unsplash.com/photo-1534536281715-e28d76689b4d?auto=format&fit=crop&w=1200&q=80',
+    demoUrl: 'support.globalinfosofts.com'
+  },
+  'cloud-hosting': {
+    num: '04',
+    gradientBorder: 'border-sky-500/25',
+    hoverBorder: 'hover:border-sky-400/70',
+    glowShadow: 'hover:shadow-[0_12px_40px_-8px_rgba(14,165,233,0.22)]',
+    iconBg: 'bg-sky-500/15 dark:bg-sky-500/20',
+    iconText: 'text-sky-600 dark:text-sky-300',
+    badgeBg: 'bg-sky-500/10 dark:bg-sky-500/15',
+    badgeText: 'text-sky-700 dark:text-sky-300',
+    badgeBorder: 'border-sky-500/30',
+    accentGradient: 'from-sky-500/10 via-cyan-500/5 to-transparent',
+    image: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1200&q=80',
+    demoUrl: 'cloud.servernode.net'
+  },
+  'website-design': {
+    num: '05',
+    gradientBorder: 'border-amber-500/25',
+    hoverBorder: 'hover:border-amber-400/70',
+    glowShadow: 'hover:shadow-[0_12px_40px_-8px_rgba(245,158,11,0.22)]',
+    iconBg: 'bg-amber-500/15 dark:bg-amber-500/20',
+    iconText: 'text-amber-600 dark:text-amber-300',
+    badgeBg: 'bg-amber-500/10 dark:bg-amber-500/15',
+    badgeText: 'text-amber-700 dark:text-amber-300',
+    badgeBorder: 'border-amber-500/30',
+    accentGradient: 'from-amber-500/10 via-orange-500/5 to-transparent',
+    image: 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=1200&q=80',
+    demoUrl: 'design.globalinfosofts.com'
+  },
+  'web-applications': {
+    num: '06',
+    gradientBorder: 'border-blue-500/25',
+    hoverBorder: 'hover:border-blue-400/70',
+    glowShadow: 'hover:shadow-[0_12px_40px_-8px_rgba(59,130,246,0.22)]',
+    iconBg: 'bg-blue-500/15 dark:bg-blue-500/20',
+    iconText: 'text-blue-600 dark:text-blue-300',
+    badgeBg: 'bg-blue-500/10 dark:bg-blue-500/15',
+    badgeText: 'text-blue-700 dark:text-blue-300',
+    badgeBorder: 'border-blue-500/30',
+    accentGradient: 'from-blue-500/10 via-indigo-500/5 to-transparent',
+    image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80',
+    demoUrl: 'portal.globalinfosofts.com'
+  },
+  'web-development': {
+    num: '06',
     gradientBorder: 'border-blue-500/25',
     hoverBorder: 'hover:border-blue-400/70',
     glowShadow: 'hover:shadow-[0_12px_40px_-8px_rgba(59,130,246,0.22)]',
@@ -67,7 +139,7 @@ const SERVICE_ACCENTS: Record<
     demoUrl: 'sevenfinancials.in'
   },
   'mobile-apps': {
-    num: '03',
+    num: '07',
     gradientBorder: 'border-violet-500/25',
     hoverBorder: 'hover:border-violet-400/70',
     glowShadow: 'hover:shadow-[0_12px_40px_-8px_rgba(139,92,246,0.22)]',
@@ -80,8 +152,22 @@ const SERVICE_ACCENTS: Record<
     image: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=1200&q=80',
     demoUrl: 'app.globalinfosofts.com'
   },
-  'accounting-pos': {
-    num: '04',
+  'gst-billing': {
+    num: '08',
+    gradientBorder: 'border-emerald-500/25',
+    hoverBorder: 'hover:border-emerald-400/70',
+    glowShadow: 'hover:shadow-[0_12px_40px_-8px_rgba(16,185,129,0.22)]',
+    iconBg: 'bg-emerald-500/15 dark:bg-emerald-500/20',
+    iconText: 'text-emerald-600 dark:text-emerald-300',
+    badgeBg: 'bg-emerald-500/10 dark:bg-emerald-500/15',
+    badgeText: 'text-emerald-700 dark:text-emerald-300',
+    badgeBorder: 'border-emerald-500/30',
+    accentGradient: 'from-emerald-500/10 via-teal-500/5 to-transparent',
+    image: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=1200&q=80',
+    demoUrl: 'billing.globalinfosofts.com'
+  },
+  'pos-systems': {
+    num: '09',
     gradientBorder: 'border-emerald-500/25',
     hoverBorder: 'hover:border-emerald-400/70',
     glowShadow: 'hover:shadow-[0_12px_40px_-8px_rgba(16,185,129,0.22)]',
@@ -94,8 +180,50 @@ const SERVICE_ACCENTS: Record<
     image: 'https://images.unsplash.com/photo-1556740738-b6a63e27c4df?auto=format&fit=crop&w=1200&q=80',
     demoUrl: 'pos.globalinfosofts.com'
   },
+  'accounting-software': {
+    num: '10',
+    gradientBorder: 'border-cyan-500/25',
+    hoverBorder: 'hover:border-cyan-400/70',
+    glowShadow: 'hover:shadow-[0_12px_40px_-8px_rgba(6,182,212,0.22)]',
+    iconBg: 'bg-cyan-500/15 dark:bg-cyan-500/20',
+    iconText: 'text-cyan-600 dark:text-cyan-300',
+    badgeBg: 'bg-cyan-500/10 dark:bg-cyan-500/15',
+    badgeText: 'text-cyan-700 dark:text-cyan-300',
+    badgeBorder: 'border-cyan-500/30',
+    accentGradient: 'from-cyan-500/10 via-teal-500/5 to-transparent',
+    image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80',
+    demoUrl: 'accounts.globalinfosofts.com'
+  },
+  'accounting-pos': {
+    num: '09',
+    gradientBorder: 'border-emerald-500/25',
+    hoverBorder: 'hover:border-emerald-400/70',
+    glowShadow: 'hover:shadow-[0_12px_40px_-8px_rgba(16,185,129,0.22)]',
+    iconBg: 'bg-emerald-500/15 dark:bg-emerald-500/20',
+    iconText: 'text-emerald-600 dark:text-emerald-300',
+    badgeBg: 'bg-emerald-500/10 dark:bg-emerald-500/15',
+    badgeText: 'text-emerald-700 dark:text-emerald-300',
+    badgeBorder: 'border-emerald-500/30',
+    accentGradient: 'from-emerald-500/10 via-teal-500/5 to-transparent',
+    image: 'https://images.unsplash.com/photo-1556740738-b6a63e27c4df?auto=format&fit=crop&w=1200&q=80',
+    demoUrl: 'pos.globalinfosofts.com'
+  },
+  'seo-services': {
+    num: '11',
+    gradientBorder: 'border-rose-500/25',
+    hoverBorder: 'hover:border-rose-400/70',
+    glowShadow: 'hover:shadow-[0_12px_40px_-8px_rgba(244,63,94,0.22)]',
+    iconBg: 'bg-rose-500/15 dark:bg-rose-500/20',
+    iconText: 'text-rose-600 dark:text-rose-300',
+    badgeBg: 'bg-rose-500/10 dark:bg-rose-500/15',
+    badgeText: 'text-rose-700 dark:text-rose-300',
+    badgeBorder: 'border-rose-500/30',
+    accentGradient: 'from-rose-500/10 via-pink-500/5 to-transparent',
+    image: 'https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?auto=format&fit=crop&w=1200&q=80',
+    demoUrl: 'seo.globalinfosofts.com'
+  },
   'digital-marketing': {
-    num: '05',
+    num: '12',
     gradientBorder: 'border-fuchsia-500/25',
     hoverBorder: 'hover:border-fuchsia-400/70',
     glowShadow: 'hover:shadow-[0_12px_40px_-8px_rgba(217,70,239,0.22)]',
@@ -109,7 +237,7 @@ const SERVICE_ACCENTS: Record<
     demoUrl: 'growth.analytics.io'
   },
   'hosting-support': {
-    num: '06',
+    num: '04',
     gradientBorder: 'border-sky-500/25',
     hoverBorder: 'hover:border-sky-400/70',
     glowShadow: 'hover:shadow-[0_12px_40px_-8px_rgba(14,165,233,0.22)]',
@@ -148,9 +276,27 @@ export const ServicesCarousel: React.FC<ServicesCarouselProps> = ({
   onExploreAll
 }) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const { services } = useCms();
 
-  // Duplicate the 6 services into two identical sets for seamless continuous looping (Right to Left)
-  const duplicatedServices = [...SERVICES_DATA, ...SERVICES_DATA];
+  const baseServices: ServiceItem[] = (services && services.length > 0)
+    ? services.filter(s => s.enabled !== false).map(s => ({
+        id: s.id,
+        title: s.title,
+        shortDesc: s.shortDesc || s.shortDescription || '',
+        longDesc: s.longDesc || '',
+        iconName: s.iconName || 'Code2',
+        category: (s.category as any) || 'software',
+        deliverables: s.deliverables || s.features || [],
+        technologies: s.technologies || s.techStack || [],
+        metrics: s.metrics || '',
+        image: s.image,
+        duration: s.duration,
+        featured: s.featured
+      }))
+    : SERVICES_DATA;
+
+  // Duplicate the services into two identical sets for seamless continuous looping
+  const duplicatedServices = [...baseServices, ...baseServices];
 
   const scrollLeft = () => {
     if (scrollContainerRef.current) {
@@ -167,10 +313,16 @@ export const ServicesCarousel: React.FC<ServicesCarouselProps> = ({
   return (
     <section
       id="our-services"
-      className="py-6 sm:py-8 relative overflow-hidden bg-[var(--bg-body)] transition-colors duration-300"
+      className="py-6 sm:py-8 relative overflow-hidden bg-[var(--bg-body)] card-section-datacenter-bg transition-colors duration-300"
     >
+      {/* High-Tech Cloud Datacenter & Global Infrastructure Background Layer */}
+      <CardSectionBackground
+        opacity="opacity-40 dark:opacity-25"
+        overlayOpacity="bg-slate-50/65 dark:bg-[#070B14]/80"
+      />
+
       {/* Ambient background glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[360px] bg-gradient-to-r from-cyan-500/8 via-blue-500/5 to-purple-500/8 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[360px] bg-gradient-to-r from-cyan-500/10 via-blue-500/8 to-purple-500/10 rounded-full blur-3xl pointer-events-none" />
 
       <div className="w-full px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20 relative z-10">
         {/* Section Header: Centered & Premium with Eyebrow */}
@@ -236,7 +388,7 @@ export const ServicesCarousel: React.FC<ServicesCarouselProps> = ({
                 <article
                   key={`${service.id}-${idx}`}
                   onClick={() => onSelectService(service)}
-                  className={`group relative w-[310px] sm:w-[350px] md:w-[370px] shrink-0 rounded-3xl overflow-hidden bg-white/95 dark:bg-[#0b1020]/90 backdrop-blur-xl border ${accent.gradientBorder} ${accent.hoverBorder} shadow-lg dark:shadow-2xl transition-all duration-350 ease-out hover:-translate-y-2 ${accent.glowShadow} flex flex-col justify-between cursor-pointer select-none text-left`}
+                  className={`group relative w-[310px] sm:w-[350px] md:w-[370px] shrink-0 rounded-3xl overflow-hidden glass-card-transparent bg-white/60 dark:bg-[#070b18]/60 backdrop-blur-2xl border ${accent.gradientBorder} ${accent.hoverBorder} shadow-lg dark:shadow-2xl transition-all duration-350 ease-out hover:-translate-y-2 ${accent.glowShadow} flex flex-col justify-between cursor-pointer select-none text-left`}
                 >
                   {/* Subtle Card Accent Gradient Background */}
                   <div

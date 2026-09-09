@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'motion/react';
 import { BLOG_POSTS } from '../data/companyData';
 import { BlogPost, PageId } from '../types';
+import { useCms } from '../context/CmsContext';
 import { getWhatsAppUrl, WHATSAPP_MESSAGES } from '../utils/whatsapp';
 import {
   FileText,
@@ -30,10 +31,30 @@ export const BlogsSection: React.FC<BlogsSectionProps> = ({
   onNavigatePage,
   onOpenContact
 }) => {
+  const { blogs } = useCms();
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [readingPost, setReadingPost] = useState<BlogPost | null>(null);
   const [copiedSlug, setCopiedSlug] = useState<string | null>(null);
+
+  const allPosts: BlogPost[] = (blogs && blogs.length > 0)
+    ? blogs.map(b => ({
+        id: b.id,
+        slug: b.slug,
+        title: b.title,
+        excerpt: b.excerpt,
+        content: b.content,
+        author: b.author,
+        authorRole: b.authorRole || 'Technical Lead',
+        authorAvatar: b.authorAvatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80',
+        date: b.date || b.publishDate || 'Recent',
+        readTime: b.readTime || '5 min read',
+        category: b.category,
+        image: b.image || 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80',
+        tags: b.tags || [],
+        featured: b.featured
+      }))
+    : BLOG_POSTS;
 
   const categories = [
     'All',
@@ -43,7 +64,7 @@ export const BlogsSection: React.FC<BlogsSectionProps> = ({
     'Education ERP'
   ];
 
-  const filteredPosts = BLOG_POSTS.filter((post) => {
+  const filteredPosts = allPosts.filter((post) => {
     const matchesCategory =
       selectedCategory === 'All' || post.category === selectedCategory;
     const matchesSearch =
@@ -54,7 +75,7 @@ export const BlogsSection: React.FC<BlogsSectionProps> = ({
     return matchesCategory && matchesSearch;
   });
 
-  const featuredPost = filteredPosts[0] || BLOG_POSTS[0];
+  const featuredPost = filteredPosts[0] || allPosts[0];
   const gridPosts = filteredPosts.slice(1);
 
   const handleCopyShareLink = (post: BlogPost, e: React.MouseEvent) => {

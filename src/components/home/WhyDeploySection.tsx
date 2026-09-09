@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { ShieldCheck, Target, Zap, Headphones, ArrowRight } from 'lucide-react';
+import { CardSectionBackground } from '../CardSectionBackground';
 
 interface WhyDeploySectionProps {
   onOpenContact: (scope?: string) => void;
@@ -66,8 +67,14 @@ export const WhyDeploySection: React.FC<WhyDeploySectionProps> = ({ onOpenContac
   return (
     <section
       id="why-deploy"
-      className="py-14 sm:py-20 relative z-10 border-t border-slate-200/80 dark:border-white/10 bg-slate-100/50 dark:bg-[#07090F] transition-colors duration-300 overflow-hidden"
+      className="py-14 sm:py-20 relative z-10 border-t border-slate-200/80 dark:border-white/10 card-section-datacenter-bg transition-colors duration-300 overflow-hidden"
     >
+      {/* High-Tech Cloud Datacenter & Global Infrastructure Background Layer */}
+      <CardSectionBackground
+        opacity="opacity-35 dark:opacity-20"
+        overlayOpacity="bg-slate-100/60 dark:bg-[#07090F]/85"
+      />
+
       {/* Background ambient radial tactical glows */}
       <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-96 h-96 bg-[#FF0055]/5 rounded-full blur-[140px] pointer-events-none" />
       <div className="absolute top-1/3 right-1/4 -translate-y-1/2 w-96 h-96 bg-cyan-500/5 rounded-full blur-[140px] pointer-events-none" />
@@ -121,10 +128,10 @@ export const WhyDeploySection: React.FC<WhyDeploySectionProps> = ({ onOpenContac
                 viewport={{ once: false, amount: 0.15 }}
                 transition={{ duration: 0.5, delay: idx * 0.1, ease: [0.22, 1, 0.36, 1] }}
                 whileHover={{ y: -6, transition: { duration: 0.25 } }}
-                className={`relative rounded-2xl p-6 sm:p-7 flex flex-col justify-between text-left transition-all duration-300 group overflow-hidden border ${
+                className={`relative rounded-2xl p-6 sm:p-7 flex flex-col justify-between text-left transition-all duration-300 group overflow-hidden border glass-card-transparent ${
                   card.hasAccentLine
-                    ? 'border-emerald-500/30 dark:border-emerald-500/30 bg-white dark:bg-[#0D141C] shadow-lg dark:shadow-[0_0_30px_rgba(16,185,129,0.06)]'
-                    : 'border-slate-200 dark:border-white/10 hover:border-slate-300 dark:hover:border-white/20 bg-white dark:bg-[#0E101B] shadow-md'
+                    ? 'border-emerald-500/30 dark:border-emerald-500/30 bg-white/65 dark:bg-[#0D141C]/70 shadow-lg dark:shadow-[0_0_30px_rgba(16,185,129,0.06)]'
+                    : 'border-slate-200/80 dark:border-cyan-500/20 hover:border-slate-300 dark:hover:border-cyan-500/40 bg-white/60 dark:bg-[#080D1A]/65 shadow-md'
                 }`}
               >
                 {/* Number Diamond Badge at top right */}

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { SOLUTIONS_DATA, COMPANY_INFO } from '../../data/companyData';
 import { SoftwareSolution } from '../../types';
+import { useCms } from '../../context/CmsContext';
 import { getWhatsAppUrl } from '../../utils/whatsapp';
 import {
   ArrowRight,
@@ -84,6 +85,25 @@ export const SolutionsPage: React.FC<SolutionsPageProps> = ({
   onSelectSolution,
   onOpenContact
 }) => {
+  const { solutions } = useCms();
+  const allSolutions: SoftwareSolution[] = (solutions && solutions.length > 0)
+    ? solutions.filter((s) => s.enabled !== false).map((s) => ({
+        id: s.id,
+        title: s.title,
+        shortDesc: s.shortDesc || s.shortDescription || '',
+        fullDesc: s.fullDesc || '',
+        industry: s.industry || 'Enterprise',
+        iconName: s.iconName || 'Layers',
+        features: s.features || s.keyFeatures || [],
+        benefits: s.benefits || [],
+        technologies: s.technologies || [],
+        compliance: s.compliance || '',
+        demoAvailable: s.demoAvailable ?? true,
+        image: s.image,
+        duration: s.duration
+      }))
+    : SOLUTIONS_DATA;
+
   const [selectedIndustry, setSelectedIndustry] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [viewMode, setViewMode] = useState<'grid' | 'dense' | 'matrix'>('grid');
@@ -98,7 +118,7 @@ export const SolutionsPage: React.FC<SolutionsPageProps> = ({
     'Education & Academics'
   ];
 
-  const filteredSolutions = SOLUTIONS_DATA.filter((sol) => {
+  const filteredSolutions = allSolutions.filter((sol) => {
     const meta = solutionMetaMap[sol.id];
     const categoryName = meta?.categoryLabel || sol.industry;
 
@@ -375,8 +395,10 @@ export const SolutionsPage: React.FC<SolutionsPageProps> = ({
                     ease: [0.22, 1, 0.36, 1]
                   }}
                   whileHover={{ y: -6, scale: 1.015, transition: { duration: 0.2 } }}
-                  className="rounded-2xl bg-white dark:bg-[#090E1B] border border-slate-200/90 dark:border-slate-800/90 hover:border-sky-500/50 transition-all duration-300 shadow-sm dark:shadow-[0_8px_30px_rgba(0,0,0,0.5)] overflow-hidden flex flex-col justify-between group text-left"
+                  className="rounded-2xl bg-white dark:bg-[#0B0F19]/95 border border-slate-200/90 dark:border-white/10 hover:border-cyan-500/60 transition-all duration-300 shadow-sm hover:shadow-[0_16px_40px_rgba(0,0,0,0.4),0_0_30px_rgba(6,182,212,0.15)] overflow-hidden flex flex-col justify-between group text-left relative"
                 >
+                  {/* Specular Top Edge Highlight */}
+                  <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-cyan-400/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-20" />
                   {/* Split Card: Left content (62%) + Right image (38%) */}
                   <div className="flex flex-row h-full">
                     {/* Left Column */}

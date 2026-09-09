@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { BLOG_POSTS, COMPANY_INFO } from '../../data/companyData';
+import { useCms } from '../../context/CmsContext';
 import { BlogPost } from '../../types';
 import { BlogPostView } from './BlogPostView';
 import {
@@ -32,6 +33,25 @@ export const BlogPage: React.FC<BlogPageProps> = ({
   onNavigateArticle,
   onOpenContact
 }) => {
+  const { blogs } = useCms();
+  const allPosts: BlogPost[] = (blogs && blogs.length > 0)
+    ? blogs.map((b) => ({
+        id: b.id,
+        slug: b.slug,
+        title: b.title,
+        excerpt: b.excerpt,
+        content: b.content,
+        author: b.author,
+        authorRole: b.authorRole || 'Technical Lead',
+        authorAvatar: b.authorAvatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80',
+        date: b.date || b.publishDate || 'Recent',
+        readTime: b.readTime || '5 min read',
+        category: b.category,
+        image: b.image || 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80',
+        tags: b.tags || ['Technology']
+      }))
+    : BLOG_POSTS;
+
   const [activeArticleSlug, setActiveArticleSlug] = useState<string | null>(initialSlug || null);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
@@ -49,18 +69,18 @@ export const BlogPage: React.FC<BlogPageProps> = ({
       if (target.startsWith('blog/') || target.startsWith('blog-')) {
         const extractedSlug = target.replace(/^blog[\/-]/, '');
         if (extractedSlug) {
-          const match = BLOG_POSTS.find((p) => p.slug === extractedSlug || p.id === extractedSlug);
+          const match = allPosts.find((p) => p.slug === extractedSlug || p.id === extractedSlug);
           if (match) {
             setActiveArticleSlug(match.slug);
           }
         }
       }
     }
-  }, [initialSlug]);
+  }, [initialSlug, allPosts]);
 
   const categories = ['All', 'AI & Medicine', 'Sustainable IT', 'Quantum Computing'];
 
-  const filteredPosts = BLOG_POSTS.filter((post) => {
+  const filteredPosts = allPosts.filter((post) => {
     let matchesCategory = true;
     if (selectedCategory === 'AI & Medicine') {
       matchesCategory = post.tags.includes('AI') || post.tags.includes('Healthcare');
@@ -79,7 +99,7 @@ export const BlogPage: React.FC<BlogPageProps> = ({
   });
 
   const activePost = activeArticleSlug
-    ? BLOG_POSTS.find((p) => p.slug === activeArticleSlug || p.id === activeArticleSlug) || null
+    ? allPosts.find((p) => p.slug === activeArticleSlug || p.id === activeArticleSlug) || null
     : null;
 
   const handleOpenArticle = (post: BlogPost) => {

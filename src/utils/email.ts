@@ -1,9 +1,9 @@
 /**
  * Email enquiry routing utility
- * Directs enquiries to info@globalinfosofts.com with formatted client details.
+ * Directs enquiries to info@globalinfosoft.com with formatted client details.
  */
 
-export const PRIMARY_ENQUIRY_EMAIL = 'info@globalinfosofts.com';
+export const PRIMARY_ENQUIRY_EMAIL = 'info@globalinfosoft.com';
 
 export interface ProjectEnquiryData {
   fullName: string;

@@ -121,15 +121,18 @@ export const QuickSearchModal: React.FC<QuickSearchModalProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-start justify-center pt-16 sm:pt-24 px-4 bg-slate-950/75 backdrop-blur-md animate-fadeIn"
+      className="fixed inset-0 z-50 flex items-start justify-center pt-16 sm:pt-24 px-4 bg-[#030712]/85 dark:bg-black/90 backdrop-blur-xl animate-fadeIn"
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-lg rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/15 shadow-2xl overflow-hidden text-slate-800 dark:text-slate-100 flex flex-col max-h-[78vh]"
+        className="relative w-full max-w-lg rounded-[22px] bg-white dark:bg-[#0B0F19] border border-slate-200/90 dark:border-white/10 shadow-[0_25px_70px_rgba(0,0,0,0.9),0_0_40px_rgba(6,182,212,0.08)] overflow-hidden text-slate-800 dark:text-slate-100 flex flex-col max-h-[78vh] font-['Outfit']"
         onClick={(e) => e.stopPropagation()}
       >
+        {/* Specular Edge Sheen Highlight */}
+        <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-cyan-400/40 to-transparent pointer-events-none z-30" />
+
         {/* Search Header */}
-        <div className="p-3 sm:p-3.5 border-b border-slate-200 dark:border-white/10 flex items-center gap-2.5 bg-slate-50 dark:bg-slate-950/60">
+        <div className="p-3.5 sm:p-4 border-b border-slate-200 dark:border-white/10 flex items-center gap-3 bg-slate-50/90 dark:bg-[#0D1220]/95">
           <Search className="w-4 h-4 text-cyan-600 dark:text-cyan-400 shrink-0" />
           <input
             ref={inputRef}

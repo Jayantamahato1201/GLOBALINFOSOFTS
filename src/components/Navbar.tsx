@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { COMPANY_INFO } from '../data/companyData';
+import { useCms } from '../context/CmsContext';
 import { getWhatsAppUrl, WHATSAPP_MESSAGES } from '../utils/whatsapp';
 import { BrandLogo } from './BrandLogo';
 import { ThemeToggle } from './ThemeToggle';
@@ -27,6 +28,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenSearch,
   onOpenContact
 }) => {
+  const { navigation, settings, isPageVisible } = useCms();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [moreDropdownOpen, setMoreDropdownOpen] = useState(false);
@@ -40,20 +42,39 @@ export const Navbar: React.FC<NavbarProps> = ({
   }, []);
 
   // Main Navigation links matching reference screenshot
-  const mainNavLinks: { label: string; page: PageId }[] = [
+  const defaultMainNavLinks: { label: string; page: PageId }[] = [
     { label: 'Home', page: 'home' },
     { label: 'Tech Support', page: 'support' },
     { label: 'Pricing', page: 'pricing' },
     { label: 'Contact', page: 'contact' },
     { label: 'About', page: 'about' },
-    { label: 'Blog', page: 'blog' }
+    { label: 'Blog', page: 'blog' },
+    { label: 'Careers', page: 'careers' }
   ];
 
   // Secondary pages under 'More'
-  const secondaryNavLinks: { label: string; page: PageId }[] = [
+  const defaultSecondaryNavLinks: { label: string; page: PageId }[] = [
     { label: 'Projects', page: 'projects' },
     { label: 'Team', page: 'team' }
   ];
+
+  const mainNavLinks: { label: string; page: PageId }[] = (navigation && navigation.length > 0)
+    ? navigation
+        .filter((n) => n.enabled !== false && !n.isSecondary && isPageVisible(n.page))
+        .map((n) => ({
+          label: n.label,
+          page: (n.page as PageId) || 'home'
+        }))
+    : defaultMainNavLinks.filter((n) => isPageVisible(n.page));
+
+  const secondaryNavLinks: { label: string; page: PageId }[] = (navigation && navigation.length > 0)
+    ? navigation
+        .filter((n) => n.enabled !== false && n.isSecondary && isPageVisible(n.page))
+        .map((n) => ({
+          label: n.label,
+          page: (n.page as PageId) || 'projects'
+        }))
+    : defaultSecondaryNavLinks.filter((n) => isPageVisible(n.page));
 
   const allNavLinks = [...mainNavLinks, ...secondaryNavLinks];
 
@@ -85,7 +106,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             >
               <BrandLogo size={34} showGlow={true} className="transition-transform duration-300 group-hover:scale-105" />
               <span className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white font-['Sora'] transition-colors duration-300">
-                Global Infosoft
+                {settings?.companyName || 'Global Infosoft'}
               </span>
             </button>
 

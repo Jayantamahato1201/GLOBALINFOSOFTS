@@ -23,8 +23,8 @@ export const COMPANY_INFO = {
   activeClients: '150+',
   uptimeSla: '99.9%',
   clientSatisfaction: '99.2%',
-  contactEmail: 'info@globalinfosofts.com',
-  supportEmail: 'info@globalinfosofts.com',
+  contactEmail: 'info@globalinfosoft.com',
+  supportEmail: 'info@globalinfosoft.com',
   officialEmail: 'info@globalinfosofts.com',
   primaryPhone: '+91-9431515806',
   altPhone: '+91-7654730090',
@@ -52,13 +52,13 @@ export const LEADERSHIP_CONTACTS: LeadershipContact[] = [
     name: 'Rajnish Kumar',
     role: 'Founder & Chief Executive Officer',
     phone: '+91-9431515806',
-    email: 'info@globalinfosofts.com'
+    email: 'info@globalinfosoft.com'
   },
   {
     name: 'Manoj Mahato',
     role: 'Technical Director & Lead Architect',
     phone: '+91-7654730090',
-    email: 'info@globalinfosofts.com'
+    email: 'info@globalinfosoft.com'
   }
 ];
 
@@ -68,129 +68,249 @@ export const HEAD_OFFICE = {
   address: 'Floor 2, House 7, Dayal Apartment, Transport Nagar, Dimna Road, Mango, Jamshedpur 831012, Jharkhand',
   phone: '+91-9431515806',
   altPhone: '+91-7654730090',
-  email: 'info@globalinfosofts.com',
+  email: 'info@globalinfosoft.com',
   hours: 'Mon - Sat: 9:30 AM - 6:30 PM IST'
 };
 
 export const SERVICES_DATA: ServiceItem[] = [
   {
     id: 'custom-software',
-    title: 'Custom Software & ERP Development',
-    shortDesc: 'Tailor-engineered Windows desktop & cloud software systems built for high performance, maximum security, and business automation.',
-    longDesc: 'We architect bespoke desktop, web, and distributed software systems from scratch. Utilizing modern architectural patterns, .NET, and Microsoft SQL Server, our software solutions eliminate operational bottlenecks, automate business workflows, and scale seamlessly with enterprise demand.',
+    title: 'Custom Software Development',
+    shortDesc: 'Tailor-engineered Windows desktop and centralized business systems built for operational speed, custom workflows, and ironclad security.',
+    longDesc: 'We architect bespoke desktop, client-server, and distributed software systems from scratch. Utilizing modern architectural patterns, .NET, and Microsoft SQL Server, our software solutions eliminate operational bottlenecks, automate business workflows, and scale seamlessly with enterprise demand.',
     iconName: 'Code2',
     category: 'software',
     image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80',
     duration: '4 - 8 Weeks',
     deliverables: [
       'Custom Windows Desktop Applications (.NET, C#, WPF)',
-      'Enterprise Resource Planning (ERP) Modules',
-      'Inventory & Point-of-Sale (POS) Integration',
-      'Multi-Branch Data Synchronization & Backup',
-      'Database Architecture & SQL Optimization'
+      'Workflow Automation & Process Control Logic',
+      'Multi-Branch Data Synchronization & Offline Buffering',
+      'Database Architecture & SQL Optimization',
+      'Role-Based Staff Access & Action Audit Logs'
     ],
-    technologies: ['C# .NET', 'Microsoft SQL Server', 'WPF', 'Node.js', 'PostgreSQL', 'Python'],
+    technologies: ['C# .NET', 'Microsoft SQL Server', 'WPF', 'Node.js', 'Python'],
     metrics: '100% Tailored to Business Workflows',
     featured: true
   },
   {
-    id: 'web-development',
-    title: 'Website Design & Web Application Development',
-    shortDesc: 'Ultra-fast, mobile-responsive corporate websites, e-commerce stores, dynamic portals, and custom web applications.',
-    longDesc: 'From institutional portals and school websites to interactive e-commerce platforms and SaaS products, our web engineering team crafts modern, SEO-friendly websites with high conversion rates, crisp UI design, and robust security.',
-    iconName: 'Globe',
+    id: 'erp-development',
+    title: 'ERP Software Development',
+    shortDesc: 'Comprehensive Enterprise Resource Planning systems unifying inventory, procurement, manufacturing, accounts, and human resources.',
+    longDesc: 'Our end-to-end ERP solutions connect every operational department into one real-time data engine. From raw material requisition and factory manufacturing schedules to multi-warehouse logistics and centralized financial reporting, we build scalable ERP architectures tailored for Indian businesses.',
+    iconName: 'Layers',
+    category: 'erp',
+    image: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=1200&q=80',
+    duration: '8 - 14 Weeks',
+    deliverables: [
+      'Supply Chain & Purchase Order Procurement Automation',
+      'Production Scheduling & Multi-Stage Manufacturing Control',
+      'Centralized Real-Time Executive BI Dashboards',
+      'Multi-Departmental Approval Workflows & Alerts',
+      'Regulatory Compliance & GST Audit Trails'
+    ],
+    technologies: ['.NET Core', 'SQL Server', 'PostgreSQL', 'Power BI', 'Microservices'],
+    metrics: 'Unified Enterprise Data & 40% Cost Reduction',
+    featured: true
+  },
+  {
+    id: 'customer-support',
+    title: 'Dedicated Technical Support & AMC',
+    shortDesc: 'Round-the-clock technical support, rapid remote troubleshooting via AnyDesk, automated database maintenance, and SLA guarantees.',
+    longDesc: 'Keep your critical software infrastructure running without hiccups. We provide dedicated Annual Maintenance Contracts (AMC), rapid remote desktop support (AnyDesk/TeamViewer), automated regular database backups, emergency bug fixes, and on-demand staff training.',
+    iconName: 'Headphones',
+    category: 'support',
+    image: 'https://images.unsplash.com/photo-1534536281715-e28d76689b4d?auto=format&fit=crop&w=1200&q=80',
+    duration: 'Annual AMC & On-Demand',
+    deliverables: [
+      'Instant Remote Assistance (AnyDesk / TeamViewer)',
+      'Annual Maintenance Contracts (AMC) with Priority SLAs',
+      'Automated Database Health Checks & Disaster Recovery',
+      '24/7 Response SLAs for Mission-Critical Issues',
+      'Operator Training & Software Version Updates'
+    ],
+    technologies: ['AnyDesk Remote', 'TeamViewer', 'SQL Backup Automations', 'Helpdesk Ticketing', '24/7 SLA'],
+    metrics: '24-Hour Guaranteed Resolution Turnaround',
+    featured: true
+  },
+  {
+    id: 'cloud-hosting',
+    title: 'Domain & Cloud Server Hosting',
+    shortDesc: 'Ultra-fast NVMe SSD cloud virtual servers, corporate domain registration, custom business email setups, and SSL encryption.',
+    longDesc: 'Deliver high availability and lightning-fast speeds for your web apps and databases. We handle complete domain portfolio registration, SSL security certificates, managed Linux cloud VPS, business email accounts, and Cloudflare CDN configuration.',
+    iconName: 'Cloud',
+    category: 'cloud',
+    image: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1200&q=80',
+    duration: 'Same-Day Provisioning',
+    deliverables: [
+      'High-Speed NVMe SSD Cloud Virtual Private Servers (VPS)',
+      'Official Business Emails (e.g. info@yourcompany.com)',
+      'Domain Registration & DNS Management (.com, .in, .co.in)',
+      'Free SSL/TLS Certificates & Cloudflare CDN Setup',
+      'Automated Daily Off-Site Cloud Backups'
+    ],
+    technologies: ['Linux Cloud VPS', 'cPanel', 'Cloudflare CDN', 'Nginx', 'SSL/TLS'],
+    metrics: '99.9% Verified Server Uptime',
+    featured: false
+  },
+  {
+    id: 'website-design',
+    title: 'Website Design & UI/UX',
+    shortDesc: 'Modern, high-conversion responsive corporate websites, brand landing pages, and intuitive user experiences designed for all devices.',
+    longDesc: 'Your website is your company’s digital storefront. Our design specialists craft elegant, pixel-perfect corporate websites and landing pages with mobile-first responsiveness, engaging visual storytelling, fluid animations, and high conversion optimization.',
+    iconName: 'Palette',
     category: 'web',
     image: 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=1200&q=80',
-    duration: '2 - 6 Weeks',
+    duration: '2 - 4 Weeks',
     deliverables: [
-      'Responsive Corporate & Business Websites',
-      'School, College & Institutional Web Portals',
-      'E-Commerce & Online Ordering Systems',
-      'Dynamic Content Management Systems (CMS)',
-      'Progressive Web Applications (PWA)'
+      'Modern Corporate & Business Showcase Websites',
+      'Mobile-First UI/UX Prototyping & Figma Wireframing',
+      'Brand Identity, Custom Typography & Vector Styling',
+      'Cross-Device & Cross-Browser Pixel-Perfect Layouts',
+      'Search-Optimized Semantic HTML & Fast Asset Loading'
     ],
-    technologies: ['React', 'Next.js', 'TypeScript', 'Tailwind CSS', 'Node.js', 'PHP / MySQL'],
-    metrics: '99.9% Mobile & Desktop Performance',
+    technologies: ['React', 'Tailwind CSS', 'TypeScript', 'Figma', 'Next.js'],
+    metrics: '100% Mobile Responsive & Sub-Second Render',
+    featured: true
+  },
+  {
+    id: 'web-applications',
+    title: 'Web Application Development',
+    shortDesc: 'Scalable cloud web applications, institutional student/staff portals, custom SaaS platforms, and secure administrative dashboards.',
+    longDesc: 'From institutional school/college portals and student management systems to multi-tenant SaaS products and e-commerce platforms, our web engineering team develops robust, secure web applications equipped with role-based access, payment gateways, and real-time APIs.',
+    iconName: 'Globe',
+    category: 'web',
+    image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80',
+    duration: '4 - 8 Weeks',
+    deliverables: [
+      'Custom Institutional, School & College Web Portals',
+      'Interactive SaaS Web Applications & Client Portals',
+      'Role-Based Admin Dashboards & Data Reporting Engines',
+      'Payment Gateway Integration (Razorpay, Stripe, UPI)',
+      'Scalable RESTful API Architectures & Cloud DBs'
+    ],
+    technologies: ['React', 'Node.js', 'PostgreSQL', 'Express', 'TypeScript', 'Docker'],
+    metrics: '<1.2s LCP Load Time & High Concurrency',
     featured: true
   },
   {
     id: 'mobile-apps',
     title: 'Mobile Application Development',
-    shortDesc: 'Native Android and iOS mobile applications designed to engage users with seamless performance and intuitive user experience.',
-    longDesc: 'Deliver delightful mobile experiences tailored to your customers. We design, build, and publish high-performance mobile applications for Android and iOS devices with offline support, push notifications, payment gateway integrations, and real-time backend synchronization.',
+    shortDesc: 'Native Android and iOS mobile apps built for seamless customer engagement, field staff tracking, and offline data synchronization.',
+    longDesc: 'Deliver delightful mobile experiences tailored to your business operations. We build native Android and cross-platform iOS applications that seamlessly synchronize with your central software and cloud databases with offline SQLite support, push notifications, and geolocation tracking.',
     iconName: 'Smartphone',
     category: 'mobile',
     image: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=1200&q=80',
     duration: '6 - 10 Weeks',
     deliverables: [
       'Native Android (Kotlin / Java) App Development',
-      'Cross-Platform (Flutter & React Native) Apps',
-      'B2B Field Sales & Delivery Tracking Apps',
-      'Customer Loyalty & Mobile Ordering Apps',
-      'Google Play Store & Apple App Store Publishing'
+      'Cross-Platform iOS & Android Apps (Flutter / React Native)',
+      'Field Sales, Order Booking & Delivery Tracking Apps',
+      'Real-Time Offline SQLite Sync & Geolocation Mapping',
+      'Google Play Store & Apple App Store Deployment'
     ],
-    technologies: ['Flutter', 'React Native', 'Kotlin', 'Firebase', 'REST APIs'],
-    metrics: 'Native Speed & Fluid Touch UI',
+    technologies: ['Flutter', 'React Native', 'Kotlin', 'Firebase', 'SQLite', 'REST APIs'],
+    metrics: '60 FPS Native Performance & Offline-First',
     featured: true
   },
   {
-    id: 'accounting-pos',
-    title: 'GST Billing, POS & Accounting Software',
-    shortDesc: 'Specialized accounting solutions for retail, wholesale, optical stores, textiles, hotels, and manufacturing businesses.',
-    longDesc: 'Equipped with native Windows integration, real-time GST invoicing (GSTR-1, 3B), barcode printing & scanning, customer ledgers, and inventory tracking. Includes 6 months of dedicated complimentary technical support and 24-hour response SLAs.',
+    id: 'gst-billing',
+    title: 'GST Billing & Invoicing Software',
+    shortDesc: 'Instant GST-compliant tax invoicing, GSTR-1 & 3B return data exports, automated WhatsApp/SMS bill dispatch, and E-Way bills.',
+    longDesc: 'Engineered specifically for Indian retail, wholesale, and service businesses, our GST billing software ensures 100% tax compliance. Generate professional CGST/SGST/IGST tax invoices in seconds, dispatch bills directly to customers on WhatsApp, and export monthly returns effortlessly.',
     iconName: 'Calculator',
-    category: 'software',
+    category: 'pos',
+    image: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=1200&q=80',
+    duration: 'Instant Setup (1 - 3 Days)',
+    deliverables: [
+      'Real-Time GST Compliant Tax Invoicing (CGST/SGST/IGST)',
+      'Automated One-Click GSTR-1 & GSTR-3B Excel Data Export',
+      'Instant WhatsApp & SMS Digital Invoice Dispatch',
+      'E-Way Bill & E-Invoice Generation Capabilities',
+      'Multiple Tax Slabs, Cess & HSN/SAC Code Search'
+    ],
+    technologies: ['C# .NET', 'SQL Server', 'Crystal Reports', 'WhatsApp Cloud API', 'PDF Engine'],
+    metrics: '100% Indian GST & Government Compliant',
+    featured: true
+  },
+  {
+    id: 'pos-systems',
+    title: 'Retail POS & Barcode Systems',
+    shortDesc: 'Sub-second barcode scanning, thermal receipt printing, weighing scale connectivity, and multi-counter cash drawer control.',
+    longDesc: 'Optimized for high-turnover supermarkets, garment showrooms, pharmacies, and grocery stores. Experience rapid item lookup via barcode scanners, custom barcode label generation, touch-screen counter billing, and automatic stock deduction at checkout.',
+    iconName: 'Layers',
+    category: 'pos',
     image: 'https://images.unsplash.com/photo-1556740738-b6a63e27c4df?auto=format&fit=crop&w=1200&q=80',
+    duration: '1 - 2 Weeks',
+    deliverables: [
+      'Sub-Second Barcode Scanning & Item Lookup Engine',
+      'Thermal Receipt Printer Integration (ESC/POS 2-inch & 3-inch)',
+      'Electronic Weighing Scale & Cash Drawer Hardware Sync',
+      'Barcode Sticker & Label Printing for Uncoded Items',
+      'Counter Shift Management, Day-End Cash Balancing & Auditing'
+    ],
+    technologies: ['Thermal ESC/POS', 'Barcode 128', 'C# .NET', 'Hardware COM APIs', 'Touch POS UI'],
+    metrics: 'Sub-Second Counter Billing Speed',
+    featured: true
+  },
+  {
+    id: 'accounting-software',
+    title: 'Accounting & Financial Software',
+    shortDesc: 'Complete double-entry financial ledger accounting, balance sheets, profit & loss statements, customer credit tracking, and banking.',
+    longDesc: 'Gain total financial visibility over your business. Our accounting software handles comprehensive party ledgers, automated trial balances, balance sheets, profit & loss statements, customer outstanding credit reminders, payment vouchers, and bank reconciliation.',
+    iconName: 'TrendingUp',
+    category: 'software',
+    image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80',
     duration: '2 - 4 Weeks',
     deliverables: [
-      'GST Billing & Tax Invoice Generation (GSTR-1/3B)',
-      'Barcode Printing & Point-of-Sale (POS) Scanning',
-      'Customer & Vendor Financial Ledgers with Balance Sheet',
-      'Multi-Godown & Batch Expiry Inventory Control',
-      'WhatsApp & SMS Invoice Dispatch'
+      'Customer & Vendor Financial Ledgers with Debit/Credit Tracking',
+      'Automated Real-Time Balance Sheet & Profit & Loss Statement',
+      'Customer Credit Limit Controls & Overdue Payment Aging',
+      'Bank Reconciliation, Cheque Management & Payment Vouchers',
+      'Multi-Firm & Multi-Year Financial Bookkeeping'
     ],
-    technologies: ['Microsoft .NET', 'SQL Server', 'Crystal Reports', 'C#', 'Thermal Print API'],
-    metrics: '100% Tax & GST Compliance',
+    technologies: ['Microsoft .NET', 'SQL Server Express', 'Financial Ledger Core', 'Audit Trail Engine'],
+    metrics: 'Real-Time Financial Health & Zero Errors',
+    featured: false
+  },
+  {
+    id: 'seo-services',
+    title: 'Search Engine Optimization (SEO)',
+    shortDesc: 'Rank on page 1 of Google, dominate Google Maps local pack in Jamshedpur & India, and drive continuous organic customer inquiries.',
+    longDesc: 'Propel your business to the top of Google search results when local customers search for your products or services. We implement comprehensive SEO audits, Google Business Profile optimization, targeted keyword rankings, schema markup, and authoritative citation building.',
+    iconName: 'Sparkles',
+    category: 'marketing',
+    image: 'https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?auto=format&fit=crop&w=1200&q=80',
+    duration: 'Ongoing Monthly Campaign',
+    deliverables: [
+      'Google Business Profile (Local Maps 3-Pack) Ranking in Jamshedpur',
+      'On-Page Keyword Research & Content Optimization',
+      'Technical SEO, Schema Markup & Page Speed Optimization',
+      'Local Citations & High-Quality Business Directory Listings',
+      'Monthly Keyword Ranking & Search Impression Reports'
+    ],
+    technologies: ['Google Search Console', 'Google Analytics 4', 'Ahrefs', 'Schema.org', 'SEMrush'],
+    metrics: 'Top 3 Google Maps Ranking & 300% Organic Growth',
     featured: true
   },
   {
     id: 'digital-marketing',
-    title: 'Digital Marketing & Search Engine Optimization (SEO)',
-    shortDesc: 'Data-driven growth strategies, local Google business optimization in Jamshedpur & PAN India, and social media campaigns.',
-    longDesc: 'Propel your brand to the top of Google search rankings. We build holistic digital marketing strategies including on-page and technical SEO, local Google Maps business ranking, Google Ads pay-per-click management, and engaging social media marketing campaigns.',
+    title: 'Digital Marketing & Social Ads',
+    shortDesc: 'ROI-focused Google Search PPC ads, Meta (Facebook & Instagram) ad campaigns, and targeted social media lead generation funnels.',
+    longDesc: 'Generate consistent, qualified inbound leads for your business. We design and execute data-backed pay-per-click (PPC) campaigns on Google Search and YouTube, along with targeted audience ads on Facebook and Instagram, complete with custom creative graphics and conversion tracking.',
     iconName: 'TrendingUp',
     category: 'marketing',
     image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80',
-    duration: 'Ongoing Monthly Growth',
+    duration: 'Ongoing Monthly Campaigns',
     deliverables: [
-      'Local SEO & Google Business Profile Ranking',
-      'On-Page & Technical Search Engine Optimization',
-      'Google Ads & Meta Advertising Campaigns',
-      'Social Media Brand Management & Content',
-      'Website Conversion & Traffic Analytics'
+      'Google Search & Display PPC Pay-Per-Click Ad Management',
+      'Meta (Facebook & Instagram) Targeted Lead Ad Campaigns',
+      'High-Converting Ad Creatives & Promotional Graphic Design',
+      'Conversion Funnel Optimization & Retargeting Setup',
+      'Verified B2B & B2C Inbound Enquiries Delivered to WhatsApp'
     ],
-    technologies: ['Google Search Console', 'Google Analytics 4', 'SEMrush', 'Meta Ads Manager'],
-    metrics: 'Top Local Search Visibility',
-    featured: true
-  },
-  {
-    id: 'hosting-support',
-    title: 'Domain, Cloud Hosting & 24/7 Technical Support',
-    shortDesc: 'Reliable domain registration, secure cloud server hosting, business email setup, and ongoing software maintenance.',
-    longDesc: 'Keep your digital infrastructure running without downtime. We provide complete domain registration, SSL certificates, high-speed cloud hosting, business email servers, remote desktop support (AnyDesk/TeamViewer), and ongoing maintenance packages.',
-    iconName: 'Headphones',
-    category: 'cloud',
-    image: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1200&q=80',
-    duration: 'Same-Day Provisioning',
-    deliverables: [
-      'Domain Name Registration (.com, .in, .org, .co.in)',
-      'High-Speed SSD Web & Database Hosting',
-      'Custom Business Email (Google Workspace / cPanel)',
-      'Remote Desktop Support & Quick Troubleshooting',
-      'Regular Database Backup & Security Patches'
-    ],
-    technologies: ['Cloud Linux', 'cPanel', 'SSL/TLS', 'AnyDesk', 'AWS / DigitalOcean'],
-    metrics: '24-Hour Guaranteed Support Turnaround',
+    technologies: ['Google Ads', 'Meta Ads Manager', 'Canva Pro', 'Conversion Pixel', 'Lead Gen Funnels'],
+    metrics: 'High-ROI Verified Inbound Leads',
     featured: false
   }
 ];
@@ -439,6 +559,69 @@ export const CASE_STUDIES: CaseStudy[] = [
     ],
     technologies: ['Microsoft SQL Server', '.NET Core', 'C#', 'React'],
     duration: '10 Weeks',
+    featured: true
+  },
+  {
+    id: 'seven-financials',
+    title: 'Seven Financials Corporate & Advisory Web Portal',
+    client: 'Seven Financials Group',
+    industry: 'Financial Advisory & Accounting',
+    category: 'Web Development',
+    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80',
+    summary: 'Engineered a modern, responsive corporate finance portal with dynamic service catalog, investor calculators, and automated lead capture.',
+    challenge: 'Legacy static website lacked mobile responsiveness, had zero lead automation, and failed to communicate financial expertise effectively.',
+    solution: 'Crafted a fast Next.js & React corporate portal with high-conversion landing funnels, interactive financial calculators, and SSL-encrypted forms.',
+    results: [
+      { label: 'Lead Inquiries', value: '+140%' },
+      { label: 'Page Load Speed', value: '0.8s' },
+      { label: 'Mobile Score', value: '99/100' },
+      { label: 'Security Grade', value: 'A+ SSL' }
+    ],
+    technologies: ['React', 'Next.js', 'Tailwind CSS', 'TypeScript', 'Node.js'],
+    duration: '4 Weeks',
+    liveUrl: 'https://sevenfinancials.in',
+    featured: true
+  },
+  {
+    id: 'riddhi-architect',
+    title: 'Riddhi Siddhi Architect Portfolio & Consultation Hub',
+    client: 'Riddhi Siddhi Architects & Planners',
+    industry: 'Architecture & Construction',
+    category: 'Architect Solutions',
+    image: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1200&q=80',
+    summary: 'Architectural portfolio website showcasing 3D floor plans, turnkey construction projects, and interactive client consultation inquiries.',
+    challenge: 'Architect firm needed an aesthetic, high-resolution portfolio to present CAD drawings and interior walkthroughs without slow load times.',
+    solution: 'Built a sleek architectural showcase portal with CDN-optimized asset delivery, project category filtering, and direct WhatsApp consultation booking.',
+    results: [
+      { label: 'Portfolio Views', value: '+220%' },
+      { label: 'Consultation Calls', value: '+85%' },
+      { label: 'Image Compression', value: '80% Savings' },
+      { label: 'Client Approvals', value: '2x Faster' }
+    ],
+    technologies: ['React', 'TypeScript', 'Tailwind CSS', 'Next.js', 'Cloud CDN'],
+    duration: '3 Weeks',
+    liveUrl: 'https://riddhisiddhiarchitect.in',
+    featured: true
+  },
+  {
+    id: 'kubberx',
+    title: 'KubberX Interactive Gaming & Esports Platform',
+    client: 'KubberX Entertainment',
+    industry: 'Gaming & Interactive Media',
+    category: 'Gaming Platform',
+    image: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1200&q=80',
+    summary: 'High-octane responsive web gaming hub featuring live match leaderboards, player profiles, tournament brackets, and instant rewards.',
+    challenge: 'High concurrency user spikes during tournaments caused server bottlenecks and slow leaderboard synchronizations.',
+    solution: 'Architected an ultra-fast event-driven web platform with WebSocket live scores, anti-cheat audit logs, and instant UPI reward settlements.',
+    results: [
+      { label: 'Active Gamers', value: '50K+' },
+      { label: 'Socket Latency', value: '<25ms' },
+      { label: 'Uptime SLA', value: '99.99%' },
+      { label: 'Tournament Matches', value: '1,200+' }
+    ],
+    technologies: ['React', 'Node.js', 'WebSockets', 'Redis', 'Tailwind CSS', 'PostgreSQL'],
+    duration: '8 Weeks',
+    liveUrl: 'https://kubberx.in',
     featured: true
   }
 ];
@@ -692,7 +875,7 @@ export const OFFICE_LOCATIONS: OfficeLocation[] = [
     country: 'Jharkhand, India',
     address: 'Floor 2, House 7, Dayal Apartment, Transport Nagar, Dimna Road, Mango, Jamshedpur 831012',
     phone: '+91-9431515806',
-    email: 'info@globalinfosofts.com',
+    email: 'info@globalinfosoft.com',
     hours: 'Mon - Sat: 9:30 AM - 6:30 PM IST',
     isHQ: true
   }
@@ -700,64 +883,34 @@ export const OFFICE_LOCATIONS: OfficeLocation[] = [
 
 export const TEAM_MEMBERS: TeamMember[] = [
   {
+    id: 'tm-manoj',
+    name: 'Manoj Mahato',
+    role: 'Full Stack Developer',
+    department: 'Engineering Division',
+    bio: 'Expert in React and Node.js ecosystems. Dedicated to crafting seamless user experiences and robust backend solutions.',
+    iconName: 'Code2',
+    initials: 'MM',
+    skills: ['React', 'Node.js', 'Full Stack Development', 'REST APIs', 'Cloud Architecture']
+  },
+  {
+    id: 'tm-shruti',
+    name: 'Shruti Kumari',
+    role: 'Full Stack Developer',
+    department: 'Engineering Division',
+    bio: 'Passionate about building scalable web applications with modern technologies. Loves clean code and creative problem-solving.',
+    iconName: 'Globe',
+    initials: 'SK',
+    skills: ['React', 'Web Applications', 'Clean Architecture', 'Frontend UI/UX', 'JavaScript & TypeScript']
+  },
+  {
     id: 'tm-rajnish',
     name: 'Rajnish Kumar',
-    role: 'Founder & Chief Executive Officer',
-    department: 'Executive Leadership & Software Strategy',
-    bio: 'Founder of Global InfoSoft with over a decade of hands-on experience in software engineering, enterprise ERP architecture, retail point-of-sale systems, and IT consultancy across India.',
+    role: 'Senior Developer',
+    department: 'Engineering Division',
+    bio: '10+ years of experience in software development. Specializes in system architecture and mentoring junior developers.',
     iconName: 'Code2',
     initials: 'RK',
-    skills: ['Enterprise Software Architecture', 'Business Workflow Strategy', 'Client Solutions', 'C# .NET & SQL Systems', 'IT Project Leadership']
-  },
-  {
-    id: 'tm-software-dev',
-    name: 'Software Engineering Team',
-    role: 'Custom Software, ERP & Accounting Systems',
-    department: 'Desktop & ERP Engineering Division',
-    bio: 'Specialized in developing custom software solutions, enterprise ERP, retail point-of-sale (POS) systems, and multi-location inventory platforms built with .NET, SQL Server, and modern full-stack architectures.',
-    iconName: 'Code2',
-    initials: 'SE',
-    skills: ['Custom Software Development', 'Enterprise ERP Systems', 'Retail POS & Billing', 'SQL Server Database Architecture', 'C# .NET', 'GST Invoicing Engine']
-  },
-  {
-    id: 'tm-web-dev',
-    name: 'Web Design & Development Team',
-    role: 'Full-Stack Web Portals & E-Commerce Solutions',
-    department: 'Web Engineering Division',
-    bio: 'Professional web engineers and UI designers creating responsive, high-performance websites, institutional portals, e-commerce platforms, and user interfaces tailored to client business requirements.',
-    iconName: 'Globe',
-    initials: 'WD',
-    skills: ['Website Design & UI/UX', 'Full-Stack Web Development', 'E-Commerce Platforms', 'React & TypeScript', 'Responsive Layouts', 'RESTful APIs']
-  },
-  {
-    id: 'tm-mobile-dev',
-    name: 'Mobile Application Team',
-    role: 'Android & iOS Application Engineering',
-    department: 'Mobile Engineering Division',
-    bio: 'Dedicated mobile software engineers delivering intuitive, high-performance mobile applications for Android and iOS devices to help businesses expand their digital and mobile footprint.',
-    iconName: 'Smartphone',
-    initials: 'MD',
-    skills: ['Android App Development', 'iOS App Development', 'Flutter Framework', 'Mobile UI Design', 'API Integration', 'App Security']
-  },
-  {
-    id: 'tm-digital-marketing',
-    name: 'Digital Marketing & SEO Team',
-    role: 'Search Engine Optimization & Local Brand Growth',
-    department: 'Digital Marketing Division',
-    bio: 'Certified digital marketing and SEO specialists focused on Google search visibility, Google Business Profile ranking, social media marketing campaigns, and measurable online business growth in Jamshedpur & India.',
-    iconName: 'TrendingUp',
-    initials: 'DM',
-    skills: ['Search Engine Optimization (SEO)', 'Local Google Business SEO', 'Digital Marketing Campaigns', 'Social Media Strategy', 'Traffic Analytics']
-  },
-  {
-    id: 'tm-tech-support',
-    name: 'Technical Support & Client Service Team',
-    role: '24/7 Technical Support & Remote Maintenance',
-    department: 'Client Operations & Helpdesk',
-    bio: 'Dedicated technical support specialists providing reliable client assistance, remote troubleshooting (AnyDesk), system maintenance, software updates, and post-deployment warranty support with rapid response SLAs.',
-    iconName: 'Headphones',
-    initials: 'TS',
-    skills: ['Technical Support', 'AnyDesk Remote Troubleshooting', 'Hardware Integration', 'Software Maintenance', 'SLA Management']
+    skills: ['System Architecture', 'Enterprise Software', 'Mentoring', 'C# .NET & SQL', 'Full Stack Development']
   }
 ];
 

@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { Lock, ExternalLink } from 'lucide-react';
+import { CardSectionBackground } from '../CardSectionBackground';
 import sevenFinancialsScrollImg from '../../assets/images/seven_financials_scroll_1788501522050.jpg';
 import riddhiArchitectScrollImg from '../../assets/images/riddhi_architect_scroll_1788501544006.jpg';
 import kubberxGamingScrollImg from '../../assets/images/kubberx_gaming_scroll_1788501563904.jpg';
@@ -42,9 +43,15 @@ export const SoftwareSolutionsBrowserSection: React.FC<SoftwareSolutionsBrowserS
   return (
     <section
       id="software-solutions"
-      className="py-14 sm:py-20 relative z-10 border-t border-slate-200/80 dark:border-white/10 bg-slate-50/70 dark:bg-[#07090F] transition-colors duration-300"
+      className="py-14 sm:py-20 relative z-10 border-t border-slate-200/80 dark:border-white/10 card-section-datacenter-bg overflow-hidden transition-colors duration-300"
     >
-      <div className="w-full px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20">
+      {/* High-Tech Cloud Datacenter & Global Infrastructure Background Layer */}
+      <CardSectionBackground
+        opacity="opacity-40 dark:opacity-25"
+        overlayOpacity="bg-slate-50/70 dark:bg-[#07090F]/85"
+      />
+
+      <div className="w-full px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20 relative z-10">
         {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-14">
           <motion.h2
@@ -68,12 +75,16 @@ export const SoftwareSolutionsBrowserSection: React.FC<SoftwareSolutionsBrowserS
               viewport={{ once: false, amount: 0.15 }}
               transition={{ duration: 0.5, delay: idx * 0.12, ease: [0.22, 1, 0.36, 1] }}
               whileHover={{ y: -6, transition: { duration: 0.25 } }}
-              className="rounded-2xl sm:rounded-3xl p-3 sm:p-4 border border-slate-200 dark:border-red-950/40 hover:border-[#FF0055]/50 bg-white dark:bg-[#0D0F19] shadow-lg dark:shadow-[0_0_35px_rgba(255,0,85,0.06)] flex flex-col justify-between transition-all duration-300 group text-left"
+              onClick={() => onSelectProject && onSelectProject(item.id)}
+              className="rounded-2xl sm:rounded-3xl p-3.5 sm:p-4 border border-slate-200/90 dark:border-cyan-500/20 hover:border-cyan-500/50 glass-card-transparent bg-white/60 dark:bg-[#070B14]/65 backdrop-blur-2xl shadow-lg dark:shadow-[0_20px_50px_rgba(0,0,0,0.6)] hover:shadow-cyan-500/10 flex flex-col justify-between transition-all duration-300 group text-left cursor-pointer relative overflow-hidden"
             >
+              {/* Subtle ambient back-glow on hover */}
+              <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-bl from-cyan-500/10 to-transparent rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+
               {/* Browser Window Frame */}
-              <div className="rounded-xl sm:rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800/80 bg-slate-100 dark:bg-[#121524] flex flex-col">
+              <div className="rounded-xl sm:rounded-2xl overflow-hidden border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-[#070B14] flex flex-col relative z-10">
                 {/* Browser Chrome Header */}
-                <div className="px-3 py-2 sm:py-2.5 bg-slate-200/80 dark:bg-[#181B2D] border-b border-slate-300/70 dark:border-slate-800 flex items-center gap-2">
+                <div className="px-3 py-2 sm:py-2.5 bg-slate-200/80 dark:bg-[#0E1322] border-b border-slate-300/70 dark:border-white/10 flex items-center gap-2">
                   {/* Traffic Light Window Controls */}
                   <div className="flex items-center gap-1.5 shrink-0">
                     <span className="w-2.5 h-2.5 rounded-full bg-[#EF4444]" />
@@ -82,8 +93,8 @@ export const SoftwareSolutionsBrowserSection: React.FC<SoftwareSolutionsBrowserS
                   </div>
 
                   {/* Browser URL Address Bar */}
-                  <div className="flex-1 mx-1.5 px-2.5 py-1 rounded-md bg-white dark:bg-[#0D0F19] border border-slate-300/80 dark:border-slate-800 text-[10px] sm:text-[11px] font-['JetBrains_Mono'] text-slate-700 dark:text-slate-300 flex items-center justify-center gap-1.5 shadow-inner truncate">
-                    <Lock className="w-2.5 h-2.5 text-emerald-500 shrink-0" />
+                  <div className="flex-1 mx-1.5 px-2.5 py-1 rounded-md bg-white dark:bg-[#070B14] border border-slate-300/80 dark:border-white/10 text-[10px] sm:text-[11px] font-['JetBrains_Mono'] text-slate-700 dark:text-slate-300 flex items-center justify-center gap-1.5 shadow-inner truncate">
+                    <Lock className="w-2.5 h-2.5 text-emerald-400 shrink-0" />
                     <span className="truncate">{item.url}</span>
                   </div>
 
@@ -92,7 +103,7 @@ export const SoftwareSolutionsBrowserSection: React.FC<SoftwareSolutionsBrowserS
                     href={item.externalUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-slate-400 hover:text-[#FF0055] transition-colors p-0.5"
+                    className="text-slate-400 hover:text-cyan-400 transition-colors p-0.5"
                     aria-label={`Open ${item.url}`}
                     onClick={(e) => e.stopPropagation()}
                   >
@@ -101,7 +112,7 @@ export const SoftwareSolutionsBrowserSection: React.FC<SoftwareSolutionsBrowserS
                 </div>
 
                 {/* Viewport Image Frame */}
-                <div className="relative h-64 sm:h-72 md:h-80 overflow-hidden bg-slate-900 group/screen">
+                <div className="relative h-64 sm:h-72 md:h-80 overflow-hidden bg-slate-950 group/screen">
                   <img
                     src={item.image}
                     alt={item.title}
@@ -114,11 +125,16 @@ export const SoftwareSolutionsBrowserSection: React.FC<SoftwareSolutionsBrowserS
               </div>
 
               {/* Information below the browser frame */}
-              <div className="pt-5 pb-2 px-1 space-y-1.5">
-                <h3 className="text-lg sm:text-xl font-bold font-['Sora'] text-slate-900 dark:text-white group-hover:text-[#FF0055] transition-colors">
-                  {item.title}
-                </h3>
-                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-normal">
+              <div className="pt-4 pb-1 px-1 space-y-2 relative z-10">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg sm:text-xl font-bold font-['Sora'] text-slate-900 dark:text-white group-hover:text-cyan-500 dark:group-hover:text-cyan-400 transition-colors">
+                    {item.title}
+                  </h3>
+                  <span className="text-[11px] font-mono text-cyan-600 dark:text-cyan-400 font-semibold flex items-center gap-1">
+                    Details →
+                  </span>
+                </div>
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
                   {item.description}
                 </p>
               </div>

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ArrowRight, Check, ArrowLeft, Sparkles, DollarSign } from 'lucide-react';
+import { useCms } from '../../context/CmsContext';
+import { CardSectionBackground } from '../CardSectionBackground';
 
 interface ServicePackage {
   id: string;
@@ -76,6 +78,9 @@ interface BuildPackageSectionProps {
 }
 
 export const BuildPackageSection: React.FC<BuildPackageSectionProps> = ({ onOpenContact }) => {
+  const { getSection } = useCms();
+  const sectionData = getSection('build_package', 'home') || getSection('sec-home-build-package');
+
   const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null);
   const [selectedAddons, setSelectedAddons] = useState<string[]>([]);
 
@@ -114,9 +119,15 @@ export const BuildPackageSection: React.FC<BuildPackageSectionProps> = ({ onOpen
   return (
     <section
       id="build-package"
-      className="py-14 sm:py-20 relative z-10 border-t border-slate-200/80 dark:border-white/10 bg-slate-50/60 dark:bg-[#07090F] transition-colors duration-300"
+      className="py-14 sm:py-20 relative z-10 border-t border-slate-200/80 dark:border-white/10 card-section-datacenter-bg overflow-hidden transition-colors duration-300"
     >
-      <div className="w-full px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20">
+      {/* High-Tech Cloud Datacenter & Global Infrastructure Background Layer */}
+      <CardSectionBackground
+        opacity="opacity-35 dark:opacity-20"
+        overlayOpacity="bg-slate-50/70 dark:bg-[#07090F]/85"
+      />
+
+      <div className="w-full px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20 relative z-10">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12">
           <motion.h2
@@ -126,7 +137,7 @@ export const BuildPackageSection: React.FC<BuildPackageSectionProps> = ({ onOpen
             transition={{ duration: 0.5 }}
             className="text-3xl sm:text-4xl md:text-5xl font-black font-['Sora'] tracking-tight text-[#FF0055] dark:text-[#FF1464] drop-shadow-sm"
           >
-            Build Your Service Package
+            {sectionData?.title || 'Build Your Service Package'}
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 15 }}
@@ -142,7 +153,7 @@ export const BuildPackageSection: React.FC<BuildPackageSectionProps> = ({ onOpen
         </div>
 
         {/* Outer Frame Container */}
-        <div className="max-w-6xl mx-auto rounded-3xl p-4 sm:p-7 md:p-9 bg-white dark:bg-[#0D0F19]/90 border border-slate-200 dark:border-red-900/30 shadow-2xl dark:shadow-[0_0_50px_rgba(255,0,85,0.06)] relative overflow-hidden backdrop-blur-xl">
+        <div className="max-w-6xl mx-auto rounded-3xl p-4 sm:p-7 md:p-9 glass-card-transparent bg-white/60 dark:bg-[#090D1A]/65 border border-slate-200/80 dark:border-cyan-500/20 shadow-2xl dark:shadow-[0_0_50px_rgba(255,0,85,0.06)] relative overflow-hidden backdrop-blur-2xl">
           {/* Subtle ambient corner glow */}
           <div className="absolute -top-24 -right-24 w-80 h-80 bg-[#FF0055]/10 rounded-full blur-3xl pointer-events-none" />
           <div className="absolute -bottom-24 -left-24 w-80 h-80 bg-rose-600/10 rounded-full blur-3xl pointer-events-none" />
@@ -166,7 +177,7 @@ export const BuildPackageSection: React.FC<BuildPackageSectionProps> = ({ onOpen
                       transition={{ duration: 0.4, delay: idx * 0.08 }}
                       whileHover={{ y: -6, transition: { duration: 0.25, ease: 'easeOut' } }}
                       onClick={() => handleSelectService(pkg.id)}
-                      className="rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-800/80 hover:border-[#FF0055] dark:hover:border-[#FF0055] bg-slate-50/80 dark:bg-[#111322] hover:bg-white dark:hover:bg-[#141728] shadow-sm hover:shadow-xl hover:dark:shadow-[0_0_30px_rgba(255,0,85,0.22)] transition-all duration-300 ease-out flex flex-col justify-between group cursor-pointer text-left select-none"
+                      className="rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-200/80 dark:border-cyan-500/20 hover:border-[#FF0055] dark:hover:border-[#FF0055] glass-card-transparent bg-white/55 dark:bg-[#0E1326]/60 backdrop-blur-xl shadow-sm hover:shadow-xl hover:dark:shadow-[0_0_30px_rgba(255,0,85,0.22)] transition-all duration-300 ease-out flex flex-col justify-between group cursor-pointer text-left select-none"
                     >
                       {/* Live Browser Frame */}
                       <div className="relative overflow-hidden bg-slate-950 flex flex-col">

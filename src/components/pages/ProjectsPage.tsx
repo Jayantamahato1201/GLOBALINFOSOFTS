@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'motion/react';
 import { CASE_STUDIES } from '../../data/companyData';
 import { CaseStudy } from '../../types';
+import { useCms } from '../../context/CmsContext';
 import { ProcessSection } from '../ProcessSection';
 import {
   Briefcase,
@@ -15,12 +16,34 @@ interface ProjectsPageProps {
 }
 
 export const ProjectsPage: React.FC<ProjectsPageProps> = ({ onOpenProject }) => {
+  const { projects } = useCms();
+  const allProjects: CaseStudy[] = (projects && projects.length > 0)
+    ? projects.filter((p) => p.enabled !== false).map((p) => ({
+        id: p.id,
+        title: p.title,
+        client: p.client,
+        industry: p.industry,
+        category: p.category,
+        image: p.image,
+        summary: p.summary || p.description || '',
+        challenge: p.challenge,
+        solution: p.solution,
+        results: Array.isArray(p.results)
+          ? p.results.map((r) => (typeof r === 'string' ? { label: 'Result', value: r } : r))
+          : [],
+        technologies: p.technologies || [],
+        duration: p.duration || '3 months',
+        liveUrl: p.liveUrl,
+        featured: p.featured
+      }))
+    : CASE_STUDIES;
+
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState<string>('');
 
   const categories = ['All', 'Custom Software', 'Healthcare & Optical', 'Retail & POS', 'Education & ERP'];
 
-  const filteredProjects = CASE_STUDIES.filter((p) => {
+  const filteredProjects = allProjects.filter((p) => {
     const matchesCategory =
       selectedCategory === 'All' ||
       p.category.toLowerCase().includes(selectedCategory.toLowerCase()) ||
@@ -72,8 +95,11 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({ onOpenProject }) => 
         }}
         whileHover={{ y: -6, scale: 1.015, transition: { duration: 0.2 } }}
         onClick={() => onOpenProject(project)}
-        className={`h-full rounded-2xl project-card-gradient border border-slate-200/90 dark:border-slate-800/90 ${theme.glow} transition-all duration-300 overflow-hidden cursor-pointer group flex flex-col justify-between text-left relative shadow-md`}
+        className={`h-full rounded-2xl bg-white/95 dark:bg-[#0B0F19]/90 border border-slate-200/90 dark:border-white/10 hover:border-cyan-500/60 shadow-sm hover:shadow-[0_16px_40px_rgba(0,0,0,0.4),0_0_30px_rgba(6,182,212,0.15)] transition-all duration-300 overflow-hidden cursor-pointer group flex flex-col justify-between text-left relative`}
       >
+        {/* Specular Top Edge Highlight */}
+        <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-cyan-400/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-20" />
+
         {/* Subtle Ambient Glow */}
         <div className={`absolute top-0 right-0 w-28 h-28 bg-gradient-to-br ${theme.bgShine} rounded-full blur-xl pointer-events-none group-hover:scale-150 transition-transform duration-500`} />
 

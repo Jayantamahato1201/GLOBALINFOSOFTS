@@ -9,6 +9,9 @@ import { ProjectsPage } from './components/pages/ProjectsPage';
 import { TeamPage } from './components/pages/TeamPage';
 import { TechSupportPage } from './components/pages/TechSupportPage';
 import { BlogPage } from './components/pages/BlogPage';
+import { CareersPage } from './components/pages/CareersPage';
+import { PageUnavailable } from './components/PageUnavailable';
+import { MaintenanceScreen } from './components/MaintenanceScreen';
 import { ServicesSection } from './components/ServicesSection';
 import { AboutSection } from './components/AboutSection';
 import { ContactSection } from './components/ContactSection';
@@ -19,9 +22,18 @@ import { WhatsAppWidget } from './components/WhatsAppWidget';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { SERVICES_DATA, SOLUTIONS_DATA, CASE_STUDIES } from './data/companyData';
 import { ServiceItem, CaseStudy, SoftwareSolution, DetailModalData, PageId } from './types';
+import { CmsProvider, useCms } from './context/CmsContext';
+import { AdminAuthProvider } from './admin/AdminAuthContext';
+import { AdminPortal } from './admin/AdminPortal';
+import { AlertTriangle } from 'lucide-react';
 
 function MainAppContent() {
+  const { settings, isPageVisible } = useCms();
   const [currentPage, setCurrentPage] = useState<PageId>('home');
+  const [adminRoute, setAdminRoute] = useState<{
+    inAdmin: boolean;
+    initialView: 'login' | 'signup' | 'dashboard';
+  }>({ inAdmin: false, initialView: 'login' });
   const [blogArticleSlug, setBlogArticleSlug] = useState<string | null>(null);
   const [modalData, setModalData] = useState<DetailModalData | null>(null);
   const [searchOpen, setSearchOpen] = useState<boolean>(false);
@@ -33,6 +45,25 @@ function MainAppContent() {
       const rawHash = window.location.hash.replace(/^#\/?/, '').toLowerCase();
       const rawPath = window.location.pathname.replace(/^\//, '').toLowerCase();
       const target = rawHash || rawPath;
+
+      if (target === 'admin' || target === 'admin/dashboard') {
+        setAdminRoute({ inAdmin: true, initialView: 'dashboard' });
+        return;
+      }
+      if (target === 'admin/login') {
+        setAdminRoute({ inAdmin: true, initialView: 'login' });
+        return;
+      }
+      if (target === 'admin/signup') {
+        setAdminRoute({ inAdmin: true, initialView: 'signup' });
+        return;
+      }
+      if (target.startsWith('admin/')) {
+        setAdminRoute({ inAdmin: true, initialView: 'dashboard' });
+        return;
+      }
+
+      setAdminRoute({ inAdmin: false, initialView: 'login' });
 
       if (target.startsWith('blog/') || target.startsWith('blog-')) {
         const slug = target.replace(/^blog[\/-]/, '');
@@ -55,6 +86,7 @@ function MainAppContent() {
         'pricing',
         'about',
         'team',
+        'careers',
         'support',
         'blog',
         'contact'
@@ -209,7 +241,36 @@ function MainAppContent() {
     }
   };
 
+  const getPageDisplayName = (page: PageId): string => {
+    switch (page) {
+      case 'home': return 'Home';
+      case 'services': return 'Services';
+      case 'solutions': return 'Software Solutions';
+      case 'projects': return 'Projects & Case Studies';
+      case 'pricing': return 'Pricing & Packages';
+      case 'about': return 'About Us';
+      case 'team': return 'Our Leadership Team';
+      case 'careers': return 'Careers';
+      case 'support': return 'Technical Support';
+      case 'blog': return 'Insights & Blogs';
+      case 'contact': return 'Contact & Consultation';
+      default: return 'Page';
+    }
+  };
+
   const renderCurrentPageContent = () => {
+    // If this page has been toggled to HIDDEN in the CMS, display the branded PageUnavailable state
+    if (!isPageVisible(currentPage)) {
+      return (
+        <div className="pt-16 sm:pt-20">
+          <PageUnavailable
+            pageName={getPageDisplayName(currentPage)}
+            onBackToHome={() => navigateToPage('home')}
+          />
+        </div>
+      );
+    }
+
     switch (currentPage) {
       case 'home':
         return (
@@ -267,6 +328,10 @@ function MainAppContent() {
             onOpenContact={(scope) => handleOpenContact(scope)}
           />
         );
+      case 'careers':
+        return (
+          <CareersPage onOpenContact={(scope) => handleOpenContact(scope)} />
+        );
       case 'support':
         return (
           <TechSupportPage onOpenContact={(scope) => handleOpenContact(scope)} />
@@ -297,8 +362,53 @@ function MainAppContent() {
     }
   };
 
+  if (adminRoute.inAdmin) {
+    return (
+      <AdminAuthProvider>
+        <AdminPortal
+          initialView={adminRoute.initialView}
+          onBackToWebsite={() => {
+            window.location.hash = '';
+            window.history.pushState(null, '', '/');
+            setAdminRoute({ inAdmin: false, initialView: 'login' });
+            setCurrentPage('home');
+          }}
+        />
+      </AdminAuthProvider>
+    );
+  }
+
+  // If Emergency Maintenance Mode is active, show the maintenance screen to public visitors
+  if (settings?.maintenanceMode) {
+    return (
+      <MaintenanceScreen
+        customMessage={settings.maintenanceMessage}
+        onOpenAdmin={() => {
+          window.location.hash = 'admin';
+          setAdminRoute({ inAdmin: true, initialView: 'login' });
+        }}
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[var(--bg-body)] text-[var(--text-body)] selection:bg-cyan-500/30 selection:text-cyan-200 flex flex-col transition-colors duration-300">
+      {/* Maintenance Mode Emergency Alert Banner */}
+      {settings?.maintenanceMode && (
+        <div className="bg-amber-500 text-slate-950 px-4 py-2 text-xs font-semibold flex items-center justify-between z-50 sticky top-0 shadow-md">
+          <div className="flex items-center gap-2">
+            <AlertTriangle className="w-4 h-4 text-slate-950 shrink-0" />
+            <span>{settings.maintenanceMessage || 'Scheduled system maintenance is currently in progress.'}</span>
+          </div>
+          <a
+            href="#admin"
+            className="underline hover:text-slate-900 text-[11px] font-mono shrink-0 ml-2"
+          >
+            Admin Login
+          </a>
+        </div>
+      )}
+
       {/* Universal Fixed Navigation with Theme Toggle */}
       <Navbar
         currentPage={currentPage}
@@ -355,7 +465,9 @@ export default function App() {
   return (
     <ErrorBoundary>
       <ThemeProvider>
-        <MainAppContent />
+        <CmsProvider>
+          <MainAppContent />
+        </CmsProvider>
       </ThemeProvider>
     </ErrorBoundary>
   );

@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { TEAM_MEMBERS } from '../../data/companyData';
 import { PageId } from '../../types';
+import { useCms } from '../../context/CmsContext';
 import {
   Users,
   Code2,
@@ -18,6 +19,20 @@ interface TeamPageProps {
 }
 
 export const TeamPage: React.FC<TeamPageProps> = ({ onOpenContact }) => {
+  const { team } = useCms();
+  const teamMembers = (team && team.length > 0)
+    ? team.filter((m) => m.enabled !== false).map((m) => ({
+        id: m.id,
+        name: m.name,
+        role: m.role,
+        department: m.department,
+        bio: m.bio,
+        iconName: m.iconName || 'Users',
+        initials: m.initials || m.name.split(' ').map((n) => n[0]).join('').slice(0, 2).toUpperCase(),
+        skills: m.skills || []
+      }))
+    : TEAM_MEMBERS;
+
   const getTeamIcon = (iconName?: string) => {
     switch (iconName) {
       case 'Code2':
@@ -63,7 +78,7 @@ export const TeamPage: React.FC<TeamPageProps> = ({ onOpenContact }) => {
 
         {/* Team Members Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 text-left">
-          {TEAM_MEMBERS.map((member, idx) => (
+          {teamMembers.map((member, idx) => (
             <motion.div
               key={member.id}
               initial={{ opacity: 0, y: 35, scale: 0.93 }}

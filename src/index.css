@@ -713,3 +713,62 @@ html.light .project-card-gradient:hover {
   animation: spinSlow 24s linear infinite;
 }
 
+/* User-Selected Target Element Glassmorphism Effect with Transparency & Blur */
+div#root:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(2) {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  background-color: rgba(19, 21, 32, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 1.5rem;
+}
+
+/* User-Selected Target Element 3: Card Section with Datacenter Background & Transparent Glass Effect */
+div#root:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(3) {
+  position: relative;
+  background-image: url('/assets/datacenter-cloud-bg.svg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* High-Tech Cloud Datacenter & Global Infrastructure Card Section Backdrop */
+.card-section-datacenter-bg {
+  position: relative;
+  background-image: url('/assets/datacenter-cloud-bg.svg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Transparent Frosted Glass Card Architecture */
+.glass-card-transparent {
+  background-color: rgba(255, 255, 255, 0.65) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border-color: rgba(255, 255, 255, 0.75) !important;
+  box-shadow: 0 8px 32px 0 rgba(2, 132, 199, 0.08), inset 0 1px 1px 0 rgba(255, 255, 255, 0.8) !important;
+}
+
+.dark .glass-card-transparent,
+[data-theme="dark"] .glass-card-transparent {
+  background-color: rgba(11, 16, 32, 0.65) !important;
+  backdrop-filter: blur(24px) saturate(190%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(190%) !important;
+  border-color: rgba(0, 229, 255, 0.2) !important;
+  box-shadow: 0 14px 44px -8px rgba(0, 0, 0, 0.65), inset 0 1px 1px 0 rgba(255, 255, 255, 0.12) !important;
+}
+
+.glass-card-transparent:hover {
+  border-color: rgba(0, 229, 255, 0.55) !important;
+  box-shadow: 0 20px 48px -6px rgba(0, 150, 255, 0.2), inset 0 1px 2px 0 rgba(255, 255, 255, 0.9) !important;
+}
+
+.dark .glass-card-transparent:hover,
+[data-theme="dark"] .glass-card-transparent:hover {
+  border-color: rgba(0, 229, 255, 0.6) !important;
+  box-shadow: 0 22px 56px -6px rgba(0, 229, 255, 0.25), inset 0 1px 2px 0 rgba(0, 229, 255, 0.25) !important;
+}
+
+

@@ -1,19 +1,35 @@
 import React, { useState } from 'react';
 import { TESTIMONIALS_DATA } from '../data/companyData';
+import { useCms } from '../context/CmsContext';
 import { Star, Quote, ChevronLeft, ChevronRight, CheckCircle } from 'lucide-react';
 
 export const TestimonialsSection: React.FC = () => {
+  const { testimonials } = useCms();
+  const allTestimonials = (testimonials && testimonials.length > 0)
+    ? testimonials.filter((t) => t.enabled !== false).map((t) => ({
+        id: t.id,
+        author: t.author || t.clientName || 'Valued Client',
+        role: t.role || 'Business Owner',
+        company: t.company || 'Enterprise',
+        location: t.location || 'Jamshedpur',
+        content: t.content || t.quote || '',
+        rating: t.rating || 5,
+        avatar: t.avatar || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80',
+        projectType: t.projectType || 'Software Solutions'
+      }))
+    : TESTIMONIALS_DATA;
+
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const nextTestimonial = () => {
-    setCurrentIndex((prev) => (prev + 1) % TESTIMONIALS_DATA.length);
+    setCurrentIndex((prev) => (prev + 1) % allTestimonials.length);
   };
 
   const prevTestimonial = () => {
-    setCurrentIndex((prev) => (prev - 1 + TESTIMONIALS_DATA.length) % TESTIMONIALS_DATA.length);
+    setCurrentIndex((prev) => (prev - 1 + allTestimonials.length) % allTestimonials.length);
   };
 
-  const current = TESTIMONIALS_DATA[currentIndex];
+  const current = allTestimonials[currentIndex] || allTestimonials[0] || TESTIMONIALS_DATA[0];
 
   return (
     <section id="testimonials" className="relative py-7 sm:py-9 border-t border-slate-200/80 dark:border-white/10 overflow-hidden text-left transition-colors duration-300">
@@ -101,7 +117,7 @@ export const TestimonialsSection: React.FC = () => {
 
         {/* Small Testimonials Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3.5">
-          {TESTIMONIALS_DATA.map((item, idx) => (
+          {allTestimonials.map((item, idx) => (
             <button
               key={item.id}
               onClick={() => setCurrentIndex(idx)}

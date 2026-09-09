@@ -1,37 +1,37 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { COMPANY_INFO } from '../data/companyData';
-import { getWhatsAppUrl, WHATSAPP_MESSAGES } from '../utils/whatsapp';
-import { BrandLogo } from './BrandLogo';
 import { PageId } from '../types';
+import { FooterCertifications } from './FooterCertifications';
 import {
   ArrowUp,
-  Mail,
-  Phone,
-  MapPin,
-  Send,
-  CheckCircle2
+  Shield,
+  Facebook,
+  Instagram,
+  Linkedin,
+  Youtube,
+  Quote
 } from 'lucide-react';
 
 interface FooterProps {
   onNavigatePage: (page: PageId) => void;
-  onOpenContact?: () => void;
+  onOpenContact?: (scope?: string) => void;
 }
 
 export const Footer: React.FC<FooterProps> = ({
-  onNavigatePage
+  onNavigatePage,
+  onOpenContact
 }) => {
-  const [newsletterEmail, setNewsletterEmail] = useState('');
-  const [subscribed, setSubscribed] = useState(false);
-
-  const handleSubscribe = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newsletterEmail) return;
-    setSubscribed(true);
-  };
-
   const handleLinkClick = (page: PageId) => {
     onNavigatePage(page);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleOpenProposal = () => {
+    if (onOpenContact) {
+      onOpenContact('Project Proposal');
+    } else {
+      handleLinkClick('contact');
+    }
   };
 
   const scrollToTop = () => {
@@ -40,146 +40,227 @@ export const Footer: React.FC<FooterProps> = ({
 
   return (
     <footer className="relative bg-slate-100/90 dark:bg-slate-950/90 border-t border-slate-200/80 dark:border-white/10 text-slate-600 dark:text-slate-400 text-xs backdrop-blur-xl transition-colors duration-300">
-      {/* Main Footer Links */}
-      <div className="w-full px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20 py-5 sm:py-6 text-left">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-5">
-          {/* Brand Info */}
-          <div className="lg:col-span-2 space-y-2.5">
-            <div className="flex items-center gap-2 cursor-pointer" onClick={() => handleLinkClick('home')}>
-              <BrandLogo size={28} showGlow={false} />
-              <span className="text-base font-bold text-slate-900 dark:text-white font-['Outfit']">
-                Global InfoSoft
-              </span>
-            </div>
-
-            <p className="text-slate-600 dark:text-slate-400 text-[11px] leading-relaxed max-w-sm">
-              {COMPANY_INFO.subTagline} Located in Jamshedpur, Jharkhand, providing retail billing POS, optical store software, customized ERP systems, and web design.
-            </p>
-
-            <div className="space-y-1.5 pt-1 text-slate-700 dark:text-slate-300">
-              <div className="flex items-start gap-1.5">
-                <MapPin className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400 shrink-0 mt-0.5" />
-                <span className="text-[10.5px] leading-tight">Floor 2, House 7, Dayal Apartment, Transport Nagar, Dimna Road, Mango, Jamshedpur, Jharkhand 831012</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <Phone className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                <a
-                  href={getWhatsAppUrl('+919431515806', WHATSAPP_MESSAGES.general)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  title="Click to enquiry on WhatsApp"
-                  className="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors font-mono underline decoration-emerald-500/40 underline-offset-2 text-[11px]"
+      <div className="w-full px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20 py-8 sm:py-10 text-left">
+        {/* 4-Column Clean Navigation Grid Matching Website Theme */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 sm:gap-8 md:gap-12 max-w-6xl">
+          {/* Column 1: Product */}
+          <div className="space-y-3">
+            <h4 className="text-sm sm:text-base font-bold font-['Sora'] text-cyan-600 dark:text-cyan-400 tracking-tight">
+              Product
+            </h4>
+            <ul className="space-y-2.5 text-xs sm:text-[13px]">
+              <li>
+                <button
+                  onClick={() => handleLinkClick('home')}
+                  className="text-slate-600 dark:text-slate-400 hover:text-cyan-600 dark:hover:text-cyan-300 transition-colors cursor-pointer text-left block"
                 >
-                  +91-9431515806
-                </a>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <Mail className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400 shrink-0" />
-                <a
-                  href="mailto:info@globalinfosofts.com"
-                  className="hover:text-cyan-600 dark:hover:text-cyan-300 transition-colors font-mono text-[11px]"
+                  Home
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => handleLinkClick('pricing')}
+                  className="text-slate-600 dark:text-slate-400 hover:text-cyan-600 dark:hover:text-cyan-300 transition-colors cursor-pointer text-left block"
                 >
-                  info@globalinfosofts.com
-                </a>
-              </div>
-            </div>
-          </div>
-
-          {/* Solutions & Services */}
-          <div className="space-y-2">
-            <div className="text-[11px] font-bold text-slate-900 dark:text-white uppercase tracking-wider font-mono">
-              Software & Solutions
-            </div>
-            <ul className="space-y-1 text-slate-600 dark:text-slate-400 text-[11px]">
-              <li><button onClick={() => handleLinkClick('solutions')} className="hover:text-cyan-600 dark:hover:text-cyan-300 transition-colors text-left">Retail POS & Supermarket Billing</button></li>
-              <li><button onClick={() => handleLinkClick('solutions')} className="hover:text-cyan-600 dark:hover:text-cyan-300 transition-colors text-left">Optical & Clinic Software</button></li>
-              <li><button onClick={() => handleLinkClick('solutions')} className="hover:text-cyan-600 dark:hover:text-cyan-300 transition-colors text-left">Gemstone & Jewelry Billing</button></li>
-              <li><button onClick={() => handleLinkClick('solutions')} className="hover:text-cyan-600 dark:hover:text-cyan-300 transition-colors text-left">Restaurant & Food POS</button></li>
-              <li><button onClick={() => handleLinkClick('services')} className="hover:text-cyan-600 dark:hover:text-cyan-300 transition-colors text-left">Custom Software Development</button></li>
-              <li><button onClick={() => handleLinkClick('services')} className="hover:text-cyan-600 dark:hover:text-cyan-300 transition-colors text-left">Website & Web Portal Design</button></li>
-              <li><button onClick={() => handleLinkClick('solutions')} className="hover:text-cyan-600 dark:hover:text-cyan-300 transition-colors text-left">GST Accounting Software</button></li>
+                  Pricing
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={handleOpenProposal}
+                  className="text-slate-600 dark:text-slate-400 hover:text-cyan-600 dark:hover:text-cyan-300 transition-colors cursor-pointer text-left block"
+                >
+                  Project Proposal
+                </button>
+              </li>
             </ul>
           </div>
 
-          {/* Company & Support */}
-          <div className="space-y-2">
-            <div className="text-[11px] font-bold text-slate-900 dark:text-white uppercase tracking-wider font-mono">
-              Company & Support
-            </div>
-            <ul className="space-y-1 text-slate-600 dark:text-slate-400 text-[11px]">
-              <li><button onClick={() => handleLinkClick('about')} className="hover:text-cyan-600 dark:hover:text-cyan-300 transition-colors text-left">About Global InfoSoft</button></li>
-              <li><button onClick={() => handleLinkClick('projects')} className="hover:text-cyan-600 dark:hover:text-cyan-300 transition-colors text-left">Case Studies & Deployments</button></li>
-              <li><button onClick={() => handleLinkClick('pricing')} className="hover:text-cyan-600 dark:hover:text-cyan-300 transition-colors text-left">Pricing & Software Packages</button></li>
-              <li><button onClick={() => handleLinkClick('team')} className="hover:text-cyan-600 dark:hover:text-cyan-300 transition-colors text-left">Leadership & Contacts</button></li>
-              <li><button onClick={() => handleLinkClick('support')} className="hover:text-cyan-600 dark:hover:text-cyan-300 transition-colors text-left">Tech Support & FAQs</button></li>
-              <li><button onClick={() => handleLinkClick('blog')} className="hover:text-cyan-600 dark:hover:text-cyan-300 transition-colors text-left">Articles & Software Tips</button></li>
-              <li><button onClick={() => handleLinkClick('contact')} className="hover:text-cyan-600 dark:hover:text-cyan-300 transition-colors text-left">Contact & Head Office</button></li>
+          {/* Column 2: Company */}
+          <div className="space-y-3">
+            <h4 className="text-sm sm:text-base font-bold font-['Sora'] text-cyan-600 dark:text-cyan-400 tracking-tight">
+              Company
+            </h4>
+            <ul className="space-y-2.5 text-xs sm:text-[13px]">
+              <li>
+                <button
+                  onClick={() => handleLinkClick('about')}
+                  className="text-slate-600 dark:text-slate-400 hover:text-cyan-600 dark:hover:text-cyan-300 transition-colors cursor-pointer text-left block"
+                >
+                  About
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => handleLinkClick('careers')}
+                  className="text-slate-600 dark:text-slate-400 hover:text-cyan-600 dark:hover:text-cyan-300 transition-colors cursor-pointer text-left block"
+                >
+                  Careers
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => handleLinkClick('projects')}
+                  className="text-slate-600 dark:text-slate-400 hover:text-cyan-600 dark:hover:text-cyan-300 transition-colors cursor-pointer text-left block"
+                >
+                  Demos
+                </button>
+              </li>
             </ul>
           </div>
 
-          {/* Newsletter / Updates */}
-          <div className="space-y-2">
-            <div className="text-[11px] font-bold text-slate-900 dark:text-white uppercase tracking-wider font-mono">
-              Product Updates
-            </div>
-            <p className="text-slate-600 dark:text-slate-400 text-[11px]">
-              Subscribe for software updates, GST rule change notifications, and technical tutorials.
-            </p>
+          {/* Column 3: Support */}
+          <div className="space-y-3">
+            <h4 className="text-sm sm:text-base font-bold font-['Sora'] text-cyan-600 dark:text-cyan-400 tracking-tight">
+              Support
+            </h4>
+            <ul className="space-y-2.5 text-xs sm:text-[13px]">
+              <li>
+                <button
+                  onClick={() => handleLinkClick('support')}
+                  className="text-slate-600 dark:text-slate-400 hover:text-cyan-600 dark:hover:text-cyan-300 transition-colors cursor-pointer text-left block"
+                >
+                  Tech Support
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => handleLinkClick('contact')}
+                  className="text-slate-600 dark:text-slate-400 hover:text-cyan-600 dark:hover:text-cyan-300 transition-colors cursor-pointer text-left block"
+                >
+                  Contact
+                </button>
+              </li>
+            </ul>
+          </div>
 
-            {subscribed ? (
-              <div className="p-2 rounded-lg glass-card text-emerald-700 dark:text-emerald-300 text-xs flex items-center gap-1.5">
-                <CheckCircle2 className="w-3.5 h-3.5" />
-                <span>Subscribed!</span>
-              </div>
-            ) : (
-              <form onSubmit={handleSubscribe} className="space-y-1.5">
-                <div className="relative">
-                  <input
-                    type="email"
-                    required
-                    value={newsletterEmail}
-                    onChange={(e) => setNewsletterEmail(e.target.value)}
-                    placeholder="your-email@gmail.com"
-                    className="w-full pl-2.5 pr-8 py-1.5 rounded-lg glass-card text-xs text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-cyan-500/50"
-                  />
-                  <button
-                    type="submit"
-                    className="absolute right-1 top-1/2 -translate-y-1/2 p-1 rounded-md bg-cyan-500 text-white dark:text-slate-950 hover:bg-cyan-600 dark:hover:bg-cyan-400 transition-colors"
-                  >
-                    <Send className="w-3 h-3" />
-                  </button>
-                </div>
-              </form>
-            )}
-
-            <div className="pt-1 text-[10px] text-slate-500 dark:text-slate-500">
-              Direct and authentic software support in Jamshedpur.
-            </div>
+          {/* Column 4: Legal */}
+          <div className="space-y-3">
+            <h4 className="text-sm sm:text-base font-bold font-['Sora'] text-cyan-600 dark:text-cyan-400 tracking-tight">
+              Legal
+            </h4>
+            <ul className="space-y-2.5 text-xs sm:text-[13px]">
+              <li>
+                <button
+                  onClick={() => handleLinkClick('support')}
+                  className="text-slate-600 dark:text-slate-400 hover:text-cyan-600 dark:hover:text-cyan-300 transition-colors cursor-pointer text-left block"
+                >
+                  Terms of Service
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => handleLinkClick('support')}
+                  className="text-slate-600 dark:text-slate-400 hover:text-cyan-600 dark:hover:text-cyan-300 transition-colors cursor-pointer text-left block"
+                >
+                  Privacy Policy
+                </button>
+              </li>
+            </ul>
           </div>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="pt-3 mt-4 border-t border-slate-200/80 dark:border-white/10 flex flex-col sm:flex-row items-center justify-between gap-2.5 text-[11px] text-slate-500 dark:text-slate-400">
-          <div>
-            © {new Date().getFullYear()} {COMPANY_INFO.name}. Jamshedpur, Jharkhand. All Rights Reserved.
+        {/* Thin Divider Line Matching Website Theme */}
+        <div className="w-full border-t border-slate-200/80 dark:border-cyan-500/20 my-6 sm:my-8" />
+
+        {/* Trust & Certification Badges Banner */}
+        <FooterCertifications />
+
+        {/* Bottom Bar: Copyright, Admin & Social Links */}
+        <div className="pt-3 pb-2 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500 dark:text-slate-400">
+          <div className="text-left font-normal tracking-wide flex items-center gap-3">
+            <span>
+              © {new Date().getFullYear()}{' '}
+              <span
+                className="text-cyan-600 dark:text-cyan-400 font-semibold hover:text-cyan-500 dark:hover:text-cyan-300 transition-colors cursor-pointer"
+                onClick={() => handleLinkClick('home')}
+              >
+                Global Infosoft
+              </span>{' '}
+              — All rights reserved.
+            </span>
+            <a
+              href="#admin"
+              className="inline-flex items-center gap-1 text-slate-500 hover:text-cyan-400 transition-colors font-mono text-[10.5px] ml-2"
+              title="Global InfoSoft Admin & CMS Console"
+            >
+              <Shield className="w-3 h-3" />
+              <span>Admin CMS</span>
+            </a>
           </div>
 
-          <div className="flex items-center gap-4">
-            <button onClick={() => handleLinkClick('support')} className="hover:text-slate-900 dark:hover:text-slate-200 transition-colors">
-              Privacy Policy
-            </button>
-            <button onClick={() => handleLinkClick('support')} className="hover:text-slate-900 dark:hover:text-slate-200 transition-colors">
-              Terms of Service
-            </button>
-            <button onClick={() => handleLinkClick('support')} className="hover:text-slate-900 dark:hover:text-slate-200 transition-colors">
-              Support Policy
-            </button>
+          <div className="flex items-center gap-4 text-slate-400">
+            {/* Social Icons matching screenshot */}
+            <a
+              href={COMPANY_INFO.socialLinks.facebook}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Facebook"
+              title="Facebook"
+              className="hover:text-[#1877F2] hover:scale-110 transition-all duration-200"
+            >
+              <Facebook className="w-4 h-4" />
+            </a>
+            <a
+              href="https://instagram.com/globalinfosofts"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Instagram"
+              title="Instagram"
+              className="hover:text-[#E4405F] hover:scale-110 transition-all duration-200"
+            >
+              <Instagram className="w-4 h-4" />
+            </a>
+            <a
+              href={COMPANY_INFO.socialLinks.linkedin}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="LinkedIn"
+              title="LinkedIn"
+              className="hover:text-[#0A66C2] hover:scale-110 transition-all duration-200"
+            >
+              <Linkedin className="w-4 h-4" />
+            </a>
+            <a
+              href={COMPANY_INFO.socialLinks.youtube}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="YouTube"
+              title="YouTube"
+              className="hover:text-[#FF0000] hover:scale-110 transition-all duration-200"
+            >
+              <Youtube className="w-4 h-4" />
+            </a>
+            <a
+              href="https://glassdoor.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Reviews and Quotes"
+              title="Client & Employee Reviews"
+              className="hover:text-[#0CAA41] hover:scale-110 transition-all duration-200"
+            >
+              <Quote className="w-4 h-4" />
+            </a>
+            <a
+              href="https://threads.net"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Threads"
+              title="Threads"
+              className="hover:text-white dark:hover:text-white hover:scale-110 transition-all duration-200"
+            >
+              <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current" aria-hidden="true">
+                <path d="M12.186 24C5.467 24 0 18.533 0 11.814 0 5.094 5.467 0 12.186 0c6.72 0 12.186 5.094 12.186 11.814 0 .61-.497 1.107-1.107 1.107-.61 0-1.107-.497-1.107-1.107 0-5.503-4.469-9.6-9.972-9.6-5.503 0-9.972 4.469-9.972 9.6 0 5.503 4.469 9.972 9.972 9.972 3.09 0 5.922-1.42 7.747-3.791.378-.49.99-.586 1.48-.208.49.378.586.99.208 1.48C19.167 22.25 15.82 24 12.186 24zm4.84-9.358c-.287 0-.57-.035-.845-.102-.676 1.705-2.022 2.802-3.792 2.802-2.18 0-3.953-1.636-3.953-4.043 0-2.408 1.773-4.044 3.953-4.044 1.83 0 3.25 1.18 3.864 2.923.498-.24 1.05-.373 1.633-.373 1.888 0 3.27 1.343 3.27 3.328 0 2.213-1.624 3.844-3.866 3.844l-.264-.435zm-4.637-.923c.01 0 .02.002.03.002.97 0 1.776-.71 2.062-1.745-.333-.94-1.135-1.577-2.092-1.577-1.164 0-2.034.904-2.034 2.14 0 1.236.87 2.14 2.034 2.14v-.96z" />
+              </svg>
+            </a>
+
             <button
               onClick={scrollToTop}
-              className="p-1.5 rounded-lg glass-card text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:border-cyan-500/40 transition-all ml-1"
+              className="p-1.5 rounded-lg glass-card text-slate-400 hover:text-white hover:border-cyan-500/40 transition-all ml-2"
               aria-label="Scroll to top"
+              title="Scroll to Top"
             >
-              <ArrowUp className="w-3 h-3" />
+              <ArrowUp className="w-3.5 h-3.5" />
             </button>
           </div>
         </div>
@@ -187,3 +268,4 @@ export const Footer: React.FC<FooterProps> = ({
     </footer>
   );
 };
+

@@ -4,7 +4,7 @@ export interface ServiceItem {
   shortDesc: string;
   longDesc: string;
   iconName: string;
-  category: 'software' | 'web' | 'mobile' | 'enterprise' | 'marketing' | 'cloud' | 'ai';
+  category: 'software' | 'erp' | 'support' | 'web' | 'mobile' | 'pos' | 'enterprise' | 'marketing' | 'cloud' | 'ai' | string;
   deliverables: string[];
   technologies: string[];
   metrics: string;
@@ -200,6 +200,7 @@ export type PageId =
   | 'pricing'
   | 'about'
   | 'team'
+  | 'careers'
   | 'support'
   | 'blog'
   | 'contact';

@@ -3,6 +3,7 @@ import { motion, useScroll, useTransform } from 'motion/react';
 import { COMPANY_INFO } from '../../data/companyData';
 import { getWhatsAppUrl, WHATSAPP_MESSAGES } from '../../utils/whatsapp';
 import { PageId, ServiceItem } from '../../types';
+import { useCms } from '../../context/CmsContext';
 import { BrandLogo } from '../BrandLogo';
 import { WavePlasmaShader } from '../WavePlasmaShader';
 import { ServicesCarousel } from '../ServicesCarousel';
@@ -11,6 +12,7 @@ import { BuildPackageSection } from '../home/BuildPackageSection';
 import { WhyDeploySection } from '../home/WhyDeploySection';
 import { SoftwareSolutionsBrowserSection } from '../home/SoftwareSolutionsBrowserSection';
 import { MeetExpertsSection } from '../home/MeetExpertsSection';
+import { CardSectionBackground } from '../CardSectionBackground';
 import {
   ArrowRight,
   ShieldCheck,
@@ -213,7 +215,18 @@ export const HomePage: React.FC<HomePageProps> = ({
   onSelectServiceItem,
   onSelectProject
 }) => {
+  const { isSectionVisible, getSection } = useCms();
   const heroRef = useRef<HTMLElement>(null);
+
+  const heroSection = getSection('hero', 'home') || getSection('sec-home-hero');
+  const heroHeadline = heroSection?.content?.headline || heroSection?.title;
+  const heroSubtitle = heroSection?.content?.subheadline || heroSection?.subtitle;
+  const heroPrimaryBtn = heroSection?.content?.primaryBtnText || 'Contact Now';
+  const heroSecondaryBtn = heroSection?.content?.secondaryBtnText || 'Our Services';
+
+  const projectsSection = getSection('projects', 'home') || getSection('sec-home-projects');
+  const projectsTitle = projectsSection?.title || 'Projects';
+  const projectsSubtitle = projectsSection?.subtitle || 'Our Software Solutions';
 
   // Parallax scroll tracking for hero background ambient blobs
   const { scrollYProgress } = useScroll({
@@ -230,11 +243,24 @@ export const HomePage: React.FC<HomePageProps> = ({
   return (
     <div className="space-y-0 w-full overflow-hidden transition-colors duration-300 font-['Inter']">
       {/* 1. HERO SECTION (With Flowing Digital Wave Shader Animation) */}
+      {isSectionVisible('hero', 'home') && (
       <section
         ref={heroRef}
         id="hero"
         className="relative min-h-[90vh] flex items-center pt-28 sm:pt-32 pb-16 sm:pb-20 overflow-hidden bg-[#0B0D14]"
       >
+        {/* Dynamic Glassy Background Image Layer with Blur & Transparency */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
+          <img
+            src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=2000&q=80"
+            alt="Glassy cyber network backdrop"
+            referrerPolicy="no-referrer"
+            className="w-full h-full object-cover object-center opacity-25 filter blur-[2px] scale-105"
+          />
+          {/* Frosted Glass Overlay with subtle gradient */}
+          <div className="absolute inset-0 backdrop-blur-[3px] bg-gradient-to-tr from-[#0B0D14]/90 via-[#0B0D14]/70 to-[#0B0D14]/85" />
+        </div>
+
         {/* Dynamic WebGL Flowing Wave Shader Animation */}
         <WavePlasmaShader className="absolute inset-0 w-full h-full pointer-events-none z-0" intensity={1.1} />
 
@@ -253,9 +279,15 @@ export const HomePage: React.FC<HomePageProps> = ({
                 transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
                 className="text-4xl sm:text-5xl md:text-6xl xl:text-[4.25rem] font-bold tracking-tight text-white leading-[1.08] font-['Sora']"
               >
-                Innovating the<br />
-                Future with <span className="text-[#85afff]">Smart</span><br />
-                <span className="text-[#00dfef]">Digital Solutions</span>
+                {heroHeadline ? (
+                  <span>{heroHeadline}</span>
+                ) : (
+                  <>
+                    Innovating the<br />
+                    Future with <span className="text-[#85afff]">Smart</span><br />
+                    <span className="text-[#00dfef]">Digital Solutions</span>
+                  </>
+                )}
               </motion.h1>
 
               {/* Subtitle */}
@@ -265,8 +297,12 @@ export const HomePage: React.FC<HomePageProps> = ({
                 transition={{ duration: 0.6, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
                 className="text-slate-400 text-base sm:text-lg max-w-xl leading-relaxed mt-6 font-normal"
               >
-                Helping businesses grow with simple and smart digital solutions.<br className="hidden sm:inline" />
-                Turning ideas into practical tools for a better, connected future.
+                {heroSubtitle || (
+                  <>
+                    Helping businesses grow with simple and smart digital solutions.<br className="hidden sm:inline" />
+                    Turning ideas into practical tools for a better, connected future.
+                  </>
+                )}
               </motion.p>
 
               {/* Action Buttons */}
@@ -281,7 +317,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                   onClick={() => onOpenContact()}
                   className="px-7 py-3 rounded-full bg-[#85AFFF] hover:bg-[#729FF9] text-[#0A1128] font-semibold text-sm transition-all flex items-center gap-2 shadow-lg shadow-[#85AFFF]/20 cursor-pointer active:scale-95"
                 >
-                  <span>Contact Now</span>
+                  <span>{heroPrimaryBtn}</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
 
@@ -294,7 +330,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                   }}
                   className="px-7 py-3 rounded-full border border-[#2a2f42] hover:border-slate-500 bg-transparent text-white font-mono text-xs sm:text-sm tracking-wide transition-all cursor-pointer active:scale-95"
                 >
-                  <span>Our Services</span>
+                  <span>{heroSecondaryBtn}</span>
                 </button>
               </motion.div>
             </div>
@@ -305,11 +341,24 @@ export const HomePage: React.FC<HomePageProps> = ({
                 initial={{ opacity: 0, scale: 0.94, y: 35 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 transition={{ duration: 0.65, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-                className="w-full max-w-md p-8 sm:p-10 rounded-2xl sm:rounded-3xl bg-[#131520]/90 border border-white/10 flex flex-col items-center text-center shadow-2xl relative overflow-hidden backdrop-blur-xl group"
+                className="w-full max-w-md p-8 sm:p-10 rounded-2xl sm:rounded-3xl bg-[#131520]/80 border border-white/20 flex flex-col items-center text-center shadow-[0_16px_50px_rgba(0,0,0,0.5)] relative overflow-hidden backdrop-blur-2xl group transition-all duration-300 hover:border-cyan-400/40"
               >
+                {/* Background Glassy Tech Image with Transparency & Blur */}
+                <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl sm:rounded-3xl -z-10">
+                  <img
+                    src="/assets/datacenter-cloud-bg.svg"
+                    alt="High-Tech Cloud Datacenter Infrastructure"
+                    referrerPolicy="no-referrer"
+                    className="w-full h-full object-cover object-center opacity-30 dark:opacity-25 filter blur-[1px] scale-105 group-hover:scale-100 transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-b from-white/60 via-white/70 to-white/80 dark:from-[#131520]/75 dark:via-[#131520]/85 dark:to-[#131520]/95 backdrop-blur-xl" />
+                  {/* Top Glass Specular Refraction Highlight */}
+                  <div className="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent" />
+                </div>
+
                 {/* Ambient glow behind card */}
-                <div className="absolute -top-12 -left-12 w-52 h-52 bg-purple-600/20 rounded-full blur-3xl pointer-events-none" />
-                <div className="absolute -bottom-10 -right-10 w-44 h-44 bg-cyan-600/10 rounded-full blur-3xl pointer-events-none" />
+                <div className="absolute -top-12 -left-12 w-52 h-52 bg-purple-600/25 rounded-full blur-3xl pointer-events-none" />
+                <div className="absolute -bottom-10 -right-10 w-44 h-44 bg-cyan-600/15 rounded-full blur-3xl pointer-events-none" />
 
                 {/* Top Logo / Accent Image */}
                 <div className="relative z-10 flex flex-col items-center">
@@ -339,6 +388,7 @@ export const HomePage: React.FC<HomePageProps> = ({
           </div>
         </div>
       </section>
+      )}
 
       {/* Full-Width Enterprise Metrics Ribbon */}
       <section className="py-6 sm:py-8 border-y border-white/10 bg-[#0B0D14] relative z-10">
@@ -422,23 +472,34 @@ export const HomePage: React.FC<HomePageProps> = ({
       </section>
 
       {/* 2. OUR SERVICES (PREMIUM CENTERED SECTION WITH HORIZONTALLY AUTO-SCROLLING CAROUSEL) */}
-      <ServicesCarousel
-        onSelectService={(service) => {
-          if (onSelectServiceItem) {
-            onSelectServiceItem(service);
-          } else {
-            onSelectService(service.id);
-          }
-        }}
-        onExploreAll={() => onNavigatePage('services')}
-      />
+      {isSectionVisible('services', 'home') && (
+        <ServicesCarousel
+          onSelectService={(service) => {
+            if (onSelectServiceItem) {
+              onSelectServiceItem(service);
+            } else {
+              onSelectService(service.id);
+            }
+          }}
+          onExploreAll={() => onNavigatePage('services')}
+        />
+      )}
 
       {/* 3. OUR SOFTWARE SOLUTIONS (3 LIVE BROWSER MOCKUPS) */}
-      <SoftwareSolutionsBrowserSection onSelectProject={onSelectProject} />
+      {isSectionVisible('solutions', 'home') && (
+        <SoftwareSolutionsBrowserSection onSelectProject={onSelectProject} />
+      )}
 
       {/* 2. PROJECTS SECTION (COMPACT 5-CARD FACETED GRID) */}
-      <section id="projects" className="py-6 sm:py-8 relative z-10 border-t border-slate-200/60 dark:border-slate-800/60 bg-[var(--bg-body)]">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      {isSectionVisible('projects', 'home') && (
+      <section id="projects" className="py-6 sm:py-8 relative z-10 border-t border-slate-200/60 dark:border-slate-800/60 card-section-datacenter-bg overflow-hidden bg-[var(--bg-body)]">
+        {/* High-Tech Cloud Datacenter & Global Infrastructure Background Layer */}
+        <CardSectionBackground
+          opacity="opacity-35 dark:opacity-20"
+          overlayOpacity="bg-slate-50/65 dark:bg-[#070B14]/85"
+        />
+
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           {/* Section Header */}
           <motion.div
             initial={{ opacity: 0, y: 25, scale: 0.97 }}
@@ -449,10 +510,10 @@ export const HomePage: React.FC<HomePageProps> = ({
           >
             <div>
               <span className="font-['JetBrains_Mono'] text-xs font-semibold text-cyan-600 dark:text-cyan-400 tracking-widest uppercase mb-1 block">
-                Our Software Solutions
+                {projectsSubtitle}
               </span>
               <h2 className="font-['Sora'] text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
-                Projects
+                {projectsTitle}
               </h2>
             </div>
 
@@ -474,8 +535,8 @@ export const HomePage: React.FC<HomePageProps> = ({
               viewport={{ once: false, amount: 0.15 }}
               transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
               whileHover={{ y: -4, transition: { duration: 0.2 } }}
-              onClick={() => onNavigatePage('projects')}
-              className="relative rounded-2xl overflow-hidden group cursor-pointer shadow-md hover:shadow-xl border border-slate-200/80 dark:border-white/10 hover:border-[#FF0055]/70 transition-all duration-300 h-[260px] sm:h-[300px] lg:h-[316px] flex flex-col select-none bg-slate-950"
+              onClick={() => onSelectProject ? onSelectProject('seven-financials') : onNavigatePage('projects')}
+              className="relative rounded-2xl overflow-hidden group cursor-pointer shadow-md hover:shadow-xl border border-slate-200/80 dark:border-cyan-500/20 hover:border-cyan-500/70 glass-card-transparent transition-all duration-300 h-[260px] sm:h-[300px] lg:h-[316px] flex flex-col select-none bg-slate-950"
             >
               {/* Browser Window Header Mockup */}
               <div className="bg-slate-900/95 dark:bg-[#060913] border-b border-white/10 px-3.5 py-1.5 flex items-center justify-between z-10 shrink-0">
@@ -515,8 +576,8 @@ export const HomePage: React.FC<HomePageProps> = ({
                 viewport={{ once: false, amount: 0.15 }}
                 transition={{ duration: 0.4, delay: 0.05, ease: [0.22, 1, 0.36, 1] }}
                 whileHover={{ y: -3, transition: { duration: 0.2 } }}
-                onClick={() => onNavigatePage('projects')}
-                className="relative rounded-xl sm:rounded-2xl overflow-hidden group cursor-pointer shadow-sm hover:shadow-lg border border-slate-200/80 dark:border-white/10 hover:border-[#FF0055]/70 transition-all duration-300 h-[125px] sm:h-[142px] lg:h-[150px] flex flex-col select-none bg-slate-950"
+                onClick={() => onSelectService ? onSelectService('mobile-apps') : onNavigatePage('services')}
+                className="relative rounded-xl sm:rounded-2xl overflow-hidden group cursor-pointer shadow-sm hover:shadow-lg border border-slate-200/80 dark:border-white/10 hover:border-cyan-500/70 transition-all duration-300 h-[125px] sm:h-[142px] lg:h-[150px] flex flex-col select-none bg-slate-950"
               >
                 <div className="bg-slate-900/95 dark:bg-[#060913] border-b border-white/10 px-2.5 py-1 flex items-center justify-between z-10 shrink-0">
                   <div className="flex items-center gap-1">
@@ -525,7 +586,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                     <div className="w-1.5 h-1.5 rounded-full bg-emerald-500/90" />
                   </div>
                   <span className="text-[9px] font-['JetBrains_Mono'] text-slate-400 truncate max-w-[120px]">app.globalinfosofts.com</span>
-                  <span className="text-[8px] font-['JetBrains_Mono'] font-bold text-violet-400">APP</span>
+                  <span className="text-[8px] font-['JetBrains_Mono'] font-bold text-cyan-400">APP</span>
                 </div>
                 <div className="relative flex-1 overflow-hidden bg-slate-950">
                   <img
@@ -547,8 +608,8 @@ export const HomePage: React.FC<HomePageProps> = ({
                 viewport={{ once: false, amount: 0.15 }}
                 transition={{ duration: 0.4, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
                 whileHover={{ y: -3, transition: { duration: 0.2 } }}
-                onClick={() => onNavigatePage('projects')}
-                className="relative rounded-xl sm:rounded-2xl overflow-hidden group cursor-pointer shadow-sm hover:shadow-lg border border-slate-200/80 dark:border-white/10 hover:border-[#FF0055]/70 transition-all duration-300 h-[125px] sm:h-[142px] lg:h-[150px] flex flex-col select-none bg-slate-950"
+                onClick={() => onSelectService ? onSelectService('digital-marketing') : onNavigatePage('services')}
+                className="relative rounded-xl sm:rounded-2xl overflow-hidden group cursor-pointer shadow-sm hover:shadow-lg border border-slate-200/80 dark:border-white/10 hover:border-cyan-500/70 transition-all duration-300 h-[125px] sm:h-[142px] lg:h-[150px] flex flex-col select-none bg-slate-950"
               >
                 <div className="bg-slate-900/95 dark:bg-[#060913] border-b border-white/10 px-2.5 py-1 flex items-center justify-between z-10 shrink-0">
                   <div className="flex items-center gap-1">
@@ -579,8 +640,8 @@ export const HomePage: React.FC<HomePageProps> = ({
                 viewport={{ once: false, amount: 0.15 }}
                 transition={{ duration: 0.4, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
                 whileHover={{ y: -3, transition: { duration: 0.2 } }}
-                onClick={() => onNavigatePage('projects')}
-                className="relative rounded-xl sm:rounded-2xl overflow-hidden group cursor-pointer shadow-sm hover:shadow-lg border border-slate-200/80 dark:border-white/10 hover:border-[#FF0055]/70 transition-all duration-300 h-[125px] sm:h-[142px] lg:h-[150px] flex flex-col select-none bg-slate-950"
+                onClick={() => onSelectProject ? onSelectProject('case-retail-chain') : onNavigatePage('projects')}
+                className="relative rounded-xl sm:rounded-2xl overflow-hidden group cursor-pointer shadow-sm hover:shadow-lg border border-slate-200/80 dark:border-white/10 hover:border-cyan-500/70 transition-all duration-300 h-[125px] sm:h-[142px] lg:h-[150px] flex flex-col select-none bg-slate-950"
               >
                 <div className="bg-slate-900/95 dark:bg-[#060913] border-b border-white/10 px-2.5 py-1 flex items-center justify-between z-10 shrink-0">
                   <div className="flex items-center gap-1">
@@ -611,8 +672,8 @@ export const HomePage: React.FC<HomePageProps> = ({
                 viewport={{ once: false, amount: 0.15 }}
                 transition={{ duration: 0.4, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
                 whileHover={{ y: -3, transition: { duration: 0.2 } }}
-                onClick={() => onNavigatePage('projects')}
-                className="relative rounded-xl sm:rounded-2xl overflow-hidden group cursor-pointer shadow-sm hover:shadow-lg border border-slate-200/80 dark:border-white/10 hover:border-[#FF0055]/70 transition-all duration-300 h-[125px] sm:h-[142px] lg:h-[150px] flex flex-col select-none bg-slate-950"
+                onClick={() => onSelectProject ? onSelectProject('riddhi-architect') : onNavigatePage('projects')}
+                className="relative rounded-xl sm:rounded-2xl overflow-hidden group cursor-pointer shadow-sm hover:shadow-lg border border-slate-200/80 dark:border-white/10 hover:border-cyan-500/70 transition-all duration-300 h-[125px] sm:h-[142px] lg:h-[150px] flex flex-col select-none bg-slate-950"
               >
                 <div className="bg-slate-900/95 dark:bg-[#060913] border-b border-white/10 px-2.5 py-1 flex items-center justify-between z-10 shrink-0">
                   <div className="flex items-center gap-1">
@@ -639,11 +700,15 @@ export const HomePage: React.FC<HomePageProps> = ({
           </div>
         </div>
       </section>
+      )}
 
       {/* 5. WHY DEPLOY WITH US? (TACTICAL CYBER SYSTEM ONLINE SECTION) */}
-      <WhyDeploySection onOpenContact={onOpenContact} />
+      {isSectionVisible('why-deploy', 'home') && (
+        <WhyDeploySection onOpenContact={onOpenContact} />
+      )}
 
       {/* 5. WHY CHOOSE GLOBAL INFOSOFT (PRESERVED ENTERPRISE TRUST SHOWCASE) */}
+      {isSectionVisible('why-us', 'home') && (
       <section className="py-6 sm:py-8 border-t border-slate-200/60 dark:border-slate-800/60 bg-slate-50/50 dark:bg-[#070b14]/50">
         <div className="w-full px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20">
           <motion.div
@@ -740,17 +805,25 @@ export const HomePage: React.FC<HomePageProps> = ({
           </div>
         </div>
       </section>
+      )}
 
       {/* 7. MEET THE EXPERTS (OUR TEAM SECTION MATCHING SCREENSHOT 487) */}
-      <MeetExpertsSection onOpenContact={onOpenContact} />
+      {isSectionVisible('team', 'home') && (
+        <MeetExpertsSection onOpenContact={onOpenContact} />
+      )}
 
       {/* 8. BLOGS & TECHNICAL INSIGHTS SECTION */}
-      <BlogsSection onNavigatePage={onNavigatePage} onOpenContact={onOpenContact} />
+      {isSectionVisible('blogs', 'home') && (
+        <BlogsSection onNavigatePage={onNavigatePage} onOpenContact={onOpenContact} />
+      )}
 
       {/* 9. BUILD YOUR SERVICE PACKAGE (PENULTIMATE / 2ND TO LAST SECTION) */}
-      <BuildPackageSection onOpenContact={onOpenContact} />
+      {isSectionVisible('package-builder', 'home') && (
+        <BuildPackageSection onOpenContact={onOpenContact} />
+      )}
 
       {/* 10. FULL-WIDTH CTA BANNER */}
+      {isSectionVisible('cta', 'home') && (
       <section className="py-6 sm:py-7 border-t border-slate-200/90 dark:border-slate-800/90 bg-gradient-to-r from-slate-100/90 via-slate-50/90 to-cyan-50/50 dark:from-slate-900/90 dark:via-[#0b1020]/90 dark:to-cyan-950/30 w-full transition-colors duration-300 relative overflow-hidden">
         <div className="absolute top-1/2 left-1/3 -translate-y-1/2 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
 
@@ -789,6 +862,7 @@ export const HomePage: React.FC<HomePageProps> = ({
           </div>
         </motion.div>
       </section>
+      )}
     </div>
   );
 };
