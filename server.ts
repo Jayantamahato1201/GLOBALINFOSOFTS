@@ -23,6 +23,11 @@ async function startServer() {
     res.json({ status: 'ok', service: 'Global InfoSoft CMS Engine', timestamp: new Date().toISOString() });
   });
 
+  // Explicit JSON 404 handler for all unhandled /api routes - strictly prevent HTML fallthrough
+  app.all('/api/*', (req, res) => {
+    res.status(404).json({ error: `API endpoint not found: ${req.method} ${req.path}` });
+  });
+
   // Vite middleware for development / static serving in production
   if (process.env.NODE_ENV !== 'production') {
     const vite = await createViteServer({

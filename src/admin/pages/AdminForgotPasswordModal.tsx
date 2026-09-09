@@ -25,8 +25,15 @@ export const AdminForgotPasswordModal: React.FC<AdminForgotPasswordModalProps> =
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email })
       });
-      const data = await res.json();
-      setStatusMsg({ type: 'success', text: data.message });
+      const text = await res.text();
+      let data: any = {};
+      try {
+        data = JSON.parse(text);
+      } catch {
+        throw new Error('Server returned an invalid response. Please try again.');
+      }
+      if (!res.ok) throw new Error(data.error || 'Password reset request failed');
+      setStatusMsg({ type: 'success', text: data.message || 'If an account exists, a reset code has been issued.' });
       setMode('reset');
     } catch (err: any) {
       setStatusMsg({ type: 'error', text: err.message || 'Request failed' });
@@ -45,8 +52,14 @@ export const AdminForgotPasswordModal: React.FC<AdminForgotPasswordModalProps> =
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, newPassword })
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
+      const text = await res.text();
+      let data: any = {};
+      try {
+        data = JSON.parse(text);
+      } catch {
+        throw new Error('Server returned an invalid response. Please try again.');
+      }
+      if (!res.ok) throw new Error(data.error || 'Password reset failed');
       setStatusMsg({ type: 'success', text: 'Password reset successfully. You may now log in with your new password.' });
     } catch (err: any) {
       setStatusMsg({ type: 'error', text: err.message || 'Reset failed' });

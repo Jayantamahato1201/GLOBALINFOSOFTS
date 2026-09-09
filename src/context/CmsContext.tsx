@@ -143,12 +143,20 @@ export const CmsProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     try {
       const res = await fetch('/api/public/cms-data');
       if (!res.ok) throw new Error(`CMS API error: ${res.status}`);
-      const json: PublicCmsData = await res.json();
+      const text = await res.text();
+      let json: PublicCmsData;
+      try {
+        json = JSON.parse(text);
+      } catch (parseErr) {
+        console.warn('[CmsContext] Non-JSON payload received from CMS endpoint, maintaining fallback defaults.');
+        return;
+      }
       setData(json);
       setError(null);
     } catch (err: any) {
       console.warn('[CmsContext] Could not fetch public CMS data, relying on local defaults:', err);
-      setError(err.message || 'Failed to load CMS data');
+      // Suppress raw error string to avoid throwing UI into broken state
+      setError(null);
     } finally {
       setIsLoading(false);
     }

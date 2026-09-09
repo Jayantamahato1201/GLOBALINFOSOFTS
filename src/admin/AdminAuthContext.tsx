@@ -37,8 +37,14 @@ const USER_KEY = 'gi_admin_user';
 export const AdminAuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [token, setToken] = useState<string | null>(() => localStorage.getItem(TOKEN_KEY));
   const [user, setUser] = useState<AdminAuthContextType['user']>(() => {
-    const cached = localStorage.getItem(USER_KEY);
-    return cached ? JSON.parse(cached) : null;
+    try {
+      const cached = localStorage.getItem(USER_KEY);
+      if (!cached) return null;
+      return JSON.parse(cached);
+    } catch {
+      localStorage.removeItem(USER_KEY);
+      return null;
+    }
   });
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [activeTab, setActiveTab] = useState<string>('dashboard');
@@ -67,9 +73,14 @@ export const AdminAuthProvider: React.FC<{ children: ReactNode }> = ({ children 
           }
         });
         if (res.ok) {
-          const userData = await res.json();
-          setUser(userData);
-          localStorage.setItem(USER_KEY, JSON.stringify(userData));
+          const text = await res.text();
+          try {
+            const userData = JSON.parse(text);
+            setUser(userData);
+            localStorage.setItem(USER_KEY, JSON.stringify(userData));
+          } catch {
+            console.warn('[AdminAuth] Non-JSON payload received for /api/auth/me');
+          }
         } else {
           // Token expired or invalid
           setToken(null);
@@ -94,7 +105,13 @@ export const AdminAuthProvider: React.FC<{ children: ReactNode }> = ({ children 
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password, rememberMe })
       });
-      const data = await res.json();
+      const text = await res.text();
+      let data: any = {};
+      try {
+        data = JSON.parse(text);
+      } catch {
+        return { success: false, error: res.ok ? 'Unexpected response format' : `Server error: ${res.status}` };
+      }
       if (!res.ok) {
         return { success: false, error: data.error || 'Login failed' };
       }
@@ -117,7 +134,13 @@ export const AdminAuthProvider: React.FC<{ children: ReactNode }> = ({ children 
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ fullName, email, password, confirmPassword })
       });
-      const data = await res.json();
+      const text = await res.text();
+      let data: any = {};
+      try {
+        data = JSON.parse(text);
+      } catch {
+        return { success: false, error: res.ok ? 'Unexpected response format' : `Server error: ${res.status}` };
+      }
       if (!res.ok) {
         return { success: false, error: data.error || 'Signup failed' };
       }
@@ -162,7 +185,16 @@ export const AdminAuthProvider: React.FC<{ children: ReactNode }> = ({ children 
       window.dispatchEvent(new CustomEvent('cms-data-updated'));
     }
 
-    const json = await res.json().catch(() => ({}));
+    const text = await res.text();
+    let json: any = {};
+    try {
+      json = text ? JSON.parse(text) : {};
+    } catch {
+      if (!res.ok) {
+        throw new Error(`Server returned HTTP ${res.status}`);
+      }
+      throw new Error('Server returned an unexpected non-JSON response');
+    }
     if (!res.ok) {
       throw new Error(json.error || `HTTP error ${res.status}`);
     }

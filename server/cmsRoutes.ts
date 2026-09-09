@@ -228,6 +228,51 @@ cmsRouter.get('/auth/users', authenticateAdmin, requireRoles(['super_admin', 'ad
   return res.json(users);
 });
 
+// POST /api/auth/users
+cmsRouter.post('/auth/users', authenticateAdmin, requireRoles(['super_admin', 'admin']), (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { email, password, fullName, role } = req.body;
+    if (!email || !password || !fullName) {
+      return res.status(400).json({ error: 'Full name, email, and password are required.' });
+    }
+    const newUser = cmsDb.createUser({
+      email,
+      passwordPlain: password,
+      fullName,
+      role: role || 'editor'
+    });
+    cmsDb.logActivity('User Account Created', req.user!.email, req.user!.fullName, 'user', `Created user account ${newUser.email} with role ${newUser.role}`);
+    return res.status(201).json({
+      id: newUser.id,
+      email: newUser.email,
+      fullName: newUser.fullName,
+      role: newUser.role,
+      status: newUser.status,
+      createdAt: newUser.createdAt
+    });
+  } catch (err: any) {
+    return res.status(400).json({ error: err.message });
+  }
+});
+
+// PATCH /api/auth/users/:id/role
+cmsRouter.patch('/auth/users/:id/role', authenticateAdmin, requireRoles(['super_admin', 'admin']), (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { role } = req.body;
+    const user = cmsDb.updateUserRole(req.params.id, role);
+    cmsDb.logActivity('User Role Updated', req.user!.email, req.user!.fullName, 'user', `Updated role for ${user.email} to ${role}`);
+    return res.json({
+      id: user.id,
+      email: user.email,
+      fullName: user.fullName,
+      role: user.role,
+      status: user.status
+    });
+  } catch (err: any) {
+    return res.status(400).json({ error: err.message });
+  }
+});
+
 // PATCH /api/auth/users/:id
 cmsRouter.patch('/auth/users/:id', authenticateAdmin, requireRoles(['super_admin']), (req: AuthenticatedRequest, res: Response) => {
   try {
