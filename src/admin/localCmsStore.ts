@@ -77,17 +77,25 @@ export class LocalCmsStore {
 
     const existingUser = (db.users || []).find((u: any) => u.email.toLowerCase() === email);
 
-    // 1. Match against known default admin / editor passwords
-    const allowedDefaults = DEFAULT_PASSWORDS[email];
-    const isDefaultMatch = allowedDefaults && allowedDefaults.some((p) => p.toLowerCase() === password.toLowerCase());
+    const hasCustom = Boolean(existingUser?.customPassword);
+    let isMatch = false;
 
-    // 2. Match against stored plain or custom set passwords
-    const isCustomMatch = existingUser?.customPassword && existingUser.customPassword === password;
+    if (hasCustom) {
+      // If user has set a custom password, ONLY that password is valid!
+      isMatch = existingUser.customPassword === password;
+    } else {
+      // 1. Match against known default admin / editor passwords
+      const allowedDefaults = DEFAULT_PASSWORDS[email] || [];
+      const isDefaultMatch = allowedDefaults.some((p) => p.toLowerCase() === password.toLowerCase());
 
-    // 3. Match against fallback if admin email is typed
-    const isAnyAdminMatch = email.includes('admin') && (password === 'admin123' || password.toLowerCase() === 'adminpassword@2026' || password === 'admin');
+      // 2. Match against fallback if admin email is typed
+      const isAnyAdminMatch = (email.includes('admin') || email.includes('globalinfosoft')) &&
+        ['admin123', 'adminpassword@2026', 'admin', 'admin@123'].includes(password.toLowerCase());
 
-    if (isDefaultMatch || isCustomMatch || isAnyAdminMatch) {
+      isMatch = isDefaultMatch || isAnyAdminMatch;
+    }
+
+    if (isMatch) {
       const user: LocalAdminUser = {
         id: existingUser?.id || 'usr-super-admin-01',
         email: existingUser?.email || email,
@@ -386,6 +394,7 @@ export class LocalCmsStore {
 
       if (target) {
         target.customPassword = newPassword;
+        target.passwordChangedAt = new Date().toISOString();
         this.saveDatabase(db);
         this.logActivity(
           'Password Updated (Standalone Mode)',

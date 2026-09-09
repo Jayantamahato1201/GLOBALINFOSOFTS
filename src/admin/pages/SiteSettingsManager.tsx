@@ -9,13 +9,34 @@ import {
   Clock,
   CheckCircle2,
   AlertTriangle,
-  Globe
+  Globe,
+  Database,
+  RefreshCw,
+  Download,
+  Upload,
+  Server,
+  Cloud,
+  Check,
+  Copy
 } from 'lucide-react';
 import { useAdminAuth } from '../AdminAuthContext';
 import { CmsSiteSettings } from '../cmsTypes';
 
+interface DatabaseStatus {
+  configured: boolean;
+  connected: boolean;
+  databaseName: string;
+  storageType: string;
+  serverUptime?: number;
+  error?: string | null;
+}
+
 export const SiteSettingsManager: React.FC = () => {
   const { apiFetch, showToast, canPublish } = useAdminAuth();
+  const [dbStatus, setDbStatus] = useState<DatabaseStatus | null>(null);
+  const [isSyncingDb, setIsSyncingDb] = useState(false);
+  const [isRestoringDb, setIsRestoringDb] = useState(false);
+  const [copiedEnv, setCopiedEnv] = useState(false);
   const [settings, setSettings] = useState<CmsSiteSettings>({
     companyName: 'Global InfoSoft',
     tagline: '',
@@ -45,6 +66,15 @@ export const SiteSettingsManager: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
 
+  const loadDbStatus = async () => {
+    try {
+      const status = await apiFetch('/api/database/status');
+      if (status) setDbStatus(status);
+    } catch {
+      // Fallback
+    }
+  };
+
   useEffect(() => {
     const loadSettings = async () => {
       try {
@@ -57,7 +87,69 @@ export const SiteSettingsManager: React.FC = () => {
       }
     };
     loadSettings();
+    loadDbStatus();
   }, [apiFetch]);
+
+  const handleSyncDatabase = async () => {
+    setIsSyncingDb(true);
+    try {
+      const res = await apiFetch('/api/database/sync', { method: 'POST' });
+      showToast(res.message || 'Database synchronized successfully!');
+      if (res.status) setDbStatus(res.status);
+    } catch (err: any) {
+      showToast(err.message || 'Database synchronization failed', 'error');
+    } finally {
+      setIsSyncingDb(false);
+    }
+  };
+
+  const handleDownloadBackup = async () => {
+    try {
+      const token = localStorage.getItem('gis_admin_token') || sessionStorage.getItem('gis_admin_token');
+      const res = await fetch('/api/database/backup', {
+        headers: token ? { Authorization: `Bearer ${token}` } : {}
+      });
+      if (!res.ok) throw new Error('Backup download failed');
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `globalinfosoft_cms_backup_${Date.now()}.json`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+      showToast('Database backup downloaded successfully!');
+    } catch (err: any) {
+      showToast(err.message || 'Failed to download backup', 'error');
+    }
+  };
+
+  const handleRestoreBackup = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsRestoringDb(true);
+    try {
+      const text = await file.text();
+      const parsed = JSON.parse(text);
+      if (!parsed.users || !parsed.pages) {
+        throw new Error('Invalid backup file. Missing required users or pages data.');
+      }
+      const res = await apiFetch('/api/database/restore', {
+        method: 'POST',
+        body: JSON.stringify({ data: parsed })
+      });
+      showToast(res.message || 'Database restored successfully! Reloading...');
+      window.dispatchEvent(new Event('cms-data-updated'));
+      setTimeout(() => window.location.reload(), 1200);
+    } catch (err: any) {
+      showToast(err.message || 'Failed to restore backup.', 'error');
+    } finally {
+      setIsRestoringDb(false);
+      e.target.value = '';
+    }
+  };
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -299,6 +391,142 @@ export const SiteSettingsManager: React.FC = () => {
                 className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-white"
               />
             </div>
+          </div>
+        </div>
+
+        {/* DATABASE & PERMANENT CLOUD STORAGE (MONGODB ATLAS) */}
+        <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                <Database className="w-4 h-4 text-emerald-400" />
+                Permanent Cloud Database Integration (MongoDB Atlas)
+              </h3>
+              <p className="text-slate-400 mt-0.5 text-[11px]">
+                Ensures admin passwords, blog posts, careers, and settings are saved permanently across page refreshes, different devices, and Vercel serverless instances.
+              </p>
+            </div>
+
+            {/* Live Connection Badge */}
+            <div className="flex items-center gap-2">
+              {dbStatus?.connected ? (
+                <span className="px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-semibold text-[11px] flex items-center gap-1.5 shadow-sm">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  MongoDB Atlas Connected (Permanent Cloud Storage)
+                </span>
+              ) : (
+                <span className="px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 font-semibold text-[11px] flex items-center gap-1.5 shadow-sm">
+                  <span className="w-2 h-2 rounded-full bg-amber-400" />
+                  Local File Storage Mode (Active)
+                </span>
+              )}
+            </div>
+          </div>
+
+          {/* Database Details & Actions Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+            <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+              <div className="flex items-center gap-2 text-slate-300 font-semibold text-xs">
+                <Server className="w-3.5 h-3.5 text-cyan-400" />
+                <span>Active Storage Target</span>
+              </div>
+              <p className="text-slate-400 text-[11px]">
+                {dbStatus?.storageType || 'Local Server JSON Database'}
+              </p>
+              {dbStatus?.databaseName && (
+                <div className="text-[10px] text-slate-500 font-mono">
+                  Database: {dbStatus.databaseName}
+                </div>
+              )}
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+              <div className="flex items-center gap-2 text-slate-300 font-semibold text-xs">
+                <RefreshCw className="w-3.5 h-3.5 text-indigo-400" />
+                <span>Live Cloud Sync</span>
+              </div>
+              <p className="text-slate-400 text-[11px]">
+                Forces synchronization between local memory and MongoDB Atlas cloud collection.
+              </p>
+              <button
+                type="button"
+                onClick={handleSyncDatabase}
+                disabled={isSyncingDb}
+                className="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-[11px] flex items-center gap-1.5 transition disabled:opacity-50"
+              >
+                <RefreshCw className={`w-3 h-3 ${isSyncingDb ? 'animate-spin' : ''}`} />
+                <span>{isSyncingDb ? 'Syncing...' : 'Sync with Cloud Database'}</span>
+              </button>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+              <div className="flex items-center gap-2 text-slate-300 font-semibold text-xs">
+                <Download className="w-3.5 h-3.5 text-purple-400" />
+                <span>One-Click Backup & Restore</span>
+              </div>
+              <p className="text-slate-400 text-[11px]">
+                Export complete database or restore anytime.
+              </p>
+              <div className="flex items-center gap-2 pt-0.5">
+                <button
+                  type="button"
+                  onClick={handleDownloadBackup}
+                  className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-[11px] flex items-center gap-1 transition border border-slate-700"
+                >
+                  <Download className="w-3 h-3 text-purple-400" />
+                  <span>Download Backup</span>
+                </button>
+
+                <label className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-[11px] flex items-center gap-1 transition border border-slate-700 cursor-pointer">
+                  <Upload className="w-3 h-3 text-cyan-400" />
+                  <span>{isRestoringDb ? 'Restoring...' : 'Restore'}</span>
+                  <input
+                    type="file"
+                    accept=".json"
+                    onChange={handleRestoreBackup}
+                    disabled={isRestoringDb}
+                    className="hidden"
+                  />
+                </label>
+              </div>
+            </div>
+          </div>
+
+          {/* Vercel & Cloud Setup Guidance */}
+          <div className="p-4 rounded-xl bg-slate-950/70 border border-slate-800 space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-slate-300 flex items-center gap-2">
+                <Cloud className="w-3.5 h-3.5 text-cyan-400" />
+                How to activate MongoDB Atlas for Vercel / Cloud deployment:
+              </span>
+              <button
+                type="button"
+                onClick={() => {
+                  navigator.clipboard.writeText('MONGODB_URI="mongodb+srv://<username>:<password>@cluster0.abcde.mongodb.net/globalinfosoft?retryWrites=true&w=majority"');
+                  setCopiedEnv(true);
+                  setTimeout(() => setCopiedEnv(false), 2000);
+                }}
+                className="text-[11px] text-cyan-400 hover:text-cyan-300 flex items-center gap-1"
+              >
+                {copiedEnv ? (
+                  <>
+                    <Check className="w-3 h-3 text-emerald-400" />
+                    <span className="text-emerald-400">Copied</span>
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-3 h-3" />
+                    <span>Copy Env Variable</span>
+                  </>
+                )}
+              </button>
+            </div>
+            <ol className="list-decimal list-inside text-[11px] text-slate-400 space-y-1 pl-1">
+              <li>Create a free MongoDB database on <strong className="text-slate-300">mongodb.com/atlas</strong> (takes 60 seconds).</li>
+              <li>In Vercel Dashboard, go to your project ➔ <strong className="text-slate-300">Settings</strong> ➔ <strong className="text-slate-300">Environment Variables</strong>.</li>
+              <li>Add variable name: <code className="text-cyan-300 bg-slate-900 px-1 py-0.5 rounded font-mono">MONGODB_URI</code> with your MongoDB connection string.</li>
+              <li>All admin password changes, blogs, portfolio projects, and site updates will automatically and permanently save to MongoDB Atlas!</li>
+            </ol>
           </div>
         </div>
 

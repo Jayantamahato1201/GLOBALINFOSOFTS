@@ -26,6 +26,12 @@ import {
   CmsRevision
 } from './cmsTypes.js';
 import { getInitialCmsDatabase } from './cmsSeed.js';
+import {
+  loadDataFromMongo,
+  saveDataToMongo,
+  getMongoStatus,
+  isMongoConfigured
+} from './mongoDb.js';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'global-infosoft-secure-cms-token-secret-2025';
 const DB_DIR = path.join(process.cwd(), 'data');
@@ -33,10 +39,43 @@ const DB_FILE = path.join(DB_DIR, 'cms_data.json');
 
 export class CmsDatabase {
   private data: CmsDatabaseSchema;
+  private isMongoSyncing: boolean = false;
 
   constructor() {
     this.ensureDirectory();
     this.data = this.loadDatabase();
+    // Asynchronously synchronize with MongoDB if configured
+    this.syncWithMongo().catch((err) => {
+      console.error('[CMS DB] Initial MongoDB sync warning:', err);
+    });
+  }
+
+  public async syncWithMongo(): Promise<boolean> {
+    if (!isMongoConfigured() || this.isMongoSyncing) return false;
+    try {
+      this.isMongoSyncing = true;
+      const mongoData = await loadDataFromMongo();
+      if (mongoData && mongoData.users && mongoData.pages) {
+        this.data = mongoData;
+        try {
+          fs.writeFileSync(DB_FILE, JSON.stringify(this.data, null, 2), 'utf-8');
+        } catch {
+          // ignore read-only
+        }
+        console.log('[CMS DB] In-memory database synchronized with MongoDB Atlas successfully!');
+        return true;
+      } else {
+        // MongoDB collection is empty: seed it with current database
+        console.log('[CMS DB] MongoDB collection empty, seeding current CMS data into MongoDB...');
+        await saveDataToMongo(this.data);
+        return true;
+      }
+    } catch (err) {
+      console.error('[CMS DB] MongoDB sync failed:', err);
+      return false;
+    } finally {
+      this.isMongoSyncing = false;
+    }
   }
 
   private ensureDirectory() {
@@ -50,17 +89,8 @@ export class CmsDatabase {
   }
 
   private loadDatabase(): CmsDatabaseSchema {
+    // 1. Primary permanent storage: data/cms_data.json
     try {
-      // In serverless environments, check if /tmp has a previous write in this container
-      const tmpFile = path.join('/tmp', 'cms_data.json');
-      if (fs.existsSync(tmpFile)) {
-        const raw = fs.readFileSync(tmpFile, 'utf-8');
-        const parsed = JSON.parse(raw);
-        if (parsed && parsed.users && parsed.pages) {
-          return parsed;
-        }
-      }
-
       if (fs.existsSync(DB_FILE)) {
         const raw = fs.readFileSync(DB_FILE, 'utf-8');
         const parsed = JSON.parse(raw);
@@ -74,7 +104,21 @@ export class CmsDatabase {
         }
       }
     } catch (err) {
-      console.error('[CMS DB] Failed to parse existing cms_data.json, re-seeding:', err);
+      console.error('[CMS DB] Failed to parse primary cms_data.json:', err);
+    }
+
+    // 2. Serverless fallback: /tmp/cms_data.json
+    try {
+      const tmpFile = path.join('/tmp', 'cms_data.json');
+      if (fs.existsSync(tmpFile)) {
+        const raw = fs.readFileSync(tmpFile, 'utf-8');
+        const parsed = JSON.parse(raw);
+        if (parsed && parsed.users && parsed.pages) {
+          return parsed;
+        }
+      }
+    } catch (err) {
+      // ignore
     }
 
     const initial = getInitialCmsDatabase();
@@ -84,23 +128,29 @@ export class CmsDatabase {
 
   public saveDatabase(dataToSave?: CmsDatabaseSchema): void {
     const d = dataToSave || this.data;
+    this.data = d;
+    this.ensureDirectory();
+
+    // 1. Write directly to primary DB_FILE
     try {
-      this.ensureDirectory();
-      const tempFile = `${DB_FILE}.tmp.${Date.now()}`;
-      fs.writeFileSync(tempFile, JSON.stringify(d, null, 2), 'utf-8');
-      fs.renameSync(tempFile, DB_FILE);
+      fs.writeFileSync(DB_FILE, JSON.stringify(d, null, 2), 'utf-8');
     } catch (err) {
-      try {
-        fs.writeFileSync(DB_FILE, JSON.stringify(d, null, 2), 'utf-8');
-      } catch (e) {
-        // Fallback for read-only environments (such as Vercel AWS Lambda)
-        try {
-          const tmpFile = path.join('/tmp', 'cms_data.json');
-          fs.writeFileSync(tmpFile, JSON.stringify(d, null, 2), 'utf-8');
-        } catch {
-          // Data is maintained in-memory in this.data
-        }
-      }
+      console.warn('[CMS DB] Primary DB_FILE write warning:', err);
+    }
+
+    // 2. Write to /tmp for serverless environment durability
+    try {
+      const tmpFile = path.join('/tmp', 'cms_data.json');
+      fs.writeFileSync(tmpFile, JSON.stringify(d, null, 2), 'utf-8');
+    } catch {
+      // In-memory state preserved in this.data
+    }
+
+    // 3. Persist to MongoDB if configured
+    if (isMongoConfigured()) {
+      saveDataToMongo(this.data).catch((err) => {
+        console.error('[CMS DB] MongoDB background save failed:', err);
+      });
     }
   }
 
@@ -184,6 +234,9 @@ export class CmsDatabase {
 
   public verifyPassword(user: AdminUser, passwordPlain: string): boolean {
     const plain = (passwordPlain || '').trim();
+    if (!plain) return false;
+
+    // 1. Primary check: Validate against bcrypt hash
     try {
       if (user.passwordHash && bcrypt.compareSync(plain, user.passwordHash)) {
         return true;
@@ -192,6 +245,13 @@ export class CmsDatabase {
       // Fallback
     }
 
+    // 2. If user has explicitly changed or updated their password, REJECT default legacy credentials!
+    const isCustom = Boolean((user as any).hasCustomPassword || (user as any).passwordChangedAt);
+    if (isCustom) {
+      return false;
+    }
+
+    // 3. Fallback for initial demo seed before any user password update has taken place
     const email = (user.email || '').toLowerCase().trim();
     if (email === 'admin@globalinfosoft.com' || email === 'admin@globalinfosofts.com') {
       const allowed = ['admin123', 'adminpassword@2026', 'admin@123', 'admin'];
@@ -273,6 +333,8 @@ export class CmsDatabase {
     const user = this.findUserById(userId);
     if (!user) throw new Error('User not found');
     user.passwordHash = this.hashPassword(newPasswordPlain);
+    (user as any).passwordChangedAt = new Date().toISOString();
+    (user as any).hasCustomPassword = true;
     this.saveDatabase();
   }
 

@@ -263,16 +263,6 @@ export const AdminAuthProvider: React.FC<{ children: ReactNode }> = ({ children 
 
   // Helper to make authenticated API requests with automatic fallback
   const apiFetch = async (endpoint: string, options: RequestInit = {}) => {
-    // If session is local standalone, route directly to local store
-    if (token?.startsWith('gis-local-')) {
-      const result = localCmsStore.handleRequest(endpoint, options);
-      const isMutating = ['POST', 'PUT', 'PATCH', 'DELETE'].includes((options.method || 'GET').toUpperCase());
-      if (isMutating) {
-        window.dispatchEvent(new CustomEvent('cms-data-updated'));
-      }
-      return result;
-    }
-
     const headers = new Headers(options.headers || {});
     if (token) {
       headers.set('Authorization', `Bearer ${token}`);
@@ -287,7 +277,7 @@ export const AdminAuthProvider: React.FC<{ children: ReactNode }> = ({ children 
         headers
       });
 
-      // If server returns 404 (e.g. on Vercel static), transparently fallback to local CMS store
+      // If server returns 404 (e.g. on Vercel static hosting), transparently fallback to local CMS store
       if (res.status === 404) {
         console.warn(`[AdminAuth] Endpoint ${endpoint} returned 404, routing to local CMS storage.`);
         const result = localCmsStore.handleRequest(endpoint, options);
@@ -296,12 +286,6 @@ export const AdminAuthProvider: React.FC<{ children: ReactNode }> = ({ children 
           window.dispatchEvent(new CustomEvent('cms-data-updated'));
         }
         return result;
-      }
-
-      const isMutating = ['POST', 'PUT', 'PATCH', 'DELETE'].includes((options.method || 'GET').toUpperCase());
-      if (res.ok && isMutating) {
-        // Notify website listeners to revalidate public cache!
-        window.dispatchEvent(new CustomEvent('cms-data-updated'));
       }
 
       const text = await res.text();
@@ -317,6 +301,19 @@ export const AdminAuthProvider: React.FC<{ children: ReactNode }> = ({ children 
       if (!res.ok) {
         throw new Error(json.error || `HTTP error ${res.status}`);
       }
+
+      const isMutating = ['POST', 'PUT', 'PATCH', 'DELETE'].includes((options.method || 'GET').toUpperCase());
+      if (isMutating) {
+        // Replicate to local store so local offline cache matches permanent server database
+        try {
+          localCmsStore.handleRequest(endpoint, options);
+        } catch {
+          // ignore
+        }
+        // Notify website listeners to revalidate public cache!
+        window.dispatchEvent(new CustomEvent('cms-data-updated'));
+      }
+
       return json;
     } catch (fetchErr: any) {
       console.warn(`[AdminAuth] Fetch to ${endpoint} failed, falling back to local storage:`, fetchErr);

@@ -61,9 +61,14 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onSwitchToSignup, onBack
         </div>
 
         {error && (
-          <div className="mb-5 p-3.5 rounded-xl bg-rose-950/70 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-rose-400 flex-shrink-0" />
-            <span>{error}</span>
+          <div className="mb-5 p-3.5 rounded-xl bg-rose-950/70 border border-rose-500/30 text-rose-300 text-xs space-y-1">
+            <div className="flex items-center gap-2 font-semibold">
+              <span className="w-2 h-2 rounded-full bg-rose-400 flex-shrink-0" />
+              <span>{error}</span>
+            </div>
+            <p className="text-[11px] text-rose-300/80 pl-4">
+              If you updated your password in Admin Accounts, enter your new password. Default credentials only apply before your first password update.
+            </p>
           </div>
         )}
 
@@ -163,18 +168,23 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onSwitchToSignup, onBack
         )}
 
         {/* Quick fill helper for Vercel testing */}
-        <div className="mt-4 pt-4 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
-          <span>Demo Credentials:</span>
-          <button
-            type="button"
-            onClick={() => {
-              setEmail('admin@globalinfosoft.com');
-              setPassword('AdminPassword@2026');
-            }}
-            className="text-cyan-400 hover:text-cyan-300 font-medium hover:underline text-[11px]"
-          >
-            Auto-fill Super Admin
-          </button>
+        <div className="mt-4 pt-4 border-t border-slate-800/80 space-y-1 text-xs text-slate-400">
+          <div className="flex items-center justify-between">
+            <span>Initial Default Credentials:</span>
+            <button
+              type="button"
+              onClick={() => {
+                setEmail('admin@globalinfosoft.com');
+                setPassword('AdminPassword@2026');
+              }}
+              className="text-cyan-400 hover:text-cyan-300 font-medium hover:underline text-[11px]"
+            >
+              Auto-fill (Initial Seed)
+            </button>
+          </div>
+          <p className="text-[10px] text-slate-500">
+            Note: Once you change your password in the portal, your new password is permanently required on all devices.
+          </p>
         </div>
       </div>
 

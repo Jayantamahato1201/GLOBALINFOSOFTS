@@ -58,6 +58,7 @@ export const UserManagement: React.FC = () => {
   const [isSubmittingPassword, setIsSubmittingPassword] = useState(false);
   const [passwordSuccessMessage, setPasswordSuccessMessage] = useState<string | null>(null);
   const [copiedGeneratedPassword, setCopiedGeneratedPassword] = useState(false);
+  const [dbStatus, setDbStatus] = useState<any>(null);
 
   const loadUsers = async () => {
     try {
@@ -71,6 +72,13 @@ export const UserManagement: React.FC = () => {
       console.error('Failed to load users:', err);
     } finally {
       setIsLoading(false);
+    }
+
+    try {
+      const status = await apiFetch('/api/database/status');
+      if (status) setDbStatus(status);
+    } catch {
+      // ignore
     }
   };
 
@@ -564,16 +572,30 @@ export const UserManagement: React.FC = () => {
                   </p>
                 </div>
 
-                {/* Quick Generator Button */}
-                <button
-                  type="button"
-                  onClick={generateStrongPassword}
-                  className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-400 hover:text-cyan-300 text-xs font-semibold flex items-center gap-1.5 border border-slate-700 transition"
-                  title="Generate a cryptographically sound password"
-                >
-                  <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
-                  <span>Generate Password</span>
-                </button>
+                {/* Quick Generator Button & Cloud Persistence Status */}
+                <div className="flex items-center gap-2">
+                  {dbStatus?.connected ? (
+                    <span className="hidden sm:inline-flex px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-semibold text-[10px] items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                      MongoDB Cloud Active
+                    </span>
+                  ) : (
+                    <span className="hidden sm:inline-flex px-2.5 py-1 rounded-full bg-slate-800 border border-slate-700 text-slate-400 text-[10px] items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                      Server Storage Mode
+                    </span>
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={generateStrongPassword}
+                    className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-400 hover:text-cyan-300 text-xs font-semibold flex items-center gap-1.5 border border-slate-700 transition"
+                    title="Generate a cryptographically sound password"
+                  >
+                    <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+                    <span>Generate Password</span>
+                  </button>
+                </div>
               </div>
 
               <form onSubmit={handleUpdatePassword} className="space-y-4">
