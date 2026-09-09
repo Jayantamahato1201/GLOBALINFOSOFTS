@@ -1,4 +1,4 @@
-import initialDatabaseRaw from '../../data/cms_data.json';
+import { initialDefaultData } from './defaultInitialData';
 
 export interface LocalAdminUser {
   id: string;
@@ -40,7 +40,7 @@ export class LocalCmsStore {
       console.warn('[LocalCmsStore] Error reading from localStorage, resetting to initial seed:', e);
     }
 
-    const seeded = JSON.parse(JSON.stringify(initialDatabaseRaw));
+    const seeded = JSON.parse(JSON.stringify(initialDefaultData));
     this.saveDatabase(seeded);
     return seeded;
   }

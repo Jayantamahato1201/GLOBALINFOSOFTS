@@ -1,4 +1,4 @@
-{
+export const initialDefaultData = {
   "users": [
     {
       "id": "usr-super-admin-01",
@@ -8,7 +8,7 @@
       "role": "super_admin",
       "status": "active",
       "createdAt": "2025-01-01T00:00:00.000Z",
-      "lastLogin": "2026-09-09T17:12:39.521Z",
+      "lastLogin": "2026-09-09T17:14:26.888Z",
       "passwordChangedAt": "2026-09-09T17:12:39.735Z",
       "hasCustomPassword": true
     },
@@ -1305,6 +1305,15 @@
   },
   "activityLogs": [
     {
+      "id": "act-1788974066892-jh1nj",
+      "action": "User Logged In",
+      "userEmail": "admin@globalinfosoft.com",
+      "userName": "Global Infosoft Super Admin",
+      "timestamp": "2026-09-09T17:14:26.892Z",
+      "details": "IP Session started",
+      "category": "auth"
+    },
+    {
       "id": "act-1788973959736-ytrpu",
       "action": "Password Updated",
       "userEmail": "admin@globalinfosoft.com",
@@ -1759,4 +1768,4 @@
       "signatureVerified": true
     }
   ]
-}
+} as const;

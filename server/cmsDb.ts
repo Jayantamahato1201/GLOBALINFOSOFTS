@@ -93,14 +93,16 @@ export class CmsDatabase {
     try {
       if (fs.existsSync(DB_FILE)) {
         const raw = fs.readFileSync(DB_FILE, 'utf-8');
-        const parsed = JSON.parse(raw);
-        if (parsed && parsed.users && parsed.pages) {
-          if (!parsed.paymentSettings) {
-            const initial = getInitialCmsDatabase();
-            parsed.paymentSettings = initial.paymentSettings;
-            this.saveDatabase(parsed);
+        if (raw && raw.trim().length > 10) {
+          const parsed = JSON.parse(raw);
+          if (parsed && parsed.users && parsed.pages) {
+            if (!parsed.paymentSettings) {
+              const initial = getInitialCmsDatabase();
+              parsed.paymentSettings = initial.paymentSettings;
+              this.saveDatabase(parsed);
+            }
+            return parsed;
           }
-          return parsed;
         }
       }
     } catch (err) {
