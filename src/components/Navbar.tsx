@@ -143,21 +143,6 @@ export const Navbar: React.FC<NavbarProps> = ({
               {/* Single Theme Toggle for all screens */}
               <ThemeToggle />
 
-              {/* CRM Portal Fast Launcher */}
-              <a
-                href="#crm"
-                onClick={(e) => {
-                  e.preventDefault();
-                  window.location.hash = 'crm';
-                  window.dispatchEvent(new Event('hashchange'));
-                }}
-                className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-600 dark:text-cyan-300 font-medium text-xs transition-all shadow-sm cursor-pointer"
-                title="Open Global InfoSoft CRM Portal"
-              >
-                <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
-                <span>CRM</span>
-              </a>
-
               {/* Get Started Pill Button matching reference */}
               <button
                 id="btn-nav-get-started"
