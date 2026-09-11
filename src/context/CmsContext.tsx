@@ -14,7 +14,9 @@ import {
   CmsNavigationItem,
   CmsFooterSettings,
   CmsSiteSettings,
-  CmsPaymentSettings
+  CmsPaymentSettings,
+  CmsNotification,
+  CmsEvent
 } from '../admin/cmsTypes';
 
 interface PublicCmsData {
@@ -32,6 +34,9 @@ interface PublicCmsData {
   footer: CmsFooterSettings;
   settings: CmsSiteSettings;
   payments?: CmsPaymentSettings;
+  notifications?: CmsNotification[];
+  activeNotification?: CmsNotification | null;
+  events?: CmsEvent[];
   content: Record<string, any>;
 }
 
@@ -59,6 +64,9 @@ interface CmsContextType {
   footer: CmsFooterSettings;
   settings: CmsSiteSettings;
   payments?: CmsPaymentSettings;
+  notifications: CmsNotification[];
+  activeNotification: CmsNotification | null;
+  events: CmsEvent[];
 }
 
 const defaultFooter: CmsFooterSettings = {
@@ -132,7 +140,10 @@ const CmsContext = createContext<CmsContextType>({
   navigation: [],
   footer: defaultFooter,
   settings: defaultSettings,
-  payments: undefined
+  payments: undefined,
+  notifications: [],
+  activeNotification: null,
+  events: []
 });
 
 export const CmsProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
@@ -142,7 +153,13 @@ export const CmsProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
   const fetchCmsData = useCallback(async () => {
     try {
-      const res = await fetch('/api/public/cms-data');
+      const res = await fetch(`/api/public/cms-data?_t=${Date.now()}`, {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache'
+        }
+      });
       if (res.ok) {
         const text = await res.text();
         let json: PublicCmsData;
@@ -182,8 +199,23 @@ export const CmsProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       fetchCmsData();
     };
 
+    // When user focuses or switches back to tab, sync latest announcements
+    const handleFocus = () => {
+      fetchCmsData();
+    };
+
+    // Periodic live sync (every 5 seconds) so notifications appear across all devices in real-time
+    const interval = setInterval(() => {
+      fetchCmsData();
+    }, 5000);
+
     window.addEventListener('cms-data-updated', handleCmsUpdated);
-    return () => window.removeEventListener('cms-data-updated', handleCmsUpdated);
+    window.addEventListener('focus', handleFocus);
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('cms-data-updated', handleCmsUpdated);
+      window.removeEventListener('focus', handleFocus);
+    };
   }, [fetchCmsData]);
 
   const isMaintenanceMode = !!data?.settings?.maintenanceMode;
@@ -293,7 +325,10 @@ export const CmsProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         navigation: data?.navigation || [],
         footer: data?.footer || defaultFooter,
         settings: data?.settings || defaultSettings,
-        payments: data?.payments
+        payments: data?.payments,
+        notifications: data?.notifications || [],
+        activeNotification: data?.activeNotification !== undefined ? data.activeNotification : ((data?.notifications || []).find((n) => n.isActive) || null),
+        events: data?.events || []
       }}
     >
       {/* Maintenance Mode Alert Banner if active on public site */}

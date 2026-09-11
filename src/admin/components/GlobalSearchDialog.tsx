@@ -89,6 +89,8 @@ export const GlobalSearchDialog: React.FC = () => {
     else if (item.type === 'Project') setActiveTab('projects');
     else if (item.type === 'Team Member') setActiveTab('team');
     else if (item.type === 'Media') setActiveTab('media');
+    else if (item.type === 'Notification' || item.type === 'Announcement') setActiveTab('notifications');
+    else if (item.type === 'Event' || item.type === 'Calendar') setActiveTab('calendar');
   };
 
   return (

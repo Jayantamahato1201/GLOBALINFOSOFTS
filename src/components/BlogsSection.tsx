@@ -67,11 +67,12 @@ export const BlogsSection: React.FC<BlogsSectionProps> = ({
   const filteredPosts = allPosts.filter((post) => {
     const matchesCategory =
       selectedCategory === 'All' || post.category === selectedCategory;
+    const q = (searchQuery || '').trim().toLowerCase();
     const matchesSearch =
-      !searchQuery.trim() ||
-      post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      post.excerpt.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      post.tags.some((t) => t.toLowerCase().includes(searchQuery.toLowerCase()));
+      !q ||
+      (post.title || '').toLowerCase().includes(q) ||
+      (post.excerpt || '').toLowerCase().includes(q) ||
+      (Array.isArray(post.tags) && post.tags.some((t) => (t || '').toLowerCase().includes(q)));
     return matchesCategory && matchesSearch;
   });
 

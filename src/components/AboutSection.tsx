@@ -14,6 +14,7 @@ import {
 import { COMPANY_INFO } from '../data/companyData';
 import { getWhatsAppUrl, WHATSAPP_MESSAGES } from '../utils/whatsapp';
 import { PageId } from '../types';
+import { useCms } from '../context/CmsContext';
 import { RevealOnScroll } from './common/RevealOnScroll';
 
 interface AboutSectionProps {
@@ -26,8 +27,10 @@ export const AboutSection: React.FC<AboutSectionProps> = ({
   onOpenContact,
   onNavigatePage
 }) => {
+  const { settings } = useCms();
+  const activePhone = settings?.salesPhone || settings?.phone || COMPANY_INFO.primaryPhone;
   const whatsappUrl = getWhatsAppUrl(
-    COMPANY_INFO.primaryPhone,
+    activePhone,
     WHATSAPP_MESSAGES.general
   );
 

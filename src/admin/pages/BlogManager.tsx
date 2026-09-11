@@ -124,10 +124,11 @@ export const BlogManager: React.FC = () => {
 
   // Filtered list
   const filteredBlogs = blogs.filter((b) => {
+    const q = (searchQuery || '').toLowerCase();
     const matchesSearch =
-      b.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      b.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      b.tags.some((t) => t.toLowerCase().includes(searchQuery.toLowerCase()));
+      (b.title || '').toLowerCase().includes(q) ||
+      (b.category || '').toLowerCase().includes(q) ||
+      (Array.isArray(b.tags) && b.tags.some((t) => (t || '').toLowerCase().includes(q)));
 
     const matchesStatus =
       statusFilter === 'all' ||

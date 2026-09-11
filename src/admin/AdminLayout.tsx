@@ -20,7 +20,9 @@ import {
   ExternalLink,
   ChevronRight,
   Shield,
-  CreditCard
+  CreditCard,
+  Bell,
+  Calendar
 } from 'lucide-react';
 import { useAdminAuth } from './AdminAuthContext';
 import { AdminDashboard } from './pages/AdminDashboard';
@@ -33,6 +35,8 @@ import { ProjectsManager } from './pages/ProjectsManager';
 import { TeamManager } from './pages/TeamManager';
 import { LocationTestimonialManager } from './pages/LocationTestimonialManager';
 import { MediaLibrary } from './pages/MediaLibrary';
+import { NotificationManager } from './pages/NotificationManager';
+import { CalendarEventManager } from './pages/CalendarEventManager';
 import { SiteSettingsManager } from './pages/SiteSettingsManager';
 import { PaymentManager } from './pages/PaymentManager';
 import { UserManagement } from './pages/UserManagement';
@@ -81,6 +85,13 @@ export const AdminLayout: React.FC = () => {
       ]
     },
     {
+      group: 'Broadcast & Scheduling',
+      items: [
+        { id: 'notifications', label: 'Popups & Notifications', icon: <Bell className="w-4 h-4 text-amber-400" /> },
+        { id: 'calendar', label: 'Event Calendar', icon: <Calendar className="w-4 h-4 text-indigo-400" /> }
+      ]
+    },
+    {
       group: 'Digital Assets',
       items: [
         { id: 'media', label: 'Media Library', icon: <ImageIcon className="w-4 h-4" /> }
@@ -100,6 +111,8 @@ export const AdminLayout: React.FC = () => {
   const renderActiveView = () => {
     switch (activeTab) {
       case 'dashboard': return <AdminDashboard />;
+      case 'notifications': return <NotificationManager />;
+      case 'calendar': return <CalendarEventManager />;
       case 'pages': return <PageSectionManager />;
       case 'navigation': return <NavigationFooterManager />;
       case 'blogs': return <BlogManager />;

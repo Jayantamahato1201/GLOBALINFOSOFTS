@@ -130,6 +130,8 @@ export const AdminAuthProvider: React.FC<{ children: ReactNode }> = ({ children 
           setToken(data.token);
           setUser(data.user);
           localStorage.setItem(TOKEN_KEY, data.token);
+          localStorage.setItem('gis_admin_token', data.token);
+          sessionStorage.setItem('gis_admin_token', data.token);
           localStorage.setItem(USER_KEY, JSON.stringify(data.user));
           showToast(`Welcome back, ${data.user.fullName}!`, 'success');
           return { success: true };
@@ -257,19 +259,24 @@ export const AdminAuthProvider: React.FC<{ children: ReactNode }> = ({ children 
     setToken(null);
     setUser(null);
     localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem('gis_admin_token');
+    sessionStorage.removeItem('gis_admin_token');
     localStorage.removeItem(USER_KEY);
     showToast('Logged out securely.', 'info');
   };
 
-  // Helper to make authenticated API requests with automatic fallback
+  // Helper to make authenticated API requests with guaranteed server persistence
   const apiFetch = async (endpoint: string, options: RequestInit = {}) => {
     const headers = new Headers(options.headers || {});
-    if (token) {
-      headers.set('Authorization', `Bearer ${token}`);
+    const activeToken = token || localStorage.getItem(TOKEN_KEY) || localStorage.getItem('gis_admin_token');
+    if (activeToken) {
+      headers.set('Authorization', `Bearer ${activeToken}`);
     }
     if (!headers.has('Content-Type') && !(options.body instanceof FormData)) {
       headers.set('Content-Type', 'application/json');
     }
+
+    const isMutating = ['POST', 'PUT', 'PATCH', 'DELETE'].includes((options.method || 'GET').toUpperCase());
 
     try {
       const res = await fetch(endpoint, {
@@ -277,11 +284,10 @@ export const AdminAuthProvider: React.FC<{ children: ReactNode }> = ({ children 
         headers
       });
 
-      // If server returns 404 (e.g. on Vercel static hosting), transparently fallback to local CMS store
+      // If server returns 404 (e.g. on Vercel static hosting), fallback to local store
       if (res.status === 404) {
         console.warn(`[AdminAuth] Endpoint ${endpoint} returned 404, routing to local CMS storage.`);
         const result = localCmsStore.handleRequest(endpoint, options);
-        const isMutating = ['POST', 'PUT', 'PATCH', 'DELETE'].includes((options.method || 'GET').toUpperCase());
         if (isMutating) {
           window.dispatchEvent(new CustomEvent('cms-data-updated'));
         }
@@ -298,11 +304,11 @@ export const AdminAuthProvider: React.FC<{ children: ReactNode }> = ({ children 
         }
         throw new Error('Server returned an unexpected non-JSON response');
       }
+
       if (!res.ok) {
         throw new Error(json.error || `HTTP error ${res.status}`);
       }
 
-      const isMutating = ['POST', 'PUT', 'PATCH', 'DELETE'].includes((options.method || 'GET').toUpperCase());
       if (isMutating) {
         // Replicate to local store so local offline cache matches permanent server database
         try {
@@ -316,13 +322,12 @@ export const AdminAuthProvider: React.FC<{ children: ReactNode }> = ({ children 
 
       return json;
     } catch (fetchErr: any) {
-      console.warn(`[AdminAuth] Fetch to ${endpoint} failed, falling back to local storage:`, fetchErr);
-      const result = localCmsStore.handleRequest(endpoint, options);
-      const isMutating = ['POST', 'PUT', 'PATCH', 'DELETE'].includes((options.method || 'GET').toUpperCase());
       if (isMutating) {
-        window.dispatchEvent(new CustomEvent('cms-data-updated'));
+        console.error(`[AdminAuth] Database mutation to ${endpoint} failed:`, fetchErr);
+        throw new Error(fetchErr.message || 'Database update failed. Please check network connection.');
       }
-      return result;
+      console.warn(`[AdminAuth] Read fetch to ${endpoint} failed, reading from local store:`, fetchErr);
+      return localCmsStore.handleRequest(endpoint, options);
     }
   };
 

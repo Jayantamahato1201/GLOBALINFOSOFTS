@@ -44,15 +44,17 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({ onOpenProject }) => 
   const categories = ['All', 'Custom Software', 'Healthcare & Optical', 'Retail & POS', 'Education & ERP'];
 
   const filteredProjects = allProjects.filter((p) => {
+    const selCat = (selectedCategory || '').toLowerCase();
     const matchesCategory =
       selectedCategory === 'All' ||
-      p.category.toLowerCase().includes(selectedCategory.toLowerCase()) ||
-      p.industry.toLowerCase().includes(selectedCategory.toLowerCase());
+      (p.category || '').toLowerCase().includes(selCat) ||
+      (p.industry || '').toLowerCase().includes(selCat);
+    const q = (searchQuery || '').toLowerCase();
     const matchesSearch =
-      !searchQuery ||
-      p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.client.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.summary.toLowerCase().includes(searchQuery.toLowerCase());
+      !q ||
+      (p.title || '').toLowerCase().includes(q) ||
+      (p.client || '').toLowerCase().includes(q) ||
+      (p.summary || '').toLowerCase().includes(q);
     return matchesCategory && matchesSearch;
   });
 

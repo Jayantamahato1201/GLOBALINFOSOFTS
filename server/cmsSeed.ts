@@ -1184,6 +1184,89 @@ While fault-tolerant quantum computers remain in cryogenic laboratories today, h
       }
     ],
 
+    notifications: [
+      {
+        id: 'notif-diwali-2026',
+        title: '✨ Shubh Deepawali & Happy Diwali! 🪔',
+        subtitle: 'May the divine lights illuminate your journey towards grand digital transformation and prosperity.',
+        message: 'Global InfoSoft wishes you, your family, and your enterprise boundless joy, success, and glowing prosperity on this auspicious festival of lights! As a token of celebration, enjoy exclusive consultations and festive discounts on custom enterprise solutions.',
+        imageUrl: 'https://images.unsplash.com/photo-1605809794356-9d332fb6b83f?q=80&w=1200&auto=format&fit=crop',
+        badgeText: 'Festive Greeting 🪔',
+        type: 'festival',
+        ctaText: 'Explore Festive Solutions',
+        ctaLink: '#contact',
+        secondaryButtonText: 'Continue to Website',
+        isActive: true,
+        showOncePerSession: false,
+        displayDelayMs: 600,
+        themeColor: 'amber',
+        enableConfetti: true,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      }
+    ],
+
+    events: [
+      {
+        id: 'evt-diwali-2026',
+        title: 'Diwali Festival & Corporate Celebration 🪔',
+        description: 'Annual Festival of Lights holiday and team celebration. Office closed for public operations, emergency tech support on standby.',
+        startDate: '2026-11-08',
+        endDate: '2026-11-10',
+        isAllDay: true,
+        category: 'festival',
+        location: 'Global InfoSoft Headquarters, Jamshedpur',
+        color: 'amber',
+        status: 'scheduled',
+        linkedNotificationId: 'notif-diwali-2026',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      },
+      {
+        id: 'evt-tech-summit-2026',
+        title: 'Global InfoSoft Enterprise Cloud Summit',
+        description: 'Virtual keynote presentation on next-gen ERP modernizations, AI integrations, and cloud migration frameworks.',
+        startDate: '2026-10-15',
+        startTime: '14:00',
+        endTime: '17:00',
+        isAllDay: false,
+        category: 'webinar',
+        meetingUrl: 'https://meet.google.com/gis-enterprise-summit',
+        color: 'indigo',
+        status: 'scheduled',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      },
+      {
+        id: 'evt-quarterly-review',
+        title: 'Q4 Product Roadmap & Client Strategy Meet',
+        description: 'Quarterly review with engineering leadership and client project owners.',
+        startDate: '2026-10-28',
+        startTime: '10:30',
+        endTime: '12:30',
+        isAllDay: false,
+        category: 'meeting',
+        location: 'Executive Conference Room A',
+        color: 'emerald',
+        status: 'scheduled',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      },
+      {
+        id: 'evt-new-year-2027',
+        title: 'New Year 2027 Celebration & Holiday 🎉',
+        description: 'Celebrating a year of digital breakthroughs and welcoming the New Year with new enterprise releases.',
+        startDate: '2027-01-01',
+        endDate: '2027-01-01',
+        isAllDay: true,
+        category: 'holiday',
+        color: 'rose',
+        status: 'scheduled',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      }
+    ],
+
     revisions: []
   };
 }

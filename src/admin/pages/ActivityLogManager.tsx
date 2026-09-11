@@ -49,10 +49,11 @@ export const ActivityLogManager: React.FC = () => {
 
   const filteredLogs = logs.filter((log) => {
     const matchesCategory = categoryFilter === 'all' || log.category === categoryFilter;
+    const q = (searchQuery || '').toLowerCase();
     const matchesSearch =
-      log.action.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      log.userName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (log.details && log.details.toLowerCase().includes(searchQuery.toLowerCase()));
+      (log.action || '').toLowerCase().includes(q) ||
+      (log.userName || '').toLowerCase().includes(q) ||
+      (log.details || '').toLowerCase().includes(q);
     return matchesCategory && matchesSearch;
   });
 

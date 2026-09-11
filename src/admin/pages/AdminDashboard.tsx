@@ -15,7 +15,9 @@ import {
   Settings,
   ArrowUpRight,
   ShieldCheck,
-  HardDrive
+  HardDrive,
+  Bell,
+  Calendar
 } from 'lucide-react';
 import { useAdminAuth } from '../AdminAuthContext';
 
@@ -31,7 +33,10 @@ export const AdminDashboard: React.FC = () => {
     projectsCount: 0,
     teamCount: 0,
     mediaCount: 0,
-    usersCount: 0
+    usersCount: 0,
+    notificationsCount: 0,
+    activeNotifTitle: '',
+    eventsCount: 0
   });
   const [recentActivities, setRecentActivities] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -48,6 +53,10 @@ export const AdminDashboard: React.FC = () => {
         const allBlogs = await apiFetch('/api/blogs?includeDrafts=true').catch(() => []);
         const allCareers = await apiFetch('/api/careers?includeClosed=true').catch(() => []);
         const allMedia = await apiFetch('/api/media').catch(() => []);
+        const allNotifs = await apiFetch('/api/notifications').catch(() => []);
+        const allEvents = await apiFetch('/api/events').catch(() => []);
+
+        const activeNotif = Array.isArray(allNotifs) ? allNotifs.find((n: any) => n.isActive) : null;
 
         setStats({
           pagesCount: publicData?.pages?.length || 0,
@@ -59,7 +68,10 @@ export const AdminDashboard: React.FC = () => {
           projectsCount: publicData?.projects?.length || 0,
           teamCount: publicData?.team?.length || 0,
           mediaCount: allMedia?.length || 0,
-          usersCount: Array.isArray(allUsers) ? allUsers.length : 2
+          usersCount: Array.isArray(allUsers) ? allUsers.length : 2,
+          notificationsCount: Array.isArray(allNotifs) ? allNotifs.length : 0,
+          activeNotifTitle: activeNotif ? activeNotif.title : '',
+          eventsCount: Array.isArray(allEvents) ? allEvents.length : 0
         });
 
         setRecentActivities(logs ? logs.slice(0, 8) : []);
@@ -74,6 +86,24 @@ export const AdminDashboard: React.FC = () => {
   }, [apiFetch]);
 
   const statCards = [
+    {
+      title: 'Active Popup',
+      value: stats.activeNotifTitle ? 'LIVE' : 'OFF',
+      sub: stats.activeNotifTitle ? stats.activeNotifTitle : `${stats.notificationsCount} announcements created`,
+      icon: <Bell className="w-5 h-5 text-amber-400" />,
+      color: stats.activeNotifTitle
+        ? 'from-amber-500/20 to-orange-600/10 border-amber-500/30 text-amber-400 ring-1 ring-amber-500/20'
+        : 'from-slate-800/40 to-slate-900/40 border-slate-800 text-slate-400',
+      actionTab: 'notifications'
+    },
+    {
+      title: 'Event Calendar',
+      value: stats.eventsCount,
+      sub: 'Scheduled events & holidays',
+      icon: <Calendar className="w-5 h-5 text-indigo-400" />,
+      color: 'from-indigo-500/10 to-indigo-600/5 border-indigo-500/20 text-indigo-400',
+      actionTab: 'calendar'
+    },
     {
       title: 'Active Pages',
       value: stats.pagesCount,
@@ -211,7 +241,21 @@ export const AdminDashboard: React.FC = () => {
           <PlusCircle className="w-4 h-4 text-cyan-400" />
           Quick Management Shortcuts
         </h3>
-        <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-2 text-xs">
+        <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-8 gap-2 text-xs">
+          <button
+            onClick={() => setActiveTab('notifications')}
+            className="p-3 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 hover:text-amber-200 transition flex flex-col items-center gap-1.5 text-center shadow-sm"
+          >
+            <Bell className="w-4 h-4 text-amber-400" />
+            <span>Push Popup</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('calendar')}
+            className="p-3 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 hover:text-indigo-200 transition flex flex-col items-center gap-1.5 text-center shadow-sm"
+          >
+            <Calendar className="w-4 h-4 text-indigo-400" />
+            <span>Calendar</span>
+          </button>
           <button
             onClick={() => setActiveTab('blogs')}
             className="p-3 rounded-lg bg-slate-950/60 hover:bg-slate-800 border border-slate-800 text-slate-200 hover:text-white transition flex flex-col items-center gap-1.5 text-center"

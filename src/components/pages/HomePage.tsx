@@ -215,8 +215,9 @@ export const HomePage: React.FC<HomePageProps> = ({
   onSelectServiceItem,
   onSelectProject
 }) => {
-  const { isSectionVisible, getSection } = useCms();
+  const { isSectionVisible, getSection, settings } = useCms();
   const heroRef = useRef<HTMLElement>(null);
+  const activeSalesPhone = settings?.salesPhone || settings?.phone || COMPANY_INFO.salesPhone;
 
   const heroSection = getSection('hero', 'home') || getSection('sec-home-hero');
   const heroHeadline = heroSection?.content?.headline || heroSection?.title;
@@ -851,13 +852,13 @@ export const HomePage: React.FC<HomePageProps> = ({
               <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
             </button>
             <a
-              href={getWhatsAppUrl(COMPANY_INFO.salesPhone, 'Hello Global InfoSoft, I would like to schedule a software consultation and get a price quote.')}
+              href={getWhatsAppUrl(activeSalesPhone, 'Hello Global InfoSoft, I would like to schedule a software consultation and get a price quote.')}
               target="_blank"
               rel="noopener noreferrer"
               className="px-4 py-2.5 rounded-full glass-panel text-emerald-700 dark:text-emerald-400 hover:text-emerald-900 dark:hover:text-white font-['JetBrains_Mono'] font-semibold text-xs transition-all flex items-center gap-2 hover:border-emerald-500/60 shadow-sm"
             >
               <PhoneCall className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-              <span>WhatsApp: {COMPANY_INFO.salesPhone}</span>
+              <span>WhatsApp: {activeSalesPhone}</span>
             </a>
           </div>
         </motion.div>

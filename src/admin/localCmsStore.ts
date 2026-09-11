@@ -33,6 +33,18 @@ export class LocalCmsStore {
       if (stored) {
         const parsed = JSON.parse(stored);
         if (parsed && Array.isArray(parsed.pages) && Array.isArray(parsed.services)) {
+          let updated = false;
+          if (!parsed.notifications || !Array.isArray(parsed.notifications)) {
+            parsed.notifications = initialDefaultData.notifications || [];
+            updated = true;
+          }
+          if (!parsed.events || !Array.isArray(parsed.events)) {
+            parsed.events = initialDefaultData.events || [];
+            updated = true;
+          }
+          if (updated) {
+            this.saveDatabase(parsed);
+          }
           return parsed;
         }
       }
@@ -211,8 +223,34 @@ export class LocalCmsStore {
         navigation: db.navigation || [],
         footer: db.footer,
         settings: db.settings,
-        payments: db.paymentSettings
+        payments: db.paymentSettings,
+        notifications: db.notifications || [],
+        events: db.events || [],
+        activeNotification: (db.notifications || []).find((n: any) => n.isActive) || null
       };
+    }
+
+    // --- /api/notifications/active ---
+    if (cleanUrl.endsWith('/api/notifications/active') || cleanUrl.endsWith('/notifications/active')) {
+      const list = db.notifications || [];
+      return list.find((n: any) => n.isActive) || null;
+    }
+
+    // --- /api/notifications/:id/toggle ---
+    const notifToggleMatch = cleanUrl.match(/\/notifications\/([^/]+)\/toggle$/);
+    if (notifToggleMatch) {
+      const id = notifToggleMatch[1];
+      const item = (db.notifications || []).find((n: any) => n.id === id);
+      if (item) {
+        const nextActive = !item.isActive;
+        if (nextActive) {
+          (db.notifications || []).forEach((n: any) => { n.isActive = false; });
+        }
+        item.isActive = nextActive;
+        item.updatedAt = new Date().toISOString();
+        this.saveDatabase(db);
+        return item;
+      }
     }
 
     // --- /api/pages ---
@@ -249,12 +287,15 @@ export class LocalCmsStore {
       }
     }
 
-    // Generic entity collection routing (services, solutions, projects, blogs, careers, team, locations, testimonials)
-    const entityTypes = ['services', 'solutions', 'projects', 'blogs', 'careers', 'team', 'locations', 'testimonials'];
+    // Generic entity collection routing (services, solutions, projects, blogs, careers, team, locations, testimonials, notifications, events)
+    const entityTypes = ['services', 'solutions', 'projects', 'blogs', 'careers', 'team', 'locations', 'testimonials', 'notifications', 'events'];
     for (const type of entityTypes) {
       if (cleanUrl.endsWith(`/api/${type}`) || cleanUrl.endsWith(`/${type}`)) {
         if (method === 'GET') return db[type] || [];
         if (method === 'POST') {
+          if (type === 'notifications' && body.isActive) {
+            (db.notifications || []).forEach((n: any) => { n.isActive = false; });
+          }
           const newItem = {
             id: `${type.slice(0, 4)}-${Date.now()}`,
             ...body,
@@ -271,8 +312,13 @@ export class LocalCmsStore {
         const id = itemMatch[1];
         const idx = (db[type] || []).findIndex((item: any) => item.id === id);
         if (method === 'PUT' || method === 'PATCH') {
+          if (type === 'notifications' && body.isActive) {
+            (db.notifications || []).forEach((n: any) => {
+              if (n.id !== id) n.isActive = false;
+            });
+          }
           if (idx !== -1) {
-            db[type][idx] = { ...db[type][idx], ...body };
+            db[type][idx] = { ...db[type][idx], ...body, updatedAt: new Date().toISOString() };
             this.saveDatabase(db);
             return db[type][idx];
           }
@@ -342,6 +388,145 @@ export class LocalCmsStore {
         this.saveDatabase(db);
         return newTx;
       }
+    }
+
+    // --- /api/notifications with Timer & Auto-Delete ---
+    if (cleanUrl.includes('/notifications')) {
+      if (!Array.isArray(db.notifications)) db.notifications = [];
+      const now = Date.now();
+      let hasChanges = false;
+      const remaining: any[] = [];
+
+      // Process auto-scheduler in local store: Never delete, only mark expired if end date passed
+      for (const n of db.notifications) {
+        n.autoDeleteOnEnd = false; // Always keep permanent in store
+        if (n.endDate) {
+          const endMs = new Date(n.endDate).getTime();
+          if (!isNaN(endMs) && now >= endMs && n.isActive) {
+            n.isActive = false;
+            hasChanges = true;
+          }
+        }
+        remaining.push(n);
+      }
+      if (hasChanges) {
+        db.notifications = remaining;
+        this.saveDatabase(db);
+      }
+
+      if (cleanUrl.includes('/notifications/active')) {
+        return (db.notifications || []).find((n: any) => n.isActive) || null;
+      }
+
+      const pushMatch = cleanUrl.match(/\/notifications\/([^/]+)\/push-now$/);
+      if (pushMatch && method === 'POST') {
+        const id = pushMatch[1];
+        (db.notifications || []).forEach((n: any) => { n.isActive = false; });
+        const item = (db.notifications || []).find((n: any) => n.id === id);
+        if (item) {
+          item.isActive = true;
+          item.isScheduled = false;
+          item.updatedAt = new Date().toISOString();
+          this.saveDatabase(db);
+          return item;
+        }
+      }
+
+      const toggleMatch = cleanUrl.match(/\/notifications\/([^/]+)\/toggle$/);
+      if (toggleMatch && method === 'PATCH') {
+        const id = toggleMatch[1];
+        const item = (db.notifications || []).find((n: any) => n.id === id);
+        if (item) {
+          const next = !item.isActive;
+          if (next) {
+            (db.notifications || []).forEach((n: any) => { n.isActive = false; });
+            item.isScheduled = false;
+          }
+          item.isActive = next;
+          item.updatedAt = new Date().toISOString();
+          this.saveDatabase(db);
+          return item;
+        }
+      }
+
+      const notifIdMatch = cleanUrl.match(/\/notifications\/([^/]+)$/);
+      if (notifIdMatch) {
+        const id = notifIdMatch[1];
+        if (method === 'PUT') {
+          const idx = (db.notifications || []).findIndex((n: any) => n.id === id);
+          if (idx >= 0) {
+            if (body.isActive) {
+              (db.notifications || []).forEach((n: any) => { n.isActive = false; });
+            }
+            db.notifications[idx] = { ...db.notifications[idx], ...body, updatedAt: new Date().toISOString() };
+            this.saveDatabase(db);
+            return db.notifications[idx];
+          }
+        }
+        if (method === 'DELETE') {
+          db.notifications = (db.notifications || []).filter((n: any) => n.id !== id);
+          this.saveDatabase(db);
+          return { success: true };
+        }
+      }
+
+      if (method === 'POST') {
+        const isFuture = body.startDate && new Date(body.startDate).getTime() > Date.now();
+        const targetActive = isFuture ? false : (body.isActive !== undefined ? body.isActive : true);
+        if (targetActive) {
+          (db.notifications || []).forEach((n: any) => { n.isActive = false; });
+        }
+        const newNotif = {
+          id: `notif-${Date.now()}`,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          autoDeleteOnEnd: true,
+          showCountdownTimer: true,
+          ...body,
+          isActive: targetActive,
+          isScheduled: isFuture
+        };
+        db.notifications.unshift(newNotif);
+        this.saveDatabase(db);
+        return newNotif;
+      }
+
+      return db.notifications || [];
+    }
+
+    // --- /api/events ---
+    if (cleanUrl.includes('/events')) {
+      if (!Array.isArray(db.events)) db.events = [];
+      const evtIdMatch = cleanUrl.match(/\/events\/([^/]+)$/);
+      if (evtIdMatch) {
+        const id = evtIdMatch[1];
+        if (method === 'PUT') {
+          const idx = db.events.findIndex((e: any) => e.id === id);
+          if (idx >= 0) {
+            db.events[idx] = { ...db.events[idx], ...body, updatedAt: new Date().toISOString() };
+            this.saveDatabase(db);
+            return db.events[idx];
+          }
+        }
+        if (method === 'DELETE') {
+          db.events = db.events.filter((e: any) => e.id !== id);
+          this.saveDatabase(db);
+          return { success: true };
+        }
+      }
+      if (method === 'POST') {
+        const newEvt = {
+          id: `evt-${Date.now()}`,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          status: 'scheduled',
+          ...body
+        };
+        db.events.unshift(newEvt);
+        this.saveDatabase(db);
+        return newEvt;
+      }
+      return db.events;
     }
 
     // --- /api/media ---

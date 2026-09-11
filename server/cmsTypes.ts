@@ -245,7 +245,9 @@ export interface CmsSiteSettings {
   contactEmail: string;
   supportEmail: string;
   officialEmail: string;
+  email?: string;
   headOfficeAddress: string;
+  address?: string;
   supportHours: string;
   maintenanceMode: boolean;
   maintenanceMessage: string;
@@ -256,6 +258,7 @@ export interface CmsSiteSettings {
     facebook: string;
     github: string;
     youtube: string;
+    instagram?: string;
   };
 }
 
@@ -317,6 +320,51 @@ export interface CmsPaymentTransaction {
   rawWebhookPayload?: any;
 }
 
+export interface CmsNotification {
+  id: string;
+  title: string;
+  subtitle?: string;
+  message: string;
+  imageUrl?: string;
+  badgeText?: string;
+  type: 'festival' | 'announcement' | 'offer' | 'alert' | 'celebration';
+  ctaText?: string;
+  ctaLink?: string;
+  secondaryButtonText?: string;
+  isActive: boolean;
+  startDate?: string;
+  endDate?: string;
+  autoDeleteOnEnd?: boolean;
+  showCountdownTimer?: boolean;
+  countdownTitle?: string;
+  isScheduled?: boolean;
+  showOncePerSession?: boolean;
+  displayDelayMs?: number;
+  themeColor?: string; // 'amber' | 'emerald' | 'indigo' | 'rose' | 'cyan' | 'purple'
+  enableConfetti?: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CmsEvent {
+  id: string;
+  title: string;
+  description?: string;
+  startDate: string; // YYYY-MM-DD
+  endDate?: string;   // YYYY-MM-DD
+  startTime?: string; // HH:mm
+  endTime?: string;   // HH:mm
+  isAllDay: boolean;
+  category: 'holiday' | 'festival' | 'meeting' | 'webinar' | 'deadline' | 'milestone' | 'celebration';
+  location?: string;
+  meetingUrl?: string;
+  color?: string; // 'amber' | 'emerald' | 'indigo' | 'rose' | 'cyan' | 'purple' | 'blue'
+  status: 'scheduled' | 'in_progress' | 'completed' | 'cancelled';
+  linkedNotificationId?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface CmsDatabaseSchema {
   users: AdminUser[];
   pages: CmsPage[];
@@ -335,6 +383,8 @@ export interface CmsDatabaseSchema {
   settings: CmsSiteSettings;
   paymentSettings: CmsPaymentSettings;
   transactions?: CmsPaymentTransaction[];
+  notifications?: CmsNotification[];
+  events?: CmsEvent[];
   content: Record<string, any>;
   activityLogs: CmsActivityLog[];
   revisions: CmsRevision[];

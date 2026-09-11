@@ -29,6 +29,8 @@ interface DatabaseStatus {
   storageType: string;
   serverUptime?: number;
   error?: string | null;
+  suggestion?: string | null;
+  lastCheckedAt?: string;
 }
 
 export const SiteSettingsManager: React.FC = () => {
@@ -105,7 +107,7 @@ export const SiteSettingsManager: React.FC = () => {
 
   const handleDownloadBackup = async () => {
     try {
-      const token = localStorage.getItem('gis_admin_token') || sessionStorage.getItem('gis_admin_token');
+      const token = localStorage.getItem('gi_admin_token') || localStorage.getItem('gis_admin_token') || sessionStorage.getItem('gis_admin_token');
       const res = await fetch('/api/database/backup', {
         headers: token ? { Authorization: `Bearer ${token}` } : {}
       });
@@ -417,11 +419,29 @@ export const SiteSettingsManager: React.FC = () => {
               ) : (
                 <span className="px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 font-semibold text-[11px] flex items-center gap-1.5 shadow-sm">
                   <span className="w-2 h-2 rounded-full bg-amber-400" />
-                  Local File Storage Mode (Active)
+                  Local File Storage Mode (Active & Safe)
                 </span>
               )}
             </div>
           </div>
+
+          {/* Error & Configuration Diagnostic Banner */}
+          {dbStatus?.error && (
+            <div className="p-4 rounded-xl bg-amber-950/30 border border-amber-500/40 text-amber-200 text-xs space-y-2">
+              <div className="font-semibold flex items-center gap-2 text-amber-300">
+                <ShieldAlert className="w-4 h-4 text-amber-400 shrink-0" />
+                <span>Cloud Database Connection Note: {dbStatus.error}</span>
+              </div>
+              {dbStatus.suggestion && (
+                <p className="text-[11px] text-amber-100/90 leading-relaxed pl-6">
+                  💡 <strong>How to resolve:</strong> {dbStatus.suggestion}
+                </p>
+              )}
+              <p className="text-[11px] text-slate-400 pl-6">
+                Your website is fully operating in local persistent storage (<code className="text-slate-300">data/cms_data.json</code>). All page edits, blogs, events, and notifications are saved safely.
+              </p>
+            </div>
+          )}
 
           {/* Database Details & Actions Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
@@ -521,11 +541,13 @@ export const SiteSettingsManager: React.FC = () => {
                 )}
               </button>
             </div>
-            <ol className="list-decimal list-inside text-[11px] text-slate-400 space-y-1 pl-1">
-              <li>Create a free MongoDB database on <strong className="text-slate-300">mongodb.com/atlas</strong> (takes 60 seconds).</li>
-              <li>In Vercel Dashboard, go to your project ➔ <strong className="text-slate-300">Settings</strong> ➔ <strong className="text-slate-300">Environment Variables</strong>.</li>
-              <li>Add variable name: <code className="text-cyan-300 bg-slate-900 px-1 py-0.5 rounded font-mono">MONGODB_URI</code> with your MongoDB connection string.</li>
-              <li>All admin password changes, blogs, portfolio projects, and site updates will automatically and permanently save to MongoDB Atlas!</li>
+            <ol className="list-decimal list-inside text-[11px] text-slate-400 space-y-1.5 pl-1">
+              <li>Create a free cluster on <strong className="text-slate-300">mongodb.com/atlas</strong> (takes 60 seconds).</li>
+              <li>
+                <strong className="text-amber-300">Crucial Network Access:</strong> In Atlas left menu, go to <strong className="text-slate-200">Security ➔ Network Access</strong> ➔ click <strong className="text-slate-200">Add IP Address</strong> ➔ choose <strong className="text-cyan-300">Allow Access from Anywhere (0.0.0.0/0)</strong>. This prevents SSL Alert 80 blocks when connecting from cloud hosting.
+              </li>
+              <li>In your settings or hosting environment variables, add <code className="text-cyan-300 bg-slate-900 px-1 py-0.5 rounded font-mono">MONGODB_URI</code> with your connection string.</li>
+              <li>Once added, click <strong className="text-indigo-400">"Sync with Cloud Database"</strong> above to synchronize all pages, blogs, and settings permanently!</li>
             </ol>
           </div>
         </div>

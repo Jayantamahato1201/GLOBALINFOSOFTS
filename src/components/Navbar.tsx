@@ -143,6 +143,21 @@ export const Navbar: React.FC<NavbarProps> = ({
               {/* Single Theme Toggle for all screens */}
               <ThemeToggle />
 
+              {/* CRM Portal Fast Launcher */}
+              <a
+                href="#crm"
+                onClick={(e) => {
+                  e.preventDefault();
+                  window.location.hash = 'crm';
+                  window.dispatchEvent(new Event('hashchange'));
+                }}
+                className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-600 dark:text-cyan-300 font-medium text-xs transition-all shadow-sm cursor-pointer"
+                title="Open Global InfoSoft CRM Portal"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+                <span>CRM</span>
+              </a>
+
               {/* Get Started Pill Button matching reference */}
               <button
                 id="btn-nav-get-started"
@@ -192,6 +207,18 @@ export const Navbar: React.FC<NavbarProps> = ({
               <button
                 onClick={() => {
                   setMobileMenuOpen(false);
+                  window.location.hash = 'crm';
+                  window.dispatchEvent(new Event('hashchange'));
+                }}
+                className="w-full py-2.5 px-4 rounded-xl border border-cyan-500/40 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-600 dark:text-cyan-300 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer"
+              >
+                <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+                <span>Open CRM Portal</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
                   onOpenContact();
                 }}
                 className="w-full py-2.5 px-4 rounded-xl btn-primary text-white text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2"
@@ -202,13 +229,13 @@ export const Navbar: React.FC<NavbarProps> = ({
 
               <div className="pt-2 flex items-center justify-center gap-4 text-xs text-slate-600 dark:text-slate-400">
                 <a
-                  href={getWhatsAppUrl(COMPANY_INFO.salesPhone, WHATSAPP_MESSAGES.general)}
+                  href={getWhatsAppUrl(settings?.salesPhone || settings?.phone || COMPANY_INFO.salesPhone, WHATSAPP_MESSAGES.general)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-mono transition-colors font-medium"
                 >
                   <MessageSquare className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-                  <span>WhatsApp: {COMPANY_INFO.salesPhone}</span>
+                  <span>WhatsApp: {settings?.salesPhone || settings?.phone || COMPANY_INFO.salesPhone}</span>
                 </a>
               </div>
             </div>

@@ -21,7 +21,9 @@ import {
   Check,
   X,
   AlertTriangle,
-  ArrowRight
+  ArrowRight,
+  Plus,
+  Trash2
 } from 'lucide-react';
 import { useAdminAuth } from '../AdminAuthContext';
 import { CmsPage, CmsSection, CmsRevision } from '../cmsTypes';
@@ -34,6 +36,17 @@ export const PageSectionManager: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [pageSearchQuery, setPageSearchQuery] = useState('');
+
+  // Add Page Modal state
+  const [isAddPageModalOpen, setIsAddPageModalOpen] = useState(false);
+  const [isCreatingPage, setIsCreatingPage] = useState(false);
+  const [newPageData, setNewPageData] = useState({
+    name: '',
+    route: '',
+    enabled: true,
+    seoTitle: '',
+    seoDescription: ''
+  });
 
   // Confirmation Modal state for toggling page visibility
   const [confirmModal, setConfirmModal] = useState<{
@@ -259,10 +272,63 @@ export const PageSectionManager: React.FC = () => {
     }
   };
 
+  const handleCreatePage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newPageData.name.trim()) {
+      showToast('Page name is required', 'error');
+      return;
+    }
+    setIsCreatingPage(true);
+    try {
+      const slug = (newPageData.route || newPageData.name)
+        .toLowerCase()
+        .replace(/^\//, '')
+        .replace(/[^a-z0-9-_]/g, '-')
+        .replace(/-+/g, '-');
+
+      const created = await apiFetch('/api/pages', {
+        method: 'POST',
+        body: JSON.stringify({
+          name: newPageData.name.trim(),
+          route: slug,
+          enabled: newPageData.enabled,
+          seoTitle: newPageData.seoTitle || `${newPageData.name} | Global InfoSoft`,
+          seoDescription: newPageData.seoDescription || ''
+        })
+      });
+      showToast(`Page "${created.name}" created successfully!`, 'success');
+      setIsAddPageModalOpen(false);
+      setNewPageData({ name: '', route: '', enabled: true, seoTitle: '', seoDescription: '' });
+      await loadPages();
+      setSelectedPageId(created.id);
+      window.dispatchEvent(new Event('cms-data-updated'));
+    } catch (err: any) {
+      showToast(err.message || 'Failed to create page', 'error');
+    } finally {
+      setIsCreatingPage(false);
+    }
+  };
+
+  const handleDeletePage = async (pageId: string, pageName: string) => {
+    if (pageId === 'page-home') {
+      showToast('The Home landing page cannot be deleted.', 'error');
+      return;
+    }
+    if (!confirm(`Are you sure you want to permanently delete page "${pageName}"?`)) return;
+    try {
+      await apiFetch(`/api/pages/${pageId}`, { method: 'DELETE' });
+      showToast(`Page "${pageName}" deleted.`, 'info');
+      await loadPages();
+      window.dispatchEvent(new Event('cms-data-updated'));
+    } catch (err: any) {
+      showToast(err.message || 'Failed to delete page', 'error');
+    }
+  };
+
   const filteredPages = pages.filter(
     (p) =>
-      p.name.toLowerCase().includes(pageSearchQuery.toLowerCase()) ||
-      p.route.toLowerCase().includes(pageSearchQuery.toLowerCase())
+      (p?.name || '').toLowerCase().includes((pageSearchQuery || '').toLowerCase()) ||
+      (p?.route || '').toLowerCase().includes((pageSearchQuery || '').toLowerCase())
   );
 
   const livePagesCount = pages.filter((p) => p.enabled !== false).length;
@@ -289,7 +355,7 @@ export const PageSectionManager: React.FC = () => {
             </p>
           </div>
 
-          {/* Stats Badges */}
+          {/* Stats Badges & Actions */}
           <div className="flex items-center gap-2.5 flex-wrap">
             <div className="px-3 py-1.5 rounded-xl bg-emerald-950/60 border border-emerald-800/80 text-emerald-300 text-xs font-['JetBrains_Mono'] flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
@@ -299,6 +365,13 @@ export const PageSectionManager: React.FC = () => {
               <span className="w-2 h-2 rounded-full bg-amber-500" />
               <span>{hiddenPagesCount} HIDDEN</span>
             </div>
+            <button
+              onClick={() => setIsAddPageModalOpen(true)}
+              className="px-3.5 py-1.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold flex items-center gap-1.5 shadow-lg shadow-cyan-600/25 transition cursor-pointer"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Add Page</span>
+            </button>
             <button
               onClick={loadPages}
               className="p-2 text-slate-400 hover:text-white rounded-xl bg-slate-800/80 hover:bg-slate-700 transition"
@@ -465,6 +538,16 @@ export const PageSectionManager: React.FC = () => {
                         >
                           <ExternalLink className="w-3.5 h-3.5" />
                         </a>
+
+                        {page.id !== 'page-home' && (
+                          <button
+                            onClick={() => handleDeletePage(page.id, page.name)}
+                            className="p-1.5 rounded-lg bg-slate-800/80 border border-slate-700 text-slate-400 hover:text-red-400 hover:border-red-900/50 transition cursor-pointer"
+                            title={`Delete page "${page.name}"`}
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>
@@ -474,6 +557,121 @@ export const PageSectionManager: React.FC = () => {
           </table>
         </div>
       </div>
+
+      {/* Create New Page Modal */}
+      {isAddPageModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+          <div className="relative w-full max-w-md bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl p-6 text-slate-100">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+              <div className="flex items-center gap-2">
+                <div className="p-2 rounded-lg bg-cyan-500/10 text-cyan-400">
+                  <Globe className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-white">Create New Page</h3>
+                  <p className="text-[11px] text-slate-400">Add a new route to the website</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsAddPageModalOpen(false)}
+                className="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreatePage} className="mt-4 space-y-4">
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-slate-300">
+                  Page Name <span className="text-red-400">*</span>
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Case Studies, Resources, Events"
+                  value={newPageData.name}
+                  onChange={(e) => {
+                    const name = e.target.value;
+                    const autoRoute = name.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-');
+                    setNewPageData((prev) => ({
+                      ...prev,
+                      name,
+                      route: prev.route ? prev.route : autoRoute
+                    }));
+                  }}
+                  className="w-full px-3 py-2 text-xs bg-slate-800 border border-slate-700 rounded-xl text-slate-100 focus:outline-none focus:border-cyan-500"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-slate-300">
+                  Route Path
+                </label>
+                <div className="flex items-center bg-slate-800 border border-slate-700 rounded-xl px-3 text-xs text-slate-400">
+                  <span>/</span>
+                  <input
+                    type="text"
+                    placeholder="case-studies"
+                    value={newPageData.route}
+                    onChange={(e) => setNewPageData({ ...newPageData, route: e.target.value })}
+                    className="flex-1 py-2 pl-1 bg-transparent text-slate-100 focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-slate-300">
+                  SEO Title (Optional)
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g. Case Studies & Success Stories | Global InfoSoft"
+                  value={newPageData.seoTitle}
+                  onChange={(e) => setNewPageData({ ...newPageData, seoTitle: e.target.value })}
+                  className="w-full px-3 py-2 text-xs bg-slate-800 border border-slate-700 rounded-xl text-slate-100 focus:outline-none focus:border-cyan-500"
+                />
+              </div>
+
+              <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between">
+                <div>
+                  <span className="text-xs font-semibold text-white block">Initial Status</span>
+                  <span className="text-[11px] text-slate-400">Publish immediately or save hidden</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setNewPageData({ ...newPageData, enabled: !newPageData.enabled })}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition ${
+                    newPageData.enabled
+                      ? 'bg-emerald-600 text-white'
+                      : 'bg-slate-800 text-slate-400 border border-slate-700'
+                  }`}
+                >
+                  {newPageData.enabled ? 'LIVE' : 'HIDDEN'}
+                </button>
+              </div>
+
+              <div className="pt-2 border-t border-slate-800 flex items-center justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsAddPageModalOpen(false)}
+                  className="px-4 py-2 rounded-xl bg-slate-800 text-xs text-slate-300 hover:bg-slate-700"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isCreatingPage}
+                  className="px-4 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold shadow-lg shadow-cyan-600/30 flex items-center gap-1.5"
+                >
+                  {isCreatingPage ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-3.5 h-3.5" />}
+                  <span>Create Page</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* 2. Section Ordering & Content Manager */}
       <div id="section-editor-view" className="space-y-4">

@@ -1,6 +1,7 @@
 import React from 'react';
 import { COMPANY_INFO } from '../data/companyData';
 import { PageId } from '../types';
+import { useCms } from '../context/CmsContext';
 import { FooterCertifications } from './FooterCertifications';
 import {
   ArrowUp,
@@ -21,6 +22,8 @@ export const Footer: React.FC<FooterProps> = ({
   onNavigatePage,
   onOpenContact
 }) => {
+  const { settings, footer } = useCms();
+
   const handleLinkClick = (page: PageId) => {
     onNavigatePage(page);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -175,24 +178,31 @@ export const Footer: React.FC<FooterProps> = ({
                 className="text-cyan-600 dark:text-cyan-400 font-semibold hover:text-cyan-500 dark:hover:text-cyan-300 transition-colors cursor-pointer"
                 onClick={() => handleLinkClick('home')}
               >
-                Global Infosoft
+                {settings?.companyName || 'Global Infosoft'}
               </span>{' '}
               — All rights reserved.
             </span>
-            <a
-              href="#admin"
-              className="inline-flex items-center gap-1 text-slate-500 hover:text-cyan-400 transition-colors font-mono text-[10.5px] ml-2"
-              title="Global InfoSoft Admin & CMS Console"
-            >
-              <Shield className="w-3 h-3" />
-              <span>Admin CMS</span>
-            </a>
+            <div className="inline-flex items-center gap-2 ml-3">
+              <a
+                href="#crm"
+                onClick={(e) => {
+                  e.preventDefault();
+                  window.location.hash = 'crm';
+                  window.dispatchEvent(new Event('hashchange'));
+                }}
+                className="inline-flex items-center gap-1.5 text-cyan-400 hover:text-cyan-300 transition-all font-mono text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-cyan-950/60 border border-cyan-500/30 hover:border-cyan-400 shadow-sm"
+                title="Open Global InfoSoft CRM Portal"
+              >
+                <Shield className="w-3 h-3 text-cyan-400" />
+                <span>CRM Portal</span>
+              </a>
+            </div>
           </div>
 
           <div className="flex items-center gap-4 text-slate-400">
             {/* Social Icons matching screenshot */}
             <a
-              href={COMPANY_INFO.socialLinks.facebook}
+              href={settings?.socialLinks?.facebook || footer?.socialLinks?.facebook || COMPANY_INFO.socialLinks.facebook}
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Facebook"
@@ -202,7 +212,7 @@ export const Footer: React.FC<FooterProps> = ({
               <Facebook className="w-4 h-4" />
             </a>
             <a
-              href="https://instagram.com/globalinfosofts"
+              href={settings?.socialLinks?.instagram || 'https://instagram.com/globalinfosofts'}
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Instagram"
@@ -212,7 +222,7 @@ export const Footer: React.FC<FooterProps> = ({
               <Instagram className="w-4 h-4" />
             </a>
             <a
-              href={COMPANY_INFO.socialLinks.linkedin}
+              href={settings?.socialLinks?.linkedin || footer?.socialLinks?.linkedin || COMPANY_INFO.socialLinks.linkedin}
               target="_blank"
               rel="noopener noreferrer"
               aria-label="LinkedIn"
@@ -222,7 +232,7 @@ export const Footer: React.FC<FooterProps> = ({
               <Linkedin className="w-4 h-4" />
             </a>
             <a
-              href={COMPANY_INFO.socialLinks.youtube}
+              href={settings?.socialLinks?.youtube || footer?.socialLinks?.youtube || COMPANY_INFO.socialLinks.youtube}
               target="_blank"
               rel="noopener noreferrer"
               aria-label="YouTube"

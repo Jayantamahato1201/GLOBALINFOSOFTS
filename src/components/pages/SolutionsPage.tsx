@@ -122,17 +122,19 @@ export const SolutionsPage: React.FC<SolutionsPageProps> = ({
     const meta = solutionMetaMap[sol.id];
     const categoryName = meta?.categoryLabel || sol.industry;
 
+    const selInd = (selectedIndustry || '').toLowerCase().split(' ')[0];
     const matchesIndustry =
       selectedIndustry === 'All' ||
-      categoryName.toLowerCase().includes(selectedIndustry.toLowerCase().split(' ')[0]) ||
-      sol.industry.toLowerCase().includes(selectedIndustry.toLowerCase().split(' ')[0]);
+      (categoryName || '').toLowerCase().includes(selInd) ||
+      (sol.industry || '').toLowerCase().includes(selInd);
 
+    const q = (searchQuery || '').toLowerCase();
     const matchesSearch =
-      !searchQuery ||
-      sol.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      sol.shortDesc.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      categoryName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      sol.features.some((f) => f.toLowerCase().includes(searchQuery.toLowerCase()));
+      !q ||
+      (sol.title || '').toLowerCase().includes(q) ||
+      (sol.shortDesc || '').toLowerCase().includes(q) ||
+      (categoryName || '').toLowerCase().includes(q) ||
+      (Array.isArray(sol.features) && sol.features.some((f) => (f || '').toLowerCase().includes(q)));
 
     return matchesIndustry && matchesSearch;
   });

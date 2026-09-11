@@ -84,9 +84,9 @@ cmsRouter.post('/auth/login', async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Email and password are required.' });
     }
 
-    // If MongoDB is configured, ensure in-memory cache is synced with latest cloud state
+    // If MongoDB is configured, trigger background sync without delaying login
     if (isMongoConfigured()) {
-      await cmsDb.syncWithMongo();
+      cmsDb.syncWithMongo().catch(() => {});
     }
 
     const user = cmsDb.findUserByEmail(email);
@@ -376,6 +376,11 @@ cmsRouter.delete('/auth/users/:id', authenticateAdmin, requireRoles(['super_admi
 // 2. PUBLIC CMS AGGREGATOR (THE LIVE REAL-TIME FEED)
 // ----------------------------------------------------
 cmsRouter.get('/public/cms-data', (req: Request, res: Response) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+  const activeNotification = cmsDb.getActiveNotification();
+  const notifications = cmsDb.getNotifications();
   const raw = cmsDb.getRawData();
   const paymentPublic = raw.paymentSettings ? {
     enabled: raw.paymentSettings.enabled,
@@ -406,6 +411,9 @@ cmsRouter.get('/public/cms-data', (req: Request, res: Response) => {
     footer: raw.footer,
     settings: raw.settings,
     payments: paymentPublic,
+    notifications: notifications,
+    activeNotification: activeNotification,
+    events: raw.events || [],
     content: raw.content
   };
   return res.json(publicData);
@@ -418,11 +426,42 @@ cmsRouter.get('/pages', (req: Request, res: Response) => {
   return res.json(cmsDb.getPages());
 });
 
+cmsRouter.post('/pages', authenticateAdmin, (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { name, route, enabled, seoTitle, seoDescription } = req.body;
+    if (!name || !name.trim()) {
+      return res.status(400).json({ error: 'Page name is required.' });
+    }
+    const created = cmsDb.createPage(
+      {
+        name: name.trim(),
+        route: route || name.trim().toLowerCase().replace(/[^a-z0-9-_]/g, '-'),
+        enabled: enabled ?? true,
+        seoTitle,
+        seoDescription
+      },
+      req.user!.fullName
+    );
+    return res.status(201).json(created);
+  } catch (err: any) {
+    return res.status(400).json({ error: err.message });
+  }
+});
+
 cmsRouter.patch('/pages/:id', authenticateAdmin, (req: AuthenticatedRequest, res: Response) => {
   try {
     const updated = cmsDb.updatePage(req.params.id, req.body, req.user!.fullName);
     cmsDb.logActivity(`Updated Page: ${updated.name}`, req.user!.email, req.user!.fullName, 'page', `Enabled status: ${updated.enabled}`);
     return res.json(updated);
+  } catch (err: any) {
+    return res.status(400).json({ error: err.message });
+  }
+});
+
+cmsRouter.delete('/pages/:id', authenticateAdmin, (req: AuthenticatedRequest, res: Response) => {
+  try {
+    cmsDb.deletePage(req.params.id, req.user!.fullName);
+    return res.json({ success: true, message: 'Page deleted successfully.' });
   } catch (err: any) {
     return res.status(400).json({ error: err.message });
   }
@@ -1039,6 +1078,8 @@ cmsRouter.get('/database/status', authenticateAdmin, async (_req: AuthenticatedR
     serverUptime: Math.floor(process.uptime()),
     storageType: status.connected
       ? 'MongoDB Atlas (Cloud Database - Permanent Across All Devices)'
+      : status.error
+      ? 'Local File Store Active (data/cms_data.json) — Cloud Sync Standby'
       : status.configured
       ? 'MongoDB Configured (Connecting...)'
       : 'Local Server File Persistence (data/cms_data.json)'
@@ -1047,13 +1088,15 @@ cmsRouter.get('/database/status', authenticateAdmin, async (_req: AuthenticatedR
 
 // POST /api/database/sync
 cmsRouter.post('/database/sync', authenticateAdmin, requireRoles(['super_admin', 'admin']), async (_req: AuthenticatedRequest, res: Response) => {
-  const success = await cmsDb.syncWithMongo();
+  const success = await cmsDb.syncWithMongo(true);
   const status = getMongoStatus();
   return res.json({
     success,
     status,
     message: success
       ? 'Synchronized with MongoDB Atlas successfully! All changes are permanent.'
+      : status.error
+      ? `Notice: ${status.error}`
       : 'Operating in local storage mode or MongoDB URI not yet set.'
   });
 });
@@ -1092,4 +1135,271 @@ cmsRouter.post('/database/restore', authenticateAdmin, requireRoles(['super_admi
   } catch (err: any) {
     return res.status(500).json({ error: err.message || 'Failed to restore database.' });
   }
+});
+
+// ----------------------------------------------------
+// 20. NOTIFICATIONS & POPUP ANNOUNCEMENTS API
+// ----------------------------------------------------
+cmsRouter.get('/notifications', (req: Request, res: Response) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+  return res.json(cmsDb.getNotifications());
+});
+
+cmsRouter.get('/notifications/active', (req: Request, res: Response) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+  return res.json(cmsDb.getActiveNotification());
+});
+
+cmsRouter.post('/notifications', authenticateAdmin, (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { title, subtitle, message, imageUrl, badgeText, type, ctaText, ctaLink, secondaryButtonText, isActive, startDate, endDate, showOncePerSession, displayDelayMs, themeColor, enableConfetti } = req.body;
+    if (!title || !title.trim()) {
+      return res.status(400).json({ error: 'Notification title is required.' });
+    }
+    const created = cmsDb.saveNotification({
+      title: title.trim(),
+      subtitle,
+      message,
+      imageUrl,
+      badgeText,
+      type,
+      ctaText,
+      ctaLink,
+      secondaryButtonText,
+      isActive: isActive !== undefined ? isActive : true,
+      startDate,
+      endDate,
+      showOncePerSession,
+      displayDelayMs,
+      themeColor,
+      enableConfetti
+    });
+    cmsDb.logActivity(
+      `Created Popup Notification: "${created.title}"`,
+      req.user!.email,
+      req.user!.fullName,
+      'settings',
+      `Type: ${created.type}, Active status: ${created.isActive ? 'Live' : 'Draft'}`
+    );
+    return res.status(201).json(created);
+  } catch (err: any) {
+    return res.status(500).json({ error: err.message || 'Failed to create notification.' });
+  }
+});
+
+cmsRouter.put('/notifications/:id', authenticateAdmin, (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const updated = cmsDb.saveNotification({
+      id: req.params.id,
+      ...req.body
+    });
+    cmsDb.logActivity(
+      `Updated Popup Notification: "${updated.title}"`,
+      req.user!.email,
+      req.user!.fullName,
+      'settings',
+      `Type: ${updated.type}, Active status: ${updated.isActive ? 'Live' : 'Draft'}`
+    );
+    return res.json(updated);
+  } catch (err: any) {
+    return res.status(500).json({ error: err.message || 'Failed to update notification.' });
+  }
+});
+
+cmsRouter.patch('/notifications/:id/toggle', authenticateAdmin, (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const toggled = cmsDb.toggleNotification(req.params.id);
+    cmsDb.logActivity(
+      `Toggled Notification Status: "${toggled.title}"`,
+      req.user!.email,
+      req.user!.fullName,
+      'settings',
+      `Notification is now ${toggled.isActive ? 'LIVE for website visitors' : 'INACTIVE'}`
+    );
+    return res.json(toggled);
+  } catch (err: any) {
+    return res.status(500).json({ error: err.message || 'Failed to toggle notification status.' });
+  }
+});
+
+cmsRouter.post('/notifications/:id/push-now', authenticateAdmin, (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const pushed = cmsDb.pushNotificationImmediately(req.params.id);
+    cmsDb.logActivity(
+      `Pushed Notification LIVE Immediately: "${pushed.title}"`,
+      req.user!.email,
+      req.user!.fullName,
+      'settings',
+      `Forced immediate live push to all visitors, overriding scheduled timer.`
+    );
+    return res.json(pushed);
+  } catch (err: any) {
+    return res.status(500).json({ error: err.message || 'Failed to push notification live.' });
+  }
+});
+
+cmsRouter.post('/notifications/check-scheduler', authenticateAdmin, (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const result = cmsDb.processScheduledNotifications();
+    return res.json(result);
+  } catch (err: any) {
+    return res.status(500).json({ error: err.message || 'Failed to check scheduler.' });
+  }
+});
+
+cmsRouter.delete('/notifications/:id', authenticateAdmin, (req: AuthenticatedRequest, res: Response) => {
+  try {
+    cmsDb.deleteNotification(req.params.id);
+    cmsDb.logActivity(
+      `Deleted Notification: ${req.params.id}`,
+      req.user!.email,
+      req.user!.fullName,
+      'settings',
+      `Removed notification from CMS database`
+    );
+    return res.json({ success: true, message: 'Notification removed successfully.' });
+  } catch (err: any) {
+    return res.status(500).json({ error: err.message || 'Failed to delete notification.' });
+  }
+});
+
+// ----------------------------------------------------
+// 21. EVENTS & CALENDAR API
+// ----------------------------------------------------
+cmsRouter.get('/events', (req: Request, res: Response) => {
+  return res.json(cmsDb.getEvents());
+});
+
+cmsRouter.post('/events', authenticateAdmin, (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { title, description, startDate, endDate, startTime, endTime, isAllDay, category, location, meetingUrl, color, status, linkedNotificationId } = req.body;
+    if (!title || !title.trim()) {
+      return res.status(400).json({ error: 'Event title is required.' });
+    }
+    if (!startDate) {
+      return res.status(400).json({ error: 'Event start date is required.' });
+    }
+    const created = cmsDb.saveEvent({
+      title: title.trim(),
+      description,
+      startDate,
+      endDate: endDate || startDate,
+      startTime,
+      endTime,
+      isAllDay: isAllDay !== undefined ? isAllDay : true,
+      category: category || 'meeting',
+      location,
+      meetingUrl,
+      color: color || 'indigo',
+      status: status || 'scheduled',
+      linkedNotificationId
+    });
+    cmsDb.logActivity(
+      `Scheduled Event: "${created.title}"`,
+      req.user!.email,
+      req.user!.fullName,
+      'settings',
+      `Category: ${created.category}, Date: ${created.startDate}`
+    );
+    return res.status(201).json(created);
+  } catch (err: any) {
+    return res.status(500).json({ error: err.message || 'Failed to create event.' });
+  }
+});
+
+cmsRouter.put('/events/:id', authenticateAdmin, (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const updated = cmsDb.saveEvent({
+      id: req.params.id,
+      ...req.body
+    });
+    cmsDb.logActivity(
+      `Updated Event: "${updated.title}"`,
+      req.user!.email,
+      req.user!.fullName,
+      'settings',
+      `Category: ${updated.category}, Date: ${updated.startDate}`
+    );
+    return res.json(updated);
+  } catch (err: any) {
+    return res.status(500).json({ error: err.message || 'Failed to update event.' });
+  }
+});
+
+cmsRouter.delete('/events/:id', authenticateAdmin, (req: AuthenticatedRequest, res: Response) => {
+  try {
+    cmsDb.deleteEvent(req.params.id);
+    cmsDb.logActivity(
+      `Deleted Scheduled Event: ${req.params.id}`,
+      req.user!.email,
+      req.user!.fullName,
+      'settings',
+      `Removed event from calendar`
+    );
+    return res.json({ success: true, message: 'Event deleted successfully.' });
+  } catch (err: any) {
+    return res.status(500).json({ error: err.message || 'Failed to delete event.' });
+  }
+});
+
+// ----------------------------------------------------
+// CRM WORKFORCE & EMPLOYEES ENDPOINTS
+// ----------------------------------------------------
+cmsRouter.get('/employees', (req: Request, res: Response) => {
+  return res.json([]);
+});
+
+cmsRouter.post('/employees', (req: Request, res: Response) => {
+  const { name, email, role, department, location, shiftStart, shiftEnd, device, os, avatar } = req.body;
+  if (!name || !email || !role) {
+    return res.status(400).json({ error: 'Name, email, and role are required' });
+  }
+  const employeeId = `EMP-${String(Math.floor(100 + Math.random() * 900))}`;
+  const password = `crm@${Math.floor(1000 + Math.random() * 9000)}`;
+  const now = new Date().toISOString();
+  const createdEmp = {
+    id: employeeId,
+    name,
+    email,
+    role,
+    department: department || 'Engineering',
+    avatar: avatar || '/avatars/emp1.jpg',
+    status: 'offline',
+    device: device || 'MacBook Pro 14"',
+    os: os || 'macOS Sonoma 14.4',
+    location: location || 'Remote',
+    shiftStart: shiftStart || '09:00',
+    shiftEnd: shiftEnd || '17:00',
+    clockIn: null,
+    clockOut: null,
+    activeTimeSec: 0,
+    idleTimeSec: 0,
+    awayTimeSec: 0,
+    productivity: 85,
+    lastActivity: now,
+    cpuUsage: 22,
+    ramUsage: 45,
+    diskUsage: 30,
+    battery: 100,
+    online: false,
+    webcamVerified: false,
+    keystrokes: 0,
+    mouseClicks: 0,
+    mouseMoves: 0,
+    screenshotsTaken: 0,
+    apps: [],
+    hourly: [],
+    activities: [],
+    trends: []
+  };
+
+  return res.status(201).json({
+    success: true,
+    employee: createdEmp,
+    credentials: {
+      employeeId,
+      email,
+      password
+    }
+  });
 });

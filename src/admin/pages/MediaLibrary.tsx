@@ -92,10 +92,26 @@ export const MediaLibrary: React.FC = () => {
     }
   };
 
-  const filteredMedia = mediaList.filter((m) =>
-    m.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    m.mimeType.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const getMediaName = (m?: CmsMediaItem | null) => m?.name || m?.filename || 'Untitled Asset';
+  const getMediaType = (m?: CmsMediaItem | null) => m?.mimeType || m?.fileType || 'image/jpeg';
+  const getMediaDate = (m?: CmsMediaItem | null) => {
+    const d = m?.createdAt || m?.uploadedAt;
+    if (!d) return 'Recent';
+    try {
+      const parsed = new Date(d);
+      return isNaN(parsed.getTime()) ? 'Recent' : parsed.toLocaleDateString();
+    } catch {
+      return 'Recent';
+    }
+  };
+
+  const filteredMedia = mediaList.filter((m) => {
+    if (!m) return false;
+    const name = (m.name || m.filename || '').toLowerCase();
+    const type = (m.mimeType || m.fileType || '').toLowerCase();
+    const query = (searchQuery || '').trim().toLowerCase();
+    return !query || name.includes(query) || type.includes(query);
+  });
 
   const formatBytes = (bytes: number) => {
     if (!bytes) return '0 B';
@@ -197,7 +213,7 @@ export const MediaLibrary: React.FC = () => {
               <div className="h-32 w-full bg-slate-950 relative overflow-hidden flex items-center justify-center p-2">
                 <img
                   src={media.url}
-                  alt={media.name}
+                  alt={getMediaName(media)}
                   className="w-full h-full object-contain group-hover:scale-105 transition duration-300"
                   onError={(e) => {
                     (e.target as HTMLElement).style.display = 'none';
@@ -207,12 +223,12 @@ export const MediaLibrary: React.FC = () => {
 
               {/* Asset Metadata & Actions */}
               <div className="p-3 bg-slate-900 space-y-1">
-                <p className="text-xs font-semibold text-white truncate" title={media.name}>
-                  {media.name}
+                <p className="text-xs font-semibold text-white truncate" title={getMediaName(media)}>
+                  {getMediaName(media)}
                 </p>
                 <div className="flex items-center justify-between text-[10px] text-slate-500 font-mono">
                   <span>{formatBytes(media.size)}</span>
-                  <span>{new Date(media.createdAt).toLocaleDateString()}</span>
+                  <span>{getMediaDate(media)}</span>
                 </div>
 
                 <div className="flex items-center gap-1 pt-2 border-t border-slate-800">
@@ -268,7 +284,7 @@ export const MediaLibrary: React.FC = () => {
       <ConfirmModal
         isOpen={!!deleteTarget}
         title="Delete Media Asset?"
-        message={`Are you sure you want to permanently delete "${deleteTarget?.name}"?`}
+        message={`Are you sure you want to permanently delete "${getMediaName(deleteTarget)}"?`}
         confirmLabel="Delete Asset"
         onConfirm={handleDeleteConfirm}
         onCancel={() => setDeleteTarget(null)}

@@ -19,17 +19,20 @@ import { Footer } from './components/Footer';
 import { DetailModal } from './components/DetailModal';
 import { QuickSearchModal } from './components/QuickSearchModal';
 import { WhatsAppWidget } from './components/WhatsAppWidget';
+import { AnnouncementPopup } from './components/AnnouncementPopup';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { SERVICES_DATA, SOLUTIONS_DATA, CASE_STUDIES } from './data/companyData';
 import { ServiceItem, CaseStudy, SoftwareSolution, DetailModalData, PageId } from './types';
 import { CmsProvider, useCms } from './context/CmsContext';
 import { AdminAuthProvider } from './admin/AdminAuthContext';
 import { AdminPortal } from './admin/AdminPortal';
+import { CrmPortal } from './crm/CrmPortal';
 import { AlertTriangle } from 'lucide-react';
 
 function MainAppContent() {
   const { settings, isPageVisible } = useCms();
   const [currentPage, setCurrentPage] = useState<PageId>('home');
+  const [inCrm, setInCrm] = useState<boolean>(false);
   const [adminRoute, setAdminRoute] = useState<{
     inAdmin: boolean;
     initialView: 'login' | 'signup' | 'dashboard';
@@ -45,6 +48,13 @@ function MainAppContent() {
       const rawHash = window.location.hash.replace(/^#\/?/, '').toLowerCase();
       const rawPath = window.location.pathname.replace(/^\//, '').toLowerCase();
       const target = rawHash || rawPath;
+
+      if (target === 'crm' || target.startsWith('crm/') || target === 'crm-portal') {
+        setInCrm(true);
+        setAdminRoute({ inAdmin: false, initialView: 'login' });
+        return;
+      }
+      setInCrm(false);
 
       if (target === 'admin' || target === 'admin/dashboard') {
         setAdminRoute({ inAdmin: true, initialView: 'dashboard' });
@@ -362,6 +372,24 @@ function MainAppContent() {
     }
   };
 
+  if (inCrm) {
+    return (
+      <CrmPortal
+        onBackToWebsite={() => {
+          window.location.hash = '';
+          window.history.pushState(null, '', '/');
+          setInCrm(false);
+          setCurrentPage('home');
+        }}
+        onOpenAdminCms={() => {
+          window.location.hash = 'admin';
+          setInCrm(false);
+          setAdminRoute({ inAdmin: true, initialView: 'dashboard' });
+        }}
+      />
+    );
+  }
+
   if (adminRoute.inAdmin) {
     return (
       <AdminAuthProvider>
@@ -457,6 +485,9 @@ function MainAppContent() {
 
       {/* Floating WhatsApp Enquiry Widget */}
       <WhatsAppWidget />
+
+      {/* Global Real-Time Announcement / Festive Notification Popup */}
+      <AnnouncementPopup onNavigatePage={(p) => navigateToPage(p as any)} />
     </div>
   );
 }

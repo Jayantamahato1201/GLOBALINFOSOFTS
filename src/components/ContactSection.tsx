@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { COMPANY_INFO } from '../data/companyData';
 import { getWhatsAppUrl } from '../utils/whatsapp';
+import { useCms } from '../context/CmsContext';
 import {
   User,
   Calendar,
@@ -116,6 +117,7 @@ const TOPICS = [
 ];
 
 export const ContactSection: React.FC<ContactSectionProps> = ({ prefilledScope = '' }) => {
+  const { settings } = useCms();
   // Wizard steps
   const [currentStep, setCurrentStep] = useState<StepId>(1);
 
@@ -980,7 +982,15 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ prefilledScope =
 
             {/* 3 Cards Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5 text-left">
-              {CONTACT_LEADERSHIP.map((item) => (
+              {CONTACT_LEADERSHIP.map((baseItem) => {
+                const item = baseItem.isOffice ? {
+                  ...baseItem,
+                  companyName: settings?.companyName || baseItem.companyName,
+                  address: settings?.address || baseItem.address,
+                  phone: settings?.phone || baseItem.phone,
+                  email: settings?.email || baseItem.email
+                } : baseItem;
+                return (
                 <motion.div
                   key={item.id}
                   whileHover={{ y: -5, transition: { duration: 0.2 } }}
@@ -1082,7 +1092,8 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ prefilledScope =
                     </a>
                   </div>
                 </motion.div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>
